@@ -1,0 +1,462 @@
+/*
+      Copyright (c) 2014-2016 Northwestern University
+
+      Permission is hereby granted, free of charge, to any person obtaining a copy
+      of this software and associated documentation files (the "Software"), to deal
+      in the Software without restriction, including without limitation the rights
+      to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+      copies of the Software, and to permit persons to whom the Software is
+      furnished to do so, subject to the following conditions:
+      The above copyright notice and this permission notice shall be included in all
+      copies or substantial portions of the Software.
+
+      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+      IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+      FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+      AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+      LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+      SOFTWARE.
+*/
+
+body{
+    font-family: Helvetica, Arial, sans-serif;
+    height: 100%;
+}
+.gamechangestar {
+    color: green;
+}
+
+.loginpage {
+    padding-top: 20px;
+    width: 60%;
+    margin: 0 auto;
+}
+
+.showLogin {
+   cursor: pointer
+}
+.keyword-options, .session-sort {
+    cursor: pointer
+}
+
+.keyword-options:hover {
+    background-color: #31b0d5;
+}
+
+.keyword-option {
+    display: in-line;
+}
+
+
+.paper .keywords {
+    text-transform: lowercase !important;
+    color: #737373 !important;
+    font-size: 90%;
+}
+
+.paper-item .keywords {
+    text-transform: lowercase !important;
+    color: #737373 !important;
+    font-size: 90%;
+}
+
+#sessionarea .ui-state-hover {
+    background: rgba(216,235,250, 0.9); 
+}
+
+.dragged-paper {
+    width: 250px;
+}
+
+.keyword-buttons {
+    margin-bottom: 5px;
+}
+
+.dragged-wide-paper {
+    width: 300px;
+}
+
+
+.dragged-session {
+    width: 300px;
+}
+
+.dragged-wide-session {
+    width: 350px;
+}
+
+
+.sessionarea-highlight {
+    
+}
+
+.authors-list {
+    font-size: 90%;
+}
+
+#paper-search {
+    width: 100%;
+    height: 30px;
+    font-size: 12px;
+    padding-left: 10px;
+}
+
+.approved-text {
+    color: #449d44;
+    font-weight: 700;
+    vertical-align: super;
+    font-size: 80%;
+}
+
+#session-search {
+    width: 100%;
+    height: 30px;
+    font-size: 12px;
+    padding-left: 10px;
+}
+
+.abstract {
+    font-size: 90%;
+    margin-top: 5px;
+}
+
+.morelink {
+    z-index: 1;
+}
+
+.morecontent span {
+    display: none;
+}
+
+.session-paper-container {
+}
+
+.watch-session-button {
+    position: relative;
+    right: 10px;
+    float: right;
+}
+
+.unwatch-session-button {
+    position: relative;
+    float: right;
+}
+
+
+li {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+body {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
+ #session-list div { 
+     -webkit-touch-callout: none; 
+     -webkit-user-select: none; 
+     -khtml-user-select: none; 
+     -moz-user-select: none; 
+     -ms-user-select: none; 
+     user-select: none; 
+ } 
+
+.paper-heading {
+    width: 90%;
+}
+
+.remove-paper-button {
+    vertical-align: middle;
+    position: relative;
+    width: 10%;
+    right: 0px;
+    float: right;
+    margin-left: 2px;
+}
+
+
+.remove-session-button {
+    position: relative;
+    right: 5px;
+    float: left;
+    margin-left: 2px;
+}
+
+.finish-session-button {
+    position: relative;
+    right: 0px;
+    float: right;
+    margin-left: 2px;
+}
+
+
+.approve-session-button {
+    position: relative;
+    right: 5px;
+    float: left;
+    margin-left: 2px;
+}
+
+.session-actions {
+    margin-top: 2px;
+}
+.session-contents {
+}
+
+.approval {
+    display: none;
+}
+
+.session-builder{
+	height: 100%;
+}
+
+#left, #middle{
+	height: 100%;
+	border-right: 1px solid black;
+}
+
+ #sessionarea { 
+     min-height: 720px;
+ } 
+
+
+#left, #middle, #right {
+      min-height: 760px;
+      height: 100%; 
+}
+
+.contributors {
+    color: lightgray;
+}
+
+#directions-icon{
+	float: right;
+}
+#directions-icon:hover{
+	color: #999;
+}
+
+#directions{
+	opacity: 1;
+	font-size: 16px;
+}
+
+#paper-deck {
+	background-color: #eee;
+	height: 500px;
+	overflow: auto;
+	list-style: none;
+	list-style-type: none;
+	padding-left: 0px;
+	border-top: 1px solid black; 
+	border-bottom: 1px solid black; 
+}
+
+
+ #session-list {
+	background-color: #eee;
+	height: 550px;
+	overflow: auto;
+	list-style: none;
+	list-style-type: none;
+	padding-left: 0px;
+	border-top: 1px solid black; 
+	border-bottom: 1px solid black; 
+}
+
+.authors-list {
+    list-style: none;
+    list-style-type: none;
+	padding-left: 0px;
+    
+}
+
+#sessionSortMenuButton{
+    vertical-align: middle;
+}
+
+#paperlist-buttons{
+	margin-bottom: 5px
+}
+
+#sessionlist-buttons{
+	margin-bottom: 5px
+}
+
+input[type=checkbox] {
+    margin-right: 5px;
+}
+
+.list-buttons button{
+	padding: 1px 5px 1px 5px;
+	border-radius: 2px;
+	border: 1px solid black;
+	box-shadow: 1px 1px 1px 1px #eee;
+	margin-right: 1px;
+}
+
+h3 {
+    position: relative;
+    border-bottom: 4px double black;
+    font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue';
+}
+
+h2 {
+   font-family: 'HelveticaNeue-Light', 'Helvetica Neue Light', 'Helvetica Neue';
+}
+#paper-count, #session-count, #workspace-count{
+    font-size: 16px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
+#paperlist-filters{
+    margin-bottom: 10px;
+}
+
+#workspace-count{
+    position:relative;
+    float:right;
+}
+
+.show-all-link, .show-all-session-link {
+    cursor:pointer;
+}
+
+.session{
+	border: 1px solid black;
+	background-color: #eee;
+	padding-left: 5px;
+	padding-right: 5px;
+	cursor: move;
+	box-shadow: 1px 1px 5px 1px #eee;
+}
+
+.session .form-group{
+    font-family: Helvetica, Arial, sans-serif;
+    margin: 5px;
+    font-size: 14px;
+}
+
+.work-button-section {
+
+}
+
+.session-label{
+	text-shadow: 1px 1px #ddd;
+	width: 10px;
+}
+
+#sessionarea .session {
+    position: relative;
+    z-index: 2000;
+}
+#sessionarea .session-label{
+	cursor: text;
+}
+
+.session-label-edit {
+    width: 80%;
+    width: 10px;
+    display:none;
+}
+
+.session .input-sm{
+    font-family: Helvetica, Arial, sans-serif;
+    font-size: 14px;
+}
+
+i {
+	cursor: pointer;
+}
+
+.session-papers{
+	height: 100%;
+	list-style: none;
+	list-style-type: none;
+	padding-left: 0px;
+}
+
+.paper-id {
+    color: #737373;
+}
+
+.paper-title {
+    font-weight: 600;
+}
+
+.paper-sessions{
+	height: 100%;
+	list-style: none;
+	list-style-type: none;
+	padding-left: 0px;
+}
+
+.paper, .paper-item{
+    font-family: Helvetica, Arial, sans-serif;
+    
+    border: solid 1px black;
+    margin: 5px;
+	padding: 5px;
+	background-color: #fff;
+	cursor: pointer;
+	list-style: none;
+	list-style-type: none;
+}
+
+.session-item {
+    
+    font-family: Helvetica, Arial, sans-serif;
+    border: solid 1px black;
+    margin: 5px;
+    padding: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    text-overflow:ellipsis;
+    overflow: hidden;
+    mix-width: 30px;
+}
+
+.unnamed-session-item {
+    background-color: lightgray;
+}
+.session .paper{
+	margin: 5px 0px 0px 0px; 
+}
+
+#new-session{
+	border: dotted 1px black;
+	font-size: 17px;
+	text-align: center;
+	padding: 10px;
+}
+
+.name-session{
+	width: 70%;
+}
+
+
+/** opty **/
+.opt-session {
+    width: 200px;
+    border: dotted 1px black;
+}
+
+.opt-paper {
+    font-size: 80%
+}
+
+#opt-left {
+    height: 100%;
+}

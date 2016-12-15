@@ -1,0 +1,333 @@
+<template name="SessionBuilder">
+  <!--
+      Copyright (c) 2014-2016 Northwestern University
+
+      Permission is hereby granted, free of charge, to any person obtaining a copy
+      of this software and associated documentation files (the "Software"), to deal
+      in the Software without restriction, including without limitation the rights
+      to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+      copies of the Software, and to permit persons to whom the Software is
+      furnished to do so, subject to the following conditions:
+      The above copyright notice and this permission notice shall be included in all
+      copies or substantial portions of the Software.
+
+      THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+      IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+      FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+      AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+      LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+      OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+      SOFTWARE.
+    -->
+  <div class="session-builder container-fluid clusterinterface">
+    <div class="row">
+      <div id="left" class="col-md-4">
+	<!--Paper List-->
+	<div>
+	  <h3 id="paperlist-header">Paper List</h3>
+	</div>
+
+	<div id="paperlist-filters">
+	<b>Need your help:</b>
+	<span id="filters" class="list-buttons btn-group">
+	  <button class="btn btn-xs btn-default without-session"><!--{{numPapersNotInSession}} -->papers not in any valid sessions </button><br/>
+	  <button class="btn btn-xs btn-default without-approved"><!--{{numPapersNotInApprovedSession}} -->papers not in an approved session</button><br/>
+	  <button class="btn btn-xs btn-default without-two-approved"><!--{{numPapersNotInTwoApprovedSessions}} -->papers in &lt; 2 approved sessions</button><br/>
+	</span>
+	</div>
+	  Keyword: 
+	<span class="keyword-buttons list-buttons btn-group">
+	  <button id="keyword-filter" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+	    {{getKeywordFilterText}} ({{countSelectedKeywordMatches}})
+	    <span class="caret"></span>
+	    <span class="sr-only">Toggle Dropdown</span>
+	  </button>
+	  <ul class="dropdown-menu" role="menu">
+	    <li class='keyword-options'><a class='keyword-option'>All ({{countAll}})</a></li>
+	    {{#each getKeywords}}
+	    {{#if hasKeywordMatches}}
+	    <li class='keyword-options'><a class='keyword-option'>{{this}} ({{countKeywordMatches}})</a></li>
+  	    {{/if}}
+	    {{/each}}
+	  </ul>
+	</span>
+	<!-- PAPER LIST STARTS HERE -->
+	<div class="paper-search-input">
+	  {{> EasySearch.Input index=PapersIndex id="paper-search" autocomplete="off" placeholder="Search title, author, abstract, keyword, or id" }} 
+	</div>
+	
+
+
+	<div class='current-status'><span id="paper-count">Showing {{numPapersDisplayed}} papers {{#if inputIsNotEmpty}} containing "{{searchKey}}" {{/if}}{{keywordStatus}}{{filterStatus}}</span></div>
+	<div class="show-all-status"><a class="show-all-link">Show all {{#if inputIsNotEmpty}}<!--{{numSearchPapers}} -->papers containing "{{searchKey}}"{{else}}<!--{{numTotalPapers}}-->papers{{/if}}</a></div>
+
+	<div id="paperlist-buttons">
+	  See all:
+	  <button class="btn btn-xs btn-success toggle-authors">authors</button>
+	  <button class="btn btn-xs btn-success toggle-abstracts">abstracts</button>
+	  <button class="btn btn-xs btn-success toggle-keywords">keywords</button>
+	  <button class="btn btn-xs btn-success toggle-paper-sessions">sessions</button>
+	</div>
+	
+	<ul id="paper-deck" class="deck ui-sortable">
+	  <!--	<li class="sort-disabled"></li>-->
+	  {{#if inputIsNotEmpty}}
+	  {{#each searchResults}}
+          {{#if passPaperFilters}}
+	  <div>
+	  {{> paperWithSessions}}
+	  </div>
+	  {{/if}}
+	  {{/each}}
+	  {{else}}
+	  {{#each papers}}
+          {{#if passPaperFilters}}
+	<div>
+	  {{> paperWithSessions}}
+	</div>
+	  {{/if}}
+	  {{/each}}
+	  {{/if}}
+	</ul>
+	
+      </div>
+      
+      
+      <div id="middle" class="col-md-6 container-fluid">
+	<div class="row">
+	  <div class="col-md-12">
+	    <h3>My Workspace
+	      <span id="workspace-count">Sessions in my workspace: {{numWorkspaceSessions}}</span>
+	    </h3>
+	  </div>
+	</div>
+	<div id="sessionarea">
+	  {{#each workspaceSessions}}
+          {{#if watchedSession}}
+	  <div>
+	  {{> session}}
+	  </div>
+          {{/if}}
+	  {{/each}}
+	  <Div class="row">
+	  </div>
+	
+	</div>
+     </div>
+      
+      <div id="right" class="col-md-2">
+	
+
+	<h3>Session List</h3> 
+	<div id="sessionlist-buttons">
+	  <button class="btn btn-xs btn-default unapprovedSessions"><!--{{numUnapproved}} -->sessions not yet approved </button><br/>
+	  <button class="btn btn-xs btn-default validSessions"><!--{{numValid}} -->valid sessions w/ 3+ papers </button>
+	</div>
+	<!-- SESSION LIST STARTS HERE -->
+
+	<div class="session-search-input">
+	  {{> EasySearch.Input index=SessionsIndex id="session-search" autocomplete="off" placeholder="Search name, id, or paper info" }}	</div>
+	<div class='current-session-status'><span id="session-count">Showing {{numNamedAndFiltered}} sessions {{#if sessionInputIsNotEmpty}} containing "{{sessionSearchKey}}" {{/if}}{{sessionFilterStatus}}</span></div>
+	<div class="show-all-session-status"><a class="show-all-session-link">Show all {{#if sessionInputIsNotEmpty}} <!--{{numSearchSessions}}-->sessions containing "{{sessionSearchKey}}"{{else}}<!--{{numTotalSessions}} -->sessions{{/if}}</a></div>	
+	<div class="sessionExpandButtons">
+	  See all: <button class="btn btn-xs btn-info toggle-papers">papers</button>
+	  <button class="btn btn-xs btn-info toggle-contributors">makers</button>
+	</div>
+	<div>
+	  <span class="list-buttons btn-group" id="sessionSortMenuButton" >
+	    <button type="button" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+	      Sort By
+	      <span class="caret"></span>
+	      <span class="sr-only">Toggle Dropdown</span>
+	    </button>
+	    <ul class="dropdown-menu" role="menu">
+	      <li class="session-sort" id="sessionSortAZ"><a>A-Z</a></li>
+	      <li class="session-sort" id="sessionSortMost"><a>Most Papers</a></li>
+	      <li class="session-sort" id="sessionSortFewest"><a>Fewest Papers</a></li>
+	    </ul>
+	  </span>
+	</div>
+	
+
+	<div id="session-list">
+	  {{#if sessionInputIsNotEmpty}}
+	  {{#each sessionSearchResults}}
+          {{#if passSessionFilters}}
+	  <div>
+{{> sessionInList}}
+</div>
+	{{/if}}
+	{{/each}} 
+	  {{else}}
+	    {{#each sessions}}
+                 {{#if passSessionFilters}}
+	  <div>
+     	          {{> sessionInList}}
+	  </div>
+	  {{/if}}
+ 	  {{/each}}
+	  {{/if}}
+
+	</div>
+
+
+      </div>
+      
+    </div>
+  </div>
+</template>
+
+<template name="sessionInList">
+  <div id="si-{{this._id}}" class="session-item">
+    <span class="session-label">
+ {{sessionName}} (<a class='pis-link'>{{numPapersInSession}}</a>) </span>
+    {{#if approved}}
+    <span class="approved-text">
+      approved
+    </span>
+    {{/if}}
+    <span class="work-button-section">
+      {{#if watchedSession}}
+      <button id="watch-{{this._id}}" class="btn btn-xs btn-primary unwatch-session-button">workspace</button>
+      {{/if}}
+    </span>
+    
+    <div class="session-paper-container {{#if papersCollapsed}} hidden {{else}} show {{/if}}">
+      {{#each sessionPapers}}
+<div>
+      {{> paper}}
+</div>
+      {{/each}}
+    </div>
+    <div class="contributors {{#if contributorsCollapsed}} hidden {{else}} show {{/if}}">
+      made by {{getContributors}}
+    </div>
+  </div>
+</template>
+
+<template name="paper">
+  <li id="ps-{{this._id}}" class="paper-item">{{this.title}} <span class="paper-id">{{this._id}}</span>
+    <span class="authors-container hidden">
+      <ul class="authors-list">
+	{{#each authors}}
+	<li>{{givenName}} {{familyName}}, <i>{{institution}}</i></li>
+	{{/each}}
+      </ul>
+    </span>
+    <span class="abs-container">
+      <span class="abstract sort-disabled hidden"><b>Abstract:</b>{{{getAbstract}}}</span>
+    </span>
+    <span class='keywords hidden'>
+      {{displayKeywords}}
+    </span>
+  </li>
+</template>
+
+<template name="paperWithSessions">
+  <li id="pd-{{this._id}}" class="paper-item"><span class="paper-title">{{this.title}}</span> <span class='paper-id'>{{this._id}}</span>
+    <span class="authors-container {{#if authorsCollapsed}} hidden {{else}} show {{/if}}">
+      <ul class="authors-list">
+	{{#each author}}
+	<li>{{givenName}} {{familyName}}, <i>{{institution}}</i></li>
+	{{/each}}
+      </ul>
+    </span>
+    <span class="abs-container">
+      <span class="abstract sort-disabled {{#if abstractCollapsed}} hidden {{else}} show {{/if}}"><b>Abstract:</b> {{{getAbstract}}}</span>
+    </span>
+    <span class='keywords {{#if keywordsCollapsed}} hidden {{else}} show {{/if}}'>
+      {{displayKeywords}}
+    </span>
+    <!--    {{numSessionsPaperIsIn}}-->
+    <div class='paper-sessions {{#if paperSessionsCollapsed}} hidden {{else}} show {{/if}}'>
+      {{#each paperSessions}}
+      <div>
+      {{> paperSession}}
+</div>
+      {{/each}}
+    </div>
+  </li>
+</template>
+
+<template name="paperSession">
+  <div id=swp-{{this._id}} class="session-item">
+    <span class="session-label">{{name}} ({{numPapersInSession}})</span> 
+    {{#if approved}} 
+     <span class="approved-text">
+      approved
+    </span>
+    {{/if}}
+     <span class="work-button-section">
+       {{#if watchedSession}}
+       <button id="watch-{{this._id}}" class="btn btn-xs btn-primary unwatch-session-button">workspace</button>
+{{/if}}
+     </span>
+     
+  </div>
+</template>
+
+<template name="paperInSession">
+  <li id=pis-{{this._id}} class="paper">
+    
+
+    <div class='paper-remove'><i class="fa fa-times remove-paper-button sort-disabled"></i> </div>
+    <div class='paper-heading'>{{this.title}} <span class='paper-id'>{{this._id}}</span> </div>
+    
+    <span class="authors-container hidden">
+      <ul class="authors-list">
+	{{#each authors}}
+	<li>{{givenName}} {{familyName}}, <i>{{institution}}</i></li>
+	{{/each}}
+      </ul>
+    </span>
+    <span class="abs-container">
+      <span class="abstract sort-disabled hidden"><b>Abstract:</b> {{{getAbstract}}}</span>
+    </span>
+    <span class='keywords hidden'>
+      {{displayKeywords}}
+    </span>
+  </li>
+</template>
+
+<template name="session">
+  <div class="session col-md-5" id={{this._id}} style="position: absolute; top:{{top}}px; left:{{left}}px">
+    <div class="form-group form-group-inline">
+      <i class="fa fa-times finish-session-button"></i> 
+      <i class="fa fa-lg {{#if isCollapsed}}fa-angle-double-right{{else}}fa-angle-double-down{{/if}} collapser"></i>
+      <span class="session-label-heading">
+	<span class="session-label {{named}} sort-disabled">{{sessionName}}</span>{{#if isCollapsed}}<span class="session-paper-count"> ({{numPapersInSession}})</span>{{/if}}
+      </span>
+      <span class="session-label-edit">
+	<input type="text" class="name-session input-sm sort-disabled" placeholder="{{sessionName}}"/>
+	<button class="btn btn-xs btn-primary edit-session-title">save</button>
+      </span>
+      
+      <div class='session-actions'>
+	{{#if approved}}
+	<button class="btn btn-xs btn-success approve-session-button">approved</button>
+	{{else}}
+	<button class="btn btn-xs btn-warning approve-session-button">approve</button>
+	{{/if}}
+	<button class="btn btn-xs btn-danger remove-session-button">delete</button>
+	</div>
+	<br/>
+    </div>
+    <div class="form-group form-group-inline approval">
+      <input type="checkbox" name="approval" value="related">All papers in this session are related to each other.<br/>
+      <input type="checkbox" name="approval" value="goodname">The session name is a good description of how the papers are related.<br/>
+      <input type="checkbox" name="approval" value="allin">All papers that deserve this description are in the session.<br/>
+    </div>
+    <div class="{{#if isCollapsed}} hidden {{else}} show {{/if}} session-contents">
+      <ul class="session-papers" id={{_id}}>
+	{{#each sessionPapers}}
+	<div>
+	  {{> paperInSession}}
+	  </div>
+	{{/each}}
+      </ul>
+    </div>
+    <div class="contributors">
+      makers: {{getContributors}}
+    </div>
+  </div>
+</template>
