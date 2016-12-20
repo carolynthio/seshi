@@ -18,6 +18,8 @@
       OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
       SOFTWARE.
 */
+@import url('http://getbootstrap.com/dist/css/bootstrap.css');
+@import url("//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css");
 
 body{
     font-family: Helvetica, Arial, sans-serif;
@@ -62,7 +64,7 @@ body{
 }
 
 #sessionarea .ui-state-hover {
-    background: rgba(216,235,250, 0.9); 
+    background: rgba(216,235,250, 0.9);
 }
 
 .dragged-paper {
@@ -88,7 +90,7 @@ body{
 
 
 .sessionarea-highlight {
-    
+
 }
 
 .authors-list {
@@ -162,14 +164,14 @@ body {
     user-select: none;
 }
 
- #session-list div { 
-     -webkit-touch-callout: none; 
-     -webkit-user-select: none; 
-     -khtml-user-select: none; 
-     -moz-user-select: none; 
-     -ms-user-select: none; 
-     user-select: none; 
- } 
+ #session-list div {
+     -webkit-touch-callout: none;
+     -webkit-user-select: none;
+     -khtml-user-select: none;
+     -moz-user-select: none;
+     -ms-user-select: none;
+     user-select: none;
+ }
 
 .paper-heading {
     width: 90%;
@@ -226,14 +228,19 @@ body {
 	border-right: 1px solid black;
 }
 
- #sessionarea { 
+ #sessionarea {
      min-height: 720px;
- } 
+ }
 
 
 #left, #middle, #right {
       min-height: 760px;
-      height: 100%; 
+      height: 100%;
+      margin-top: 55px;
+}
+
+#left {
+  margin-left: 45px;
 }
 
 .contributors {
@@ -259,8 +266,8 @@ body {
 	list-style: none;
 	list-style-type: none;
 	padding-left: 0px;
-	border-top: 1px solid black; 
-	border-bottom: 1px solid black; 
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
 }
 
 
@@ -271,15 +278,15 @@ body {
 	list-style: none;
 	list-style-type: none;
 	padding-left: 0px;
-	border-top: 1px solid black; 
-	border-bottom: 1px solid black; 
+	border-top: 1px solid black;
+	border-bottom: 1px solid black;
 }
 
 .authors-list {
     list-style: none;
     list-style-type: none;
 	padding-left: 0px;
-    
+
 }
 
 #sessionSortMenuButton{
@@ -405,7 +412,7 @@ i {
 
 .paper, .paper-item{
     font-family: Helvetica, Arial, sans-serif;
-    
+
     border: solid 1px black;
     margin: 5px;
 	padding: 5px;
@@ -416,7 +423,7 @@ i {
 }
 
 .session-item {
-    
+
     font-family: Helvetica, Arial, sans-serif;
     border: solid 1px black;
     margin: 5px;
@@ -432,7 +439,7 @@ i {
     background-color: lightgray;
 }
 .session .paper{
-	margin: 5px 0px 0px 0px; 
+	margin: 5px 0px 0px 0px;
 }
 
 #new-session{
@@ -459,4 +466,125 @@ i {
 
 #opt-left {
     height: 100%;
+}
+
+/* nav bar */
+body {
+    background: none repeat scroll 0 0 white;
+}
+nav.sidebar-menu-collapsed {
+    width: 44px;
+}
+nav.sidebar-menu-expanded {
+    width: auto;
+}
+nav.sidebar {
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    background: none repeat scroll 0 0 #2B3F54;
+    color: white;
+    padding: 20px 10px;
+    z-index: 1030;
+}
+nav.sidebar a#justify-icon {
+    outline: 0;
+    color: white;
+    font-size: 24px;
+    font-style: normal;
+}
+nav.sidebar a#logout-icon {
+    outline: 0;
+    color: white;
+    font-size: 24px;
+    font-style: normal;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+nav.sidebar ul.level1 {
+    margin: 0;
+    padding: 0;
+    margin-top: 60px;
+}
+nav.sidebar ul.level1 li {
+    margin: 0;
+    padding: 0;
+    margin-top: 20px;
+    list-style-type: none;
+}
+nav.sidebar ul.level1 li a.expandable {
+    outline: 0;
+    display: block;
+    position: relative;
+    width: 100%;
+    height: 30px;
+    color: white;
+    text-decoration: none;
+    text-align: left;
+    padding: 4px 4px 4px 0px;
+    font-size: 20px;
+}
+nav.sidebar ul.level1 li a.expandable:hover {
+    color: #bbbbbb;
+}
+nav.sidebar ul.level1 li a.expandable span.expanded-element {
+    display: none;
+    font-size: 11px;
+    position: relative;
+    bottom: 5px;
+}
+nav.sidebar ul.level1 li.active {
+    margin-left: -4px;
+}
+nav.sidebar ul.level1 li.active a.expandable {
+    background: none repeat scroll 0 0 black;
+    border-radius: 4px;
+    color: white !important;
+    width: 30px;
+    padding: 4px;
+}
+nav.sidebar ul.level1 li.active a.expandable:hover {
+    color: white !important;
+}
+nav.sidebar ul.level1 ul.level2 {
+    margin: 20px 6px 20px 30px;
+    padding: 0;
+    display: none;
+}
+nav.sidebar ul.level1 ul.level2 li {
+    margin: 0;
+    padding: 0;
+    margin-top: 10px;
+    padding-bottom: 10px;
+    list-style-type: none;
+    border-bottom: solid white 1px;
+}
+nav.sidebar ul.level1 ul.level2 li:last-child {
+    border-bottom: none;
+}
+nav.sidebar ul.level1 ul.level2 li a {
+    text-decoration: none;
+    outline: 0;
+    color: white;
+    text-decoration: none;
+    font-size: 11px;
+}
+/* end nav bar */
+
+/* Top bar */
+#titlebar{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:50px;
+  background-color:#EDEDED;
+  z-index: 20;
+}
+
+#title-header {
+  padding-left: 75px;
+  border-bottom: 1px solid black;
 }

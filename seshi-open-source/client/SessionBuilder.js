@@ -59,7 +59,10 @@ Meteor.startup(function (){
 	    }
 	});
     });
-    
+
+    /* Nav Bar */
+    /* end nav bar */
+
 })
 
 /* Helper functions */
@@ -107,35 +110,35 @@ function getSessions(){
 Template.SessionBuilder.rendered = function(){
     console.log("rendered");
     $('#directions').hide();
-    
+
     // accept dragged in sessions
     $('#sessionarea').droppable({
     	accept: '.session-item, .paper-item, .paper',// .session',
-	hoverClass: 'ui-state-hover',
-	greedy: true,
+    	hoverClass: 'ui-state-hover',
+    	greedy: true,
     	drop: function (e, u){
-	    if(u.draggable.hasClass("paper-item")){
-		// create a new session with this paper
-		console.log("creating session with paper from paper list")
-		var paperID = u.draggable.attr("id").split("-")[1];
-		createSession(paperID, u.position);
-	    }else if(u.draggable.hasClass("paper")){
-		// paper from a workspace session
-		var paperID = u.draggable.attr("id").split("-")[1];
-		var sessionID = u.draggable.closest('div.session').attr("id");
-		console.log("creating session with paper from workspace session")
-//		console.log(paperID, sessionID);
-		createSession(paperID, {top: u.position.top, left: u.position.left});
-		removePaperFromSession(paperID, sessionID);
-		$(u.draggable).remove()
-	    }else {
-		// must be a session being dragged into the workspace
-		console.log("dragging a session into the workspace");
-		var sessionID = u.draggable.attr("id").split("-")[1];
-		addToWatchlist(sessionID, {top: u.position.top, left: u.position.left});
-	    }
-    	}});
-}  
+	       if(u.draggable.hasClass("paper-item")){
+        		// create a new session with this paper
+        		console.log("creating session with paper from paper list")
+        		var paperID = u.draggable.attr("id").split("-")[1];
+        		createSession(paperID, u.position);
+	       }else if(u.draggable.hasClass("paper")){
+        		// paper from a workspace session
+        		var paperID = u.draggable.attr("id").split("-")[1];
+        		var sessionID = u.draggable.closest('div.session').attr("id");
+        		console.log("creating session with paper from workspace session")
+        //		console.log(paperID, sessionID);
+        		createSession(paperID, {top: u.position.top, left: u.position.left});
+        		removePaperFromSession(paperID, sessionID);
+        		$(u.draggable).remove()
+  	    }else {
+      		// must be a session being dragged into the workspace
+      		console.log("dragging a session into the workspace");
+      		var sessionID = u.draggable.attr("id").split("-")[1];
+      		addToWatchlist(sessionID, {top: u.position.top, left: u.position.left});
+	       }
+  	 }});
+}
 
 Template.sessionInList.rendered = function(){
     $('#session-list .session-item').draggable({
@@ -218,7 +221,7 @@ Template.session.rendered = function(){
 		// move paper from another session to this
 		console.log("move paper from another session into this one");
 		var paperID = u.draggable.attr("id").split("-")[1];
-		
+
 		var sourceSessionID = u.draggable.closest('.session').attr("id");
 		var targetSessionID = $(this).attr('id');
 		if((typeof sourceSessionID == 'undefined') || (typeof targetSessionID == 'undefined')){
@@ -230,15 +233,15 @@ Template.session.rendered = function(){
 		    return;
 		}
 //		console.log(paperID, sourceSessionID, targetSessionID);
-		
+
 		addPaperToSession(paperID, targetSessionID);
 		removePaperFromSession(paperID, sourceSessionID);
 		$(u.draggable).remove();
 	    }
 
     	}});
-    
-     
+
+
   $('#sessionarea .session').draggable({
       stop: function() {
 	  var id = $(this).attr('id');
@@ -247,7 +250,7 @@ Template.session.rendered = function(){
 	  watchedSessions[id].position = pos;
 	  Session.set("sessionsWatched", watchedSessions);
       },
-      grid: [5, 5] 
+      grid: [5, 5]
   });
 }
 
@@ -256,7 +259,7 @@ Template.paperSession.helpers({
     numPapersInSession:  function(){
 	return this.papers.length;
     },
-   
+
     watchedSession: function (){
 	var watchedSessions = Session.get("sessionsWatched");
 	return (this._id in watchedSessions);
@@ -270,51 +273,51 @@ Template.SessionBuilder.helpers({
 	var watchedSessions = Session.get("sessionsWatched");
 	return (this._id in watchedSessions);
     },
-    
+
     pesOptions : function (){
 	return Session.get("sort");
     },
-    
+
     sesOptions : function (){
 	return Session.get("sessionSort");
     },
-    
+
     namedSession : function (){
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
 	return nullNames.indexOf(this.name) == -1
     },
-    
+
     sessionName : function(){
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
-	
+
 	if (nullNames.indexOf(this.name) != -1) return "Session not yet named";
 	return this.name;
     },
-    
+
     numPapersInSession : function(){
 	return this.papers.length;
     },
-    
-    
-    PapersIndex: function () { 
-	return PapersIndex; 
+
+
+    PapersIndex: function () {
+	return PapersIndex;
     },
 
-    SessionsIndex: function () { 
-	return SessionsIndex; 
+    SessionsIndex: function () {
+	return SessionsIndex;
     },
-    
+
     numPapersDisplayed : function (){
 	return numPapersDisplayed();
     },
-    
+
     numPapersNotInSession : function(){
 	// DEPREC
 	console.log("ran numPapersNotINSession");
 	return papersNotInValidSessions().length;
 	return 0; // TODO REACTIVE
 	var ret = Papers.find({active: true});
-	
+
 	var papers = ret.fetch();
 	return unsatPapers(papers, wellFormedSessions()).length
     },
@@ -326,7 +329,7 @@ Template.SessionBuilder.helpers({
 	var papers = ret.fetch();
 	return unsatPapers(papers, approvedSessions()).length
     },
-    
+
     numPapersNotInTwoApprovedSessions : function(){
 	// DEPREC
 	return 0; // TODO REACTIVE
@@ -334,7 +337,7 @@ Template.SessionBuilder.helpers({
 	var papers = ret.fetch();
 	return unsatKPapers(papers, approvedSessions(), 2).length
     },
-    
+
     numUnapproved : function(){
 	return 0; // TODO REACTIVE
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
@@ -342,46 +345,46 @@ Template.SessionBuilder.helpers({
 			      name: {$not: {$in: nullNames}}
 			     }).count();;
     },
-    
+
     numValid : function(){
 	return 0; // TODO REACTIVE
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
 	return Sessions.find(
  	    {
 		name   : {$not: {$in: nullNames}},
-		papers : {$exists:true}, 
+		papers : {$exists:true},
  		$where:'this.papers.length>2'}).count();
     },
-    
+
     hasDisplays : function(keywordOption){
 	return true; // TODO TEST REACTIVE
 	var papers;
-	
+
 	if(!inputIsNotEmpty()){
 	    papers = Papers.find({active: true}).fetch();
 	} else {
 	    papers = Session.get("searchResults");
 	}
 	if(!papers) return;
-	
+
 	var keyword = keywordOption.toString();
 	if(!keywordOption) keyword = Session.get('keywordFilter')
-	
+
 	if(keyword != "All"){
-	    papers = papers.filter(function(x) { 
+	    papers = papers.filter(function(x) {
 		return x.keywordList.indexOf(keyword) != -1});
 	}
-	
+
 	var withoutApproved = Session.get("withoutApprovedSession");
 	var withoutSession = Session.get("withoutSession");
 	var withoutTwoApproved = Session.get("withoutTwoApprovedSessions");
-    
+
 	var count = 0;
 	for(var i = 0; i < papers.length; i++){
 	    if(count > 0) return count;
 	    var p = papers[i];
 	    var matchedSessions;
-	    
+
 	    if(!withoutApproved && !withoutSession && !withoutTwoApproved) {
 	    count++;
 		continue;
@@ -390,14 +393,14 @@ Template.SessionBuilder.helpers({
 	    }else {
 	    matchedSessions =  approvedSessions();
 	    }
-	    
+
 	    if(!withoutTwoApproved){
 		if(unsatPapers([p], matchedSessions).length > 0) count++;
 	    }else{
 		if(unsatKPapers([p], matchedSessions, 2).length > 0) count++;
 	    }
 	}
-	
+
 	return count;
     },
 
@@ -408,49 +411,49 @@ Template.SessionBuilder.helpers({
 	console.log("Called");
 	if(!inputIsNotEmpty()){
 	    var ret = Papers.find({active: true});
-	    
+
 	    // ret.observeChanges({
 	    // 	added: function (id, fields) {
 	    // 	    console.log("", 'added', id, fields);
 	    // 	},
-		
+
 	    // 	changed: function (id, fields) {
 	    // 	    console.log("", 'changed', id, fields);
 	    // 	},
-		
+
 	    // 	movedBefore: function (id, before) {
 	    // 	    console.log("", 'movedBefore', id, before);
 	    // 	},
-		
+
 	    // 	removed: function (id) {
 	    // 	    console.log("", 'removed', id);
 	    // 	}
 	    // });
-	    
+
 	    papers = ret.fetch();
 	} else {
 	    papers = Session.get("searchResults");
 	    console.log(papers);
 	}
-	
+
 	if(!papers) return;
-	
+
 	var keyword = keywordOption.toString();
 	if(!keywordOption) keyword = Session.get('keywordFilter')
-	
+
 	if(keyword != "All"){
 	    papers = papers.filter(function(x) { return x.keywordList.indexOf(keyword) != -1});
 	}
-	
+
 	var withoutApproved = Session.get("withoutApprovedSession");
 	var withoutTwoApproved = Session.get("withoutTwoApprovedSessions");
 	var withoutSession = Session.get("withoutSession");
-	
+
 	var count = 0;
 	for(var i = 0; i < papers.length; i++){
 	    var p = papers[i];
 	    var matchedSessions;
-	    
+
 	    if(!withoutApproved && !withoutSession && !withoutTwoApproved) {
 		count++;
 		continue;
@@ -459,17 +462,17 @@ Template.SessionBuilder.helpers({
 	    }else {
 		matchedSessions =  approvedSessions();
 	    }
-	    
+
 	    if(!withoutTwoApproved){
 		if(unsatPapers([p], matchedSessions).length > 0) count++;
 	    }else{ // without two approved
 		if(unsatKPapers([p], matchedSessions, 2).length > 0) count++;
 	    }
 	}
-	
+
 	return count;
     },
-    
+
     papers : function(){
 	var sort = Session.get("sort");
 	var papers = Papers.find({active: true}, sort);
@@ -477,20 +480,20 @@ Template.SessionBuilder.helpers({
 	//     added: function (id, fields) {
 	// 	console.log("", 'added', id, fields);
 	//     },
-	    
+
 	//     changed: function (id, fields) {
 	// 	console.log("", 'changed', id, fields);
 	//     },
-	    
+
 	//     movedBefore: function (id, before) {
 	// 	console.log("", 'movedBefore', id, before);
 	//     },
-	    
+
 	//     removed: function (id) {
 	// 	console.log("", 'removed', id);
 	//     }
 	// });
-	
+
 	return papers;
     },
 
@@ -500,38 +503,38 @@ Template.SessionBuilder.helpers({
 	var results = Session.get("searchResults").map(function(x){return x._id});
 	var papers =  Papers.find({_id: {$in: results},
 				   active: true});
-	
+
 	return papers;
 	//return Session.get("searchResults")
     },
-    
+
     sessionSearchResults : function(){
 	// makes the search reactive
 	var results = Session.get("sessionSearchResults").map(function(x){return x._id});
 	return Sessions.find({_id: {$in: results}});
 //	return Session.get("sessionSearchResults");
     },
-    
+
     passPaperFilters : function (){
 	var withoutApproved = Session.get("withoutApprovedSession");
 	var withoutTwoApproved = Session.get("withoutTwoApprovedSessions");
 	var withoutSession = Session.get("withoutSession");
-	var matchedSessions; 
-		
+	var matchedSessions;
+
 	// only return accepted papers
 	if(!this.active) {
 	    updateIsDisplayed(this._id, false);
 	    return false;
 	}
-	
+
 	// only return papers that have the set keyword
-	if(Session.get('keywordFilter') != "All" && 
+	if(Session.get('keywordFilter') != "All" &&
 	   this.keywordList.indexOf(Session.get('keywordFilter')) == -1){
-	    
+
 	    updateIsDisplayed(this._id, false);
 	    return false;
 	}
-	
+
 	if(!withoutApproved && !withoutSession && !withoutTwoApproved) {
 	    updateIsDisplayed(this._id, true);
 	    return true;
@@ -550,35 +553,35 @@ Template.SessionBuilder.helpers({
 	    return ret;
 	}
     },
-    
+
     passSessionFilters: function () {
 	var showUnapproved = Session.get("showUnapprovedSessions");
 	var showValid = Session.get("showValidSessions");
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
 	var passed = (nullNames.indexOf(this.name) === -1)
-	
+
 	if(showValid) passed = passed && this.papers.length > 2;
 	if(showUnapproved) passed = passed && !this.approved;
-	
+
 	updateIsDisplayedSession(this._id, passed);
 	return passed;
     },
-    
+
     sessionPapers : function() {
 	var paperIDs = this.papers;
 	var papers = Papers.find({_id: {$in: paperIDs}})
 
 	return papers;
     },
-    
+
     inputIsNotEmpty : function (){
 	return inputIsNotEmpty()
     },
-    
+
     searchKey : function (){
 	return Session.get('paperSearchVal');
     },
-    
+
     keywordStatus: function(){
 	var filter = Session.get("keywordFilter");
 	if(filter != "All"){
@@ -586,7 +589,7 @@ Template.SessionBuilder.helpers({
 	}
 	return;
     },
-    
+
     filterStatus: function(){
 	if(Session.get("withoutTwoApprovedSessions")){
 	    return " that aren't in two or more approved sessions";
@@ -597,7 +600,7 @@ Template.SessionBuilder.helpers({
 	}
 	return;
     },
-    
+
     numSearchPapers : function(){
 	return Session.get("searchResults").length;
     },
@@ -605,19 +608,19 @@ Template.SessionBuilder.helpers({
     numTotalPapers: function(){
 	return Papers.find({active:true}).count();
     },
-    
+
     sessionInputIsNotEmpty : function (){
 	return sessionInputIsNotEmpty();
     },
-    
+
     numSearchSessions: function(){
 	return Session.get("sessionSearchResults").length;
     },
-    
+
     numTotalSessions: function(){
 	return getSessions().count();
     },
-    
+
     getKeywordFilterText : function(){
 	var filter = Session.get("keywordFilter");
 	if(filter == "All") {
@@ -627,7 +630,7 @@ Template.SessionBuilder.helpers({
 	}
 	return filter;
     },
-    
+
     countAll : function (){
 	var count = numPapersDisplayed();//countDisplays("All");
 	return count;
@@ -638,7 +641,7 @@ Template.SessionBuilder.helpers({
 
 	return countKeywordMatchesWithFilter(filter);
     },
-    
+
     hasKeywordMatches : function (){
 	var filter = this.toString();
 	return hasKeywordMatchesWithFilter(filter);
@@ -648,16 +651,16 @@ Template.SessionBuilder.helpers({
 	var filter = Session.get("keywordFilter");
 	return countKeywordMatchesWithFilter(filter);
     },
-    
+
     getKeywords : function(){
 	return personaList;
     },
-    
+
     sessions : function(){
 	return getSessions()
     },
-    
-    
+
+
     workspaceSessions : function(){
 	var sessions =  Sessions.find();
 	// sessions.observeChanges({
@@ -666,11 +669,11 @@ Template.SessionBuilder.helpers({
 	//     }
 	// });
 	return sessions;
-	
+
     },
     /*  sessionName : function(){
 	var session = Sessions.findOne({_id: this.toString()});
-	if(session === undefined) 
+	if(session === undefined)
 	return false;
 	return session.name;
 	},
@@ -678,14 +681,14 @@ Template.SessionBuilder.helpers({
     numSessions : function(){
 	return getSessions().count()
     },
-    
+
     numWorkspaceSessions : function(){
 	 var watched = Session.get("sessionsWatched");
 	 var size = 0;
 	 for(var k in watched) {
 	     size++;
 	 }
-	
+
 	//return 0;
 	// var sessions = Sessions.find();
 	// sessions.observeChanges({
@@ -703,13 +706,13 @@ Template.SessionBuilder.helpers({
 	// }
 	return size;
     },
-    
-    
+
+
     numNamed : function(){
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
 	return Sessions.find({name: {$not: {$in: nullNames}}}).count();
     },
-    
+
     numNamedAndFiltered : function(){
 	if(!sessionInputIsNotEmpty()){
 	    var count = 0;
@@ -729,7 +732,7 @@ Template.SessionBuilder.helpers({
 	    return count;
 	}
     },
-    
+
     sessionSearchKey: function(){
 	return Session.get('sessionSearchVal');
     },
@@ -747,7 +750,7 @@ Template.SessionBuilder.helpers({
 	    return "";
 	}
     },
-    
+
     numUnnamed : function(){
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
 	return Sessions.find({name: {$in: nullNames}}).count();
@@ -758,14 +761,14 @@ Template.SessionBuilder.helpers({
 countKeywordMatchesWithFilter = function countKeywordMatchesWithFilter(filter){
     //    console.log("count keyword matches");
     if(filter == "All") return numPapersDisplayed();
-    
+
     var isDisplayed = Session.get("isDisplayed");
     var filteredPapers = keywords[filter];
 
     for(var p in isDisplayed){
 	isDisplayed[p] = isDisplayed[p] && (filteredPapers.indexOf(p) != -1);
     }
-    
+
     if(!inputIsNotEmpty()){
 	var count = 0;
 	var d = isDisplayed;
@@ -788,7 +791,7 @@ countKeywordMatchesWithFilter = function countKeywordMatchesWithFilter(filter){
 
 hasKeywordMatchesWithFilter = function hasKeywordMatchesWithFilter(filter){
     if(filter == "All") return true;
-    
+
     var isDisplayed = Session.get("isDisplayed");
     var filteredPapers = keywords[filter];
 
@@ -798,7 +801,7 @@ hasKeywordMatchesWithFilter = function hasKeywordMatchesWithFilter(filter){
     }
 
 
-    
+
     if(!inputIsNotEmpty()){
 	var count = 0;
 	var d = isDisplayed;
@@ -839,7 +842,7 @@ Template.session.helpers({
 	var watchedSessions = Session.get("sessionsWatched");
 	return watchedSessions[this._id].position.top;
     },
-    
+
     left: function (){
 	var watchedSessions = Session.get("sessionsWatched");
 	return watchedSessions[this._id].position.left;
@@ -857,31 +860,31 @@ Template.session.helpers({
 
 	return papers.fetch().sort(function (a, b) { return paperIDs.indexOf(a._id) - paperIDs.indexOf(b._id)});
     },
-    
+
     named : function(){
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
 	if(nullNames.indexOf(this.name) != -1)
 	    return 'text-danger';
 	else return false
     },
-    
+
     isCollapsed : function(){
 	var watchedSessions = Session.get("sessionsWatched");
 	return watchedSessions[this._id].isCollapsed;
 	//	return $(this)[0].isCollapsed;
     },
-    
+
     getContributors : function(){
 	return this.contributors.map(function(x){
-	    return x.author}).filter(function(value, index,self){	
+	    return x.author}).filter(function(value, index,self){
 		return self.indexOf(value) === index;
 	    }).map(function(x) { return shortenName(x)}).join(', ');
     },
-    
+
     numPapersInSession: function(){
 	return this.papers.length;
     }
-    
+
 });
 
 Template.session.events({
@@ -890,7 +893,7 @@ Template.session.events({
 	$('.name-session').focus();
 	$(e.target).parent().hide();
     },
-    
+
     'click .edit-session-title' : function (e, u){
 	var $session = $(e.target).closest('div.session');
 	var sessionID = $session.attr('id');
@@ -899,7 +902,7 @@ Template.session.events({
 	$(e.target).closest('.session-label-edit').hide();
 	$session.find('.session-label-heading').show();
     },
-    
+
     //updates name field in session as user types
     'focus .name-session' : function(e, template){
 	if($(e.target).attr('placeholder') != "Session not yet named")
@@ -914,8 +917,8 @@ Template.session.events({
 	$(e.target).closest('.session-label-edit').hide();
 	$session.find('.session-label-heading').show();
     },
-    
-    
+
+
     'keyup .name-session' : function(e, template){
 	if(e.which == 13){ // enter
     	    var $session = $(e.target).closest('div.session');
@@ -959,14 +962,14 @@ Template.sessionInList.helpers({
 	var watchedSessions = Session.get("sessionsWatched");
 	return (this._id in watchedSessions);
     },
-    
-    
+
+
     sessionPapers : function (){
 	var paperIDs = this.papers;
 	//	return Papers.find({_id: {$in: paperIDs}})
 	//var paperIDs = this.papers;
 	return Papers.find({_id: {$in: paperIDs}}).fetch().sort(function (a, b) { return paperIDs.indexOf(a._id) - paperIDs.indexOf(b._id)});
-	
+
     },
     papersCollapsed : function(){
 	return !Session.get("showAllPapers");
@@ -976,7 +979,7 @@ Template.sessionInList.helpers({
     },
     getContributors : function(){
 	return this.contributors.map(function(x){
-	    return x.author}).filter(function(value, index,self){	
+	    return x.author}).filter(function(value, index,self){
 		return self.indexOf(value) === index;
 	    }).map(function(x) { return shortenName(x)}).join(', ');
     }
@@ -988,26 +991,26 @@ Template.sessionInList.events({
 	if($(e.target).hasClass("morelink")){
 	    return;
 	}
-	
+
 	toggleDetails($(e.target).closest('.session-item').find('.session-paper-container'), '.toggle-papers');
 	toggleDetails($(e.target).closest('.session-item').find('.contributors'), '.toggle-contributors');
-	
+
     },
-    
+
     'click .watch-session-button': function(e, u){
 	e.stopPropagation();
 	var id = $(e.target).attr("id");
 	id = id.split("-")[1];
 	addToWatchlist(id);
     },
-    
+
     'click .unwatch-session-button': function(e, u){
 	e.stopPropagation();
 	var id = $(e.target).attr("id");
 	id = id.split("-")[1];
 	removeFromWatchlist(id);
     }
-    
+
 });
 
 Template.paperSession.events({
@@ -1079,15 +1082,15 @@ Template.paper.helpers({
         if(abstract.length > showChar) {
             var c = abstract.substr(0, showChar);
             var h = abstract.substr(showChar, abstract.length - showChar);
-	    
+
             var html = c+'<span class="moreellipses">'+ellipsestext+ '&nbsp;</span><span class="morecontent"><span>'+h+'</span>&nbsp;<a class="morelink">'+ moretext+'</a></span>';
-	    
+
 	    return html;
         }else{
 	    return abstract;
 	}
     }
-    
+
 });
 
 Template.paperInSession.helpers({
@@ -1115,28 +1118,28 @@ Template.paperInSession.helpers({
         if(abstract.length > showChar) {
             var c = abstract.substr(0, showChar);
             var h = abstract.substr(showChar, abstract.length - showChar);
-	    
+
             var html = c + '<span class="moreellipses">'+ellipsestext+'&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;<a class="morelink">' + moretext + '</a></span>';
-	    
+
 	    return html;
         }else{
 	    return abstract;
 	}
     }
-});	
+});
 
 Template.paperInSession.events({
     'click .paper': function(e, u){
 	if($(e.target).hasClass("morelink")){
 	    return;
 	}
-	
+
 	e.stopPropagation();
 	toggleDetails($(e.target).closest('.paper').find('.abstract'));
 	toggleDetails($(e.target).closest('.paper').find('.keywords'));
 	toggleDetails($(e.target).closest('.paper').find('.authors-container'));
     },
-    
+
     'click .remove-paper-button' : function(e){
 	e.stopPropagation();
 	var paperID = $(e.target).closest('li').attr("id");
@@ -1145,8 +1148,8 @@ Template.paperInSession.events({
 	removePaperFromSession(paperID, sessionID);
 	$(e.target).remove();
     },
-    
-    
+
+
 });
 
 Template.paper.events({
@@ -1173,10 +1176,10 @@ Template.paperWithSessions.helpers({
 	// 	console.log("paperSessions", "added", id);
 	//     }
 	// });
-	
+
 	return sessions;
     },
-    
+
     numSessionsPaperIsIn : function(){
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
 	var sessionIDs = this.sessions;
@@ -1184,15 +1187,15 @@ Template.paperWithSessions.helpers({
 			      name: {$not: {$in: nullNames}}
 			     }).count()
     },
-    
+
     abstractCollapsed : function(){
 	return !Session.get('showAllAbstracts');
     },
-    
+
     authorsCollapsed : function(){
 	return !Session.get('showAllAuthors');
     },
-    
+
     keywordsCollapsed : function () {
 	return !Session.get('showKeywords');
     },
@@ -1200,11 +1203,11 @@ Template.paperWithSessions.helpers({
     paperSessionsCollapsed : function(){
 	return !Session.get('showPaperSessions');
     },
-    
+
     author : function (){
 	return this.authors;
     },
-    
+
     institution : function() {
 	if(this.primary.institution != "")
 	    return this.primary.institution;
@@ -1229,16 +1232,34 @@ Template.paperWithSessions.helpers({
         if(abstract.length > showChar) {
             var c = abstract.substr(0, showChar);
             var h = abstract.substr(showChar, abstract.length - showChar);
-	    
+
             var html = c + '<span class="moreellipses">' + ellipsestext+ '&nbsp;</span><span class="morecontent"><span>' + h + '</span>&nbsp;<a class="morelink">' + moretext + '</a></span>';
-	    
+
 	    return html;
         }else{
 	    return abstract;
 	}
     }
-    
-    
+
+
+
+});
+
+Meteor.call('callPython', 3, "1,2,3,4,5,6,7",
+  function(error, result) {
+    if (error) {
+      console.log(error);
+    }
+    console.log("woo: " + result);
+    Session.set('teams', result); // not sure
+    console.log(Session.get('teams')); // nothing prints
+  });
+
+Template.studentRoster.events({
+  'submit .csv-file': function(event) {
+    console.log(event.target.csvfile);
+    return false;
+  }
 
 });
 
@@ -1272,7 +1293,7 @@ Template.SessionBuilder.events({
 	    $('#directions-icon').switchClass("fa-chevron-circle-up", "fa-question-circle");
 	}
     },
-    
+
     'keyup .paper-search-input input': function (e) {
 	clearTimeout(Session.get('paperSearchTimer'));
 	var ms = 300;
@@ -1288,23 +1309,23 @@ Template.SessionBuilder.events({
 
 	    console.log("search results: " + Session.get('searchResults'))
 	}, ms);
-	Session.set('paperSearchTimer', timer); 
+	Session.set('paperSearchTimer', timer);
     },
-    
+
     'keyup .session-search-input input' : function (e) {
 	clearTimeout(Session.get('sessionSearchTimer'));
 	var ms = 300;
 	var val = $(e.target).val();
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
-	
+
 	var timer = setTimeout(function(){
 	    let cursor = SessionsIndex.search(val);
 	    Session.set('sessionSearchVal', val);
 	    Session.set("sessionSearchResults", cursor.fetch().filter(function(x){return nullNames.indexOf(x.name) == -1}));
 	}, ms);
-	Session.set('sessionSearchTimer', timer); 
+	Session.set('sessionSearchTimer', timer);
     },
-    
+
     'click .show-all-link': function(){
 	Session.set("withoutTwoApprovedSessions", false);
 	Session.set("withoutApprovedSession", false);
@@ -1312,17 +1333,17 @@ Template.SessionBuilder.events({
 	removeFilter('.without-two-approved', 'btn-default', 'btn-warning');
 	removeFilter('.without-approved', 'btn-default', 'btn-warning');
 	removeFilter('.without-session', 'btn-default', 'btn-warning');
-	
+
 	Session.set("keywordFilter", "All");
     },
-    
+
     'click .show-all-session-link': function(){
 	Session.set("showUnapprovedSessions", false);
 	Session.set("showValidSessions", false);
 	removeFilter('.unapprovedSessions', 'btn-default', 'btn-warning');
 	removeFilter('.validSessions', 'btn-default', 'btn-warning');
     },
-    
+
     'click .abs-link' : function(e){
 	if($(e.target).siblings('.abstract').hasClass("hidden")){
 	    $(e.target).siblings('.abstract').removeClass("hidden").addClass("show");
@@ -1330,36 +1351,36 @@ Template.SessionBuilder.events({
 	    $(e.target).siblings('.abstract').removeClass("show").addClass("hidden");
 	}
     },
-    
+
     'click .pis-link' : function(e){
 //	$(e.target).parent().parent().find('div.session-paper-container').toggle();
     },
-    
+
     'click .unapprovedSessions': function(){
 	toggleFilter("showUnapprovedSessions", '.unapprovedSessions',
 		     'btn-default', 'btn-warning');
     },
-    
+
     'click .validSessions': function(){
 	toggleFilter("showValidSessions", '.validSessions',
 		     'btn-default', 'btn-warning');
     },
-    
+
     'click .without-approved' : function (){
 	toggleFilter("withoutApprovedSession", '.without-approved',
 		     'btn-default', 'btn-warning');
     },
-    
+
     'click .without-two-approved' : function (){
 	toggleFilter("withoutTwoApprovedSessions", '.without-two-approved',
 		     'btn-default', 'btn-warning');
     },
-    
+
     'click .without-session' : function (){
 	toggleFilter("withoutSession", '.without-session',
 		     'btn-default', 'btn-warning');
     },
-    
+
     'click .toggle-abstracts' : function(){
 	toggleButton('showAllAbstracts', '#paper-deck .paper .abstract',
 		     '.toggle-abstracts', 'btn-info', 'btn-success');
@@ -1374,12 +1395,12 @@ Template.SessionBuilder.events({
 	toggleButton('showAllAuthors', '#paper-deck .paper .authors-container',
 		     '.toggle-authors', 'btn-info', 'btn-success');
     },
-    
+
     'click .toggle-paper-sessions' : function(){
 	toggleButton('showPaperSessions', '#paper-deck .paper-sessions',
 		     '.toggle-paper-sessions', 'btn-info', 'btn-success');
     },
-    
+
     'click .toggle-papers' : function(){
 	toggleButton('showAllPapers', '#session-list .session-paper-container',
 		     '.toggle-papers', 'btn-info', 'btn-success');
@@ -1389,20 +1410,20 @@ Template.SessionBuilder.events({
 	toggleButton('showAllContributors', '#session-list .session-contributors',
 		     '.toggle-contributors', 'btn-info', 'btn-success');
     },
-    
-    
+
+
     'click .finish-session-button' : function(e){
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
 	if(nullNames.indexOf($(e.target).siblings().find('.session-label').text()) != -1) {
 	    var r = confirm("This session is unnamed and will thus be destroyed. If you want to save it, 'cancel' and name it.");
 	    if(!r) return;
 	}
-	
+
 	var sessionID = $(e.target).closest('div.session').attr("id");
-	
+
 	removeFromWatchlist(sessionID);
     },
-    
+
     'click .remove-session-button' : function(e){
 	var r = confirm("This session will be removed globally from the list of candidate sessions. Continue?");
 	if(r){
@@ -1413,7 +1434,7 @@ Template.SessionBuilder.events({
 	    }
 	}
     },
-    
+
     'click .approve-session-button' : function(e){
 	if (this.approved) {
 	    $(e.target).closest('div.session').find('input[name="approval"]').prop('checked', true);
@@ -1429,7 +1450,7 @@ Template.SessionBuilder.events({
 	}
 	$(e.target).closest('div.session').find('div.approval').toggle();
     },
-    
+
     //Collapse Session and makes them unsortable until expanded
     'click .collapser' : function(e, u){
 	var id = $(e.target).closest('div.session').attr('id');
@@ -1439,7 +1460,7 @@ Template.SessionBuilder.events({
 	Session.set("sessionsWatched", watchedSessions);
 	logAction('collapse', {sessionID: id});
     },
-    
+
     'click input[type=checkbox]': function(e, u){
 	var numChecked = $(e.target).parent().find('input[name="approval"]:checked').length;
 	var sessionID = $(e.target).closest('div.session').attr("id");
@@ -1449,7 +1470,7 @@ Template.SessionBuilder.events({
 			     $push: {contributors : logSessionAction('approve')}
 			    });
 	    logAction('approve', {sessionID: sessionID});
-	    // toggle the approve 
+	    // toggle the approve
 	    $(e.target).closest('div.session').find('.approve-session-button').trigger('click');
 	}else{
 	    if(Sessions.findOne({_id: sessionID}).approved){
@@ -1460,8 +1481,8 @@ Template.SessionBuilder.events({
 	    }
 	}
     },
-    
-   
+
+
     'click .keyword-option' : function (e, u) {
 	Session.set("keywordFilter", $(e.target).text().substring(0, $(e.target).text().indexOf(" (")));
 
@@ -1469,11 +1490,11 @@ Template.SessionBuilder.events({
 //	console.log($(e.target).text())
 //	console.log(Session.get("keywordFilter"))
     },
-    
+
     'click #sessionSortAZ' : function(){
  	Session.set("sessionSort", {sort: {name: 1}});
     },
-    
+
     'click #sessionSortMost' : function(){
  	Session.set("sessionSort", {sort: {numPapers: -1}});
     },
@@ -1492,13 +1513,13 @@ logAction = function logAction(act, params){
     var userId = null;
     var author = Session.get('anonymousName');
     var time = new Date().getTime();
-    
+
     if(Meteor.user() != null) {
 	userId = Meteor.user()._id;
 	author = Meteor.user().profile.name;
     }
     var log = new ActionLog(userId, author, time, act, params);
-    
+
     Meteor.call('logAction', log, function(err, ret){
 	if(err) console.log(err);
     });
@@ -1513,7 +1534,7 @@ function logSessionAction(act){
 	userId = Meteor.user()._id;
 	author = Meteor.user().profile.name;
     }
-    var log = ({ 
+    var log = ({
 	userId: userId,
 	author: author,
 	timestamp: time,
@@ -1524,8 +1545,8 @@ function logSessionAction(act){
 
 function createPaperIndex(x){
     var paper = Papers.findOne({_id: x});
-    return paper._id + " " + paper.title + " " + 
-    	paper.keywords + " " + paper.authors.map(function(y){ 
+    return paper._id + " " + paper.title + " " +
+    	paper.keywords + " " + paper.authors.map(function(y){
     	    return y.givenName + " " + y.familyName}).join(" ");
 }
 
@@ -1537,7 +1558,7 @@ function createPaperIndices(paperIDs){
 
 updateSessionName = function updateSessionName(sessionID, name){
     if(Sessions.findOne({_id: sessionID}).name == name.toLowerCase()) return;
-    
+
     Sessions.update({_id: sessionID},
 		    {$set: {name: name.toLowerCase(),
 			    approved: false},
@@ -1553,10 +1574,10 @@ createSession = function createSession(paperID, position) {
     session.paperIndex = createPaperIndices(papers);
     var sessionID = Sessions.insert(session);
     logAction('create', {paperID: paperID, sessionID: sessionID});
-    
+
     updateInSession(paperID, true);
     updateSessionList(paperID, sessionID, true);
-    
+
     // add to personal watch list
     addToWatchlist(sessionID, position);
     return sessionID;
@@ -1570,9 +1591,9 @@ removePaperFromSession = function removePaperFromSession(paperID, sessionID) {
 	console.log("Paper not in session, ignoring...");
 	return;
     }
-    
+
     // take it out of the session object
-    Sessions.update({_id: sessionID}, 
+    Sessions.update({_id: sessionID},
 		    {
 			$pull: {papers: paperID,
 			        paperIndex : createPaperIndex(paperID)},
@@ -1581,19 +1602,19 @@ removePaperFromSession = function removePaperFromSession(paperID, sessionID) {
 			$inc: {numPapers: -1}
 		    });
     logAction('remove', {paperID: paperID, sessionID: sessionID});
-        
+
     // take it out of the paper object
-    updateSessionList(paperID, sessionID, false);   
-    
+    updateSessionList(paperID, sessionID, false);
+
     // check for empty session
     var session = Sessions.findOne({_id: sessionID});
     if(!('papers' in session) || session.papers.length === 0){
 	// TODO: remove session from UI, or reactive?
-	
+
 	//   remove it from session
 	Sessions.remove(sessionID);
 	logAction('remove-session', {sessionID: sessionID});
-	
+
 	//   remove session from watchlist
 	removeFromWatchlist(sessionID);
     }
@@ -1607,7 +1628,7 @@ addPaperToSession = function addPaperToSession(paperID, sessionID){
 	console.log("Paper already in session, ignoring...");
 	return;
     }
-    
+
     updateInSession(paperID, true);
     Sessions.update({_id: sessionID},
 		    {$set: {approved: false},
@@ -1628,7 +1649,7 @@ function addToWatchlist(sessionID, position){
     var watchlist = Session.get("sessionsWatched");
     watchlist[sessionID] = {position: position || {top: 55, left: 15},
 			    isCollapsed : false };
-    
+
     logAction('addToWatchlist', {sessionID: sessionID});
     Session.set("sessionsWatched", watchlist);
 }
@@ -1644,7 +1665,7 @@ function removeFromWatchlist(sessionID){
 * Convenience function used to update items in the Papers Collection*
 ********************************************************************/
 function updateInSession(paperID, inSession){
-  Papers.update({_id: paperID}, 
+  Papers.update({_id: paperID},
     {$set:
       {inSession: inSession}
   });
@@ -1652,13 +1673,13 @@ function updateInSession(paperID, inSession){
 
 function updateSessionList(paperID, sessionID, adding){
   if (adding){
-    Papers.update({_id: paperID}, 
+    Papers.update({_id: paperID},
       {$addToSet:
         {sessions: sessionID}
     });
   } else {
-    
-    Papers.update({_id: paperID}, 
+
+    Papers.update({_id: paperID},
       {$pull:
         {sessions: sessionID}
     });
@@ -1667,7 +1688,7 @@ function updateSessionList(paperID, sessionID, adding){
       var paper = Papers.findOne({_id: paperID});
       if(!('sessions' in paper) || paper.sessions.length === 0)
 	  updateInSession(paperID, false);
-      
+
   }
 }
 
@@ -1683,7 +1704,7 @@ function toggleButton(varToCheck, whatToToggle, button, defaultClass, pressedCla
 	Session.set(varToCheck, true);
     }
 
-    
+
     if($(button).hasClass(defaultClass))
 	$(button).removeClass(defaultClass).addClass(pressedClass);
     else
@@ -1692,7 +1713,7 @@ function toggleButton(varToCheck, whatToToggle, button, defaultClass, pressedCla
 
 function toggleFilter(varToCheck, button, defaultClass, pressedClass){
     Session.set(varToCheck, !Session.get(varToCheck));
-    
+
     if($(button).hasClass(defaultClass))
 	$(button).removeClass(defaultClass).addClass(pressedClass);
     else
@@ -1713,7 +1734,7 @@ function wellFormedSessions(){
     return Sessions.find(
  	{
 	    name   : {$not: {$in: nullNames}},
-	    papers : {$exists:true}, 
+	    papers : {$exists:true},
  	    $where:'this.papers.length>2'}).fetch().map(function (x) { return x._id;});
 }
 
@@ -1723,7 +1744,7 @@ function approvedSessions(){
  	{
 	    name   : {$not: {$in: nullNames}},
 	    approved : true,
-	    papers : {$exists:true}, 
+	    papers : {$exists:true},
  	    $where:'this.papers.length>2'}).fetch().map(function (x) { return x._id;});
 }
 
@@ -1747,7 +1768,7 @@ function papersNotInValidSessions(){
     var papers = Papers.find({active:true});
     var sessions = Sessions.find({
 	name   : {$not: {$in: nullNames}},
-	papers : {$exists:true}, 
+	papers : {$exists:true},
  	$where:'this.papers.length>2'
     });
 
@@ -1755,15 +1776,15 @@ function papersNotInValidSessions(){
     // 	added: function (id, fields) {
     // 	    console.log("s", 'added', id, fields);
     // 	},
-	
+
     // 	changed: function (id, fields) {
     // 	    console.log("s", 'changed', id, fields);
     // 	},
-	
+
     // 	movedBefore: function (id, before) {
     // 	    console.log("s", 'movedBefore', id, before);
     // 	},
-	
+
     // 	removed: function (id) {
     // 	    console.log("s", 'removed', id);
     // 	}
@@ -1778,23 +1799,23 @@ function papersNotInValidSessions(){
     // 	added: function (id, fields) {
     // 	    console.log("x", 'added', id, fields);
     // 	},
-	
+
     // 	changed: function (id, fields) {
     // 	    console.log("x", 'changed', id, fields);
     // 	},
-	
+
     // 	movedBefore: function (id, before) {
     // 	    console.log("x", 'movedBefore', id, before);
     // 	},
-	
+
     // 	removed: function (id) {
     // 	    console.log("x", 'removed', id);
     // 	}
     // });
-    
+
 
     var paperIDsNotInValidSession = [];
-    
+
     papers.forEach( function(paper) {
 	var sessionsPaperIsIn = paper.sessions;
 	for(var i = 0; i < sessionsPaperIsIn.length; i++){
@@ -1823,3 +1844,88 @@ function unsatKPapers(papers, matchedSessions, k){
     }
     return papersWithout;
 }
+
+Template.navBar.events({
+  'click .sidebar' : function (){
+    $(function () {
+        var SideBAR;
+        SideBAR = (function () {
+            function SideBAR() {}
+
+            SideBAR.prototype.expandMyMenu = function () {
+                return $("nav.sidebar").removeClass("sidebar-menu-collapsed").addClass("sidebar-menu-expanded");
+            };
+
+            SideBAR.prototype.collapseMyMenu = function () {
+                return $("nav.sidebar").removeClass("sidebar-menu-expanded").addClass("sidebar-menu-collapsed");
+            };
+
+            SideBAR.prototype.showMenuTexts = function () {
+                return $("nav.sidebar ul a span.expanded-element").show();
+            };
+
+            SideBAR.prototype.hideMenuTexts = function () {
+                return $("nav.sidebar ul a span.expanded-element").hide();
+            };
+
+            SideBAR.prototype.showActiveSubMenu = function () {
+                $("li.active ul.level2").show();
+                return $("li.active a.expandable").css({
+                    width: "100%"
+                });
+            };
+
+            SideBAR.prototype.hideActiveSubMenu = function () {
+                return $("li.active ul.level2").hide();
+            };
+
+            SideBAR.prototype.adjustPaddingOnExpand = function () {
+                $("ul.level1 li a.expandable").css({
+                    padding: "1px 4px 4px 0px"
+                });
+                return $("ul.level1 li.active a.expandable").css({
+                    padding: "1px 4px 4px 4px"
+                });
+            };
+
+            SideBAR.prototype.resetOriginalPaddingOnCollapse = function () {
+                $("ul.nbs-level1 li a.expandable").css({
+                    padding: "4px 4px 4px 0px"
+                });
+                return $("ul.level1 li.active a.expandable").css({
+                    padding: "4px"
+                });
+            };
+
+            SideBAR.prototype.ignite = function () {
+                return (function (instance) {
+                    return $("#justify-icon").click(function (e) {
+                        if ($(this).parent("nav.sidebar").hasClass("sidebar-menu-collapsed")) {
+                            instance.adjustPaddingOnExpand();
+                            instance.expandMyMenu();
+                            instance.showMenuTexts();
+                            instance.showActiveSubMenu();
+                            $(this).css({
+                                color: "#000"
+                            });
+                        } else if ($(this).parent("nav.sidebar").hasClass("sidebar-menu-expanded")) {
+                            instance.resetOriginalPaddingOnCollapse();
+                            instance.collapseMyMenu();
+                            instance.hideMenuTexts();
+                            instance.hideActiveSubMenu();
+                            $(this).css({
+                                color: "#FFF"
+                            });
+                        }
+                        return false;
+                    });
+                })(this);
+            };
+
+            return SideBAR;
+
+        })();
+        return (new SideBAR).ignite();
+    });
+  }
+});

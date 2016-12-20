@@ -20,6 +20,11 @@
       SOFTWARE.
     -->
   <div class="session-builder container-fluid clusterinterface">
+    <div id="titlebar">
+			<!-- <i class="fa fa-paw"></i> -->
+			<h3 id="title-header">TEAMME</h3>
+	</div>
+    {{> navBar}}
     <div class="row">
       <div id="left" class="col-md-4">
 	<!--Paper List-->
@@ -35,7 +40,7 @@
 	  <button class="btn btn-xs btn-default without-two-approved"><!--{{numPapersNotInTwoApprovedSessions}} -->papers in &lt; 2 approved sessions</button><br/>
 	</span>
 	</div>
-	  Keyword: 
+	  Keyword:
 	<span class="keyword-buttons list-buttons btn-group">
 	  <button id="keyword-filter" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
 	    {{getKeywordFilterText}} ({{countSelectedKeywordMatches}})
@@ -53,9 +58,9 @@
 	</span>
 	<!-- PAPER LIST STARTS HERE -->
 	<div class="paper-search-input">
-	  {{> EasySearch.Input index=PapersIndex id="paper-search" autocomplete="off" placeholder="Search title, author, abstract, keyword, or id" }} 
+	  {{> EasySearch.Input index=PapersIndex id="paper-search" autocomplete="off" placeholder="Search title, author, abstract, keyword, or id" }}
 	</div>
-	
+
 
 
 	<div class='current-status'><span id="paper-count">Showing {{numPapersDisplayed}} papers {{#if inputIsNotEmpty}} containing "{{searchKey}}" {{/if}}{{keywordStatus}}{{filterStatus}}</span></div>
@@ -68,7 +73,9 @@
 	  <button class="btn btn-xs btn-success toggle-keywords">keywords</button>
 	  <button class="btn btn-xs btn-success toggle-paper-sessions">sessions</button>
 	</div>
-	
+
+  {{> studentRoster}}
+
 	<ul id="paper-deck" class="deck ui-sortable">
 	  <!--	<li class="sort-disabled"></li>-->
 	  {{#if inputIsNotEmpty}}
@@ -89,11 +96,11 @@
 	  {{/each}}
 	  {{/if}}
 	</ul>
-	
+
       </div>
-      
-      
-      <div id="middle" class="col-md-6 container-fluid">
+
+
+      <div id="middle" class="col-md-5 container-fluid">
 	<div class="row">
 	  <div class="col-md-12">
 	    <h3>My Workspace
@@ -111,14 +118,14 @@
 	  {{/each}}
 	  <Div class="row">
 	  </div>
-	
+
 	</div>
      </div>
-      
-      <div id="right" class="col-md-2">
-	
 
-	<h3>Session List</h3> 
+      <div id="right" class="col-md-2">
+
+
+	<h3>Session List</h3>
 	<div id="sessionlist-buttons">
 	  <button class="btn btn-xs btn-default unapprovedSessions"><!--{{numUnapproved}} -->sessions not yet approved </button><br/>
 	  <button class="btn btn-xs btn-default validSessions"><!--{{numValid}} -->valid sessions w/ 3+ papers </button>
@@ -128,7 +135,7 @@
 	<div class="session-search-input">
 	  {{> EasySearch.Input index=SessionsIndex id="session-search" autocomplete="off" placeholder="Search name, id, or paper info" }}	</div>
 	<div class='current-session-status'><span id="session-count">Showing {{numNamedAndFiltered}} sessions {{#if sessionInputIsNotEmpty}} containing "{{sessionSearchKey}}" {{/if}}{{sessionFilterStatus}}</span></div>
-	<div class="show-all-session-status"><a class="show-all-session-link">Show all {{#if sessionInputIsNotEmpty}} <!--{{numSearchSessions}}-->sessions containing "{{sessionSearchKey}}"{{else}}<!--{{numTotalSessions}} -->sessions{{/if}}</a></div>	
+	<div class="show-all-session-status"><a class="show-all-session-link">Show all {{#if sessionInputIsNotEmpty}} <!--{{numSearchSessions}}-->sessions containing "{{sessionSearchKey}}"{{else}}<!--{{numTotalSessions}} -->sessions{{/if}}</a></div>
 	<div class="sessionExpandButtons">
 	  See all: <button class="btn btn-xs btn-info toggle-papers">papers</button>
 	  <button class="btn btn-xs btn-info toggle-contributors">makers</button>
@@ -147,7 +154,7 @@
 	    </ul>
 	  </span>
 	</div>
-	
+
 
 	<div id="session-list">
 	  {{#if sessionInputIsNotEmpty}}
@@ -157,7 +164,7 @@
 {{> sessionInList}}
 </div>
 	{{/if}}
-	{{/each}} 
+	{{/each}}
 	  {{else}}
 	    {{#each sessions}}
                  {{#if passSessionFilters}}
@@ -172,7 +179,7 @@
 
 
       </div>
-      
+
     </div>
   </div>
 </template>
@@ -191,7 +198,7 @@
       <button id="watch-{{this._id}}" class="btn btn-xs btn-primary unwatch-session-button">workspace</button>
       {{/if}}
     </span>
-    
+
     <div class="session-paper-container {{#if papersCollapsed}} hidden {{else}} show {{/if}}">
       {{#each sessionPapers}}
 <div>
@@ -249,10 +256,17 @@
   </li>
 </template>
 
+<template name="studentRoster">
+  <form class="csv-file">
+    <input type="file" name="csvfile" id="csvFileInput">
+    <input type="submit" value="Upload">
+  </form>
+</template>
+
 <template name="paperSession">
   <div id=swp-{{this._id}} class="session-item">
-    <span class="session-label">{{name}} ({{numPapersInSession}})</span> 
-    {{#if approved}} 
+    <span class="session-label">{{name}} ({{numPapersInSession}})</span>
+    {{#if approved}}
      <span class="approved-text">
       approved
     </span>
@@ -262,17 +276,17 @@
        <button id="watch-{{this._id}}" class="btn btn-xs btn-primary unwatch-session-button">workspace</button>
 {{/if}}
      </span>
-     
+
   </div>
 </template>
 
 <template name="paperInSession">
   <li id=pis-{{this._id}} class="paper">
-    
+
 
     <div class='paper-remove'><i class="fa fa-times remove-paper-button sort-disabled"></i> </div>
     <div class='paper-heading'>{{this.title}} <span class='paper-id'>{{this._id}}</span> </div>
-    
+
     <span class="authors-container hidden">
       <ul class="authors-list">
 	{{#each authors}}
@@ -292,7 +306,7 @@
 <template name="session">
   <div class="session col-md-5" id={{this._id}} style="position: absolute; top:{{top}}px; left:{{left}}px">
     <div class="form-group form-group-inline">
-      <i class="fa fa-times finish-session-button"></i> 
+      <i class="fa fa-times finish-session-button"></i>
       <i class="fa fa-lg {{#if isCollapsed}}fa-angle-double-right{{else}}fa-angle-double-down{{/if}} collapser"></i>
       <span class="session-label-heading">
 	<span class="session-label {{named}} sort-disabled">{{sessionName}}</span>{{#if isCollapsed}}<span class="session-paper-count"> ({{numPapersInSession}})</span>{{/if}}
@@ -301,7 +315,7 @@
 	<input type="text" class="name-session input-sm sort-disabled" placeholder="{{sessionName}}"/>
 	<button class="btn btn-xs btn-primary edit-session-title">save</button>
       </span>
-      
+
       <div class='session-actions'>
 	{{#if approved}}
 	<button class="btn btn-xs btn-success approve-session-button">approved</button>
@@ -330,4 +344,51 @@
       makers: {{getContributors}}
     </div>
   </div>
+</template>
+
+<template name="navBar">
+  <nav class='sidebar sidebar-menu-collapsed'> <a href='#' id='justify-icon'>
+      <span class='glyphicon glyphicon-align-justify'></span>
+      </a>
+
+      <ul class='level1'>
+        <li class='active'> <a class='expandable' href='#' title='Dashboard'>
+          <span class='glyphicon glyphicon-home collapsed-element'></span>
+          <span class='expanded-element'>Dashboard</span>
+        </a>
+
+        <ul class='level2'>
+          <li> <a href='#' title='Traffic'>Traffic</a>
+
+          </li>
+          <li> <a href='#' title='Conversion rate'>Conversion rate</a>
+
+          </li>
+          <li> <a href='#' title='Purchases'>Purchases</a>
+
+          </li>
+        </ul>
+      </li>
+      <li> <a class='expandable' href='#' title='APIs'>
+        <span class='glyphicon glyphicon-wrench collapsed-element'></span>
+        <span class='expanded-element'>APIs</span>
+      </a>
+
+    </li>
+    <li> <a class='expandable' href='#' title='Settings'>
+      <span class='glyphicon glyphicon-cog collapsed-element'></span>
+      <span class='expanded-element'>Settings</span>
+    </a>
+
+    </li>
+    <li> <a class='expandable' href='#' title='Account'>
+      <span class='glyphicon glyphicon-user collapsed-element'></span>
+      <span class='expanded-element'>Account</span>
+    </a>
+
+    </li>
+    </ul> <a href='#' id='logout-icon' title='Logout'>
+    <span class='glyphicon glyphicon-off'></span>
+    </a>
+  </nav>
 </template>
