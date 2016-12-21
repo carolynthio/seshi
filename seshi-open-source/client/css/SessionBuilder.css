@@ -676,7 +676,7 @@ tr.constraints-row {
     background-color: #fefefe;
     margin: 15% auto; /* 15% from the top and centered */
     border: 1px solid #888;
-    width: 80%; /* Could be more or less, depending on screen size */
+    width: 50%; /* Could be more or less, depending on screen size */
 }
 
 .modal-header {
@@ -705,14 +705,181 @@ tr.constraints-row {
 .column-right{ float: right; width: 33%; }
 .column-center{ display: inline-block; width: 33%; }
 
-#remainingConstraints{
-  border: 1px solid #2B3F54;
-}
-
-#currentConstraints{
-  border: 1px solid #2B3F54;
+#currentconstraints{
   width: 200px;
-  height:200px;
 }
 
+.clickable-row:hover{
+  background-color: #b8d1f3;
+}
+
+.clickable-row {
+  height: 100%;
+}
+
+.individual {
+  width: 190px;
+}
+
+.highlight {
+  background-color: #b8d1f3;
+}
+
+#saveButton {
+  margin-right: 10px;
+  border-radius:3px 3px 3px 3px;
+  border-color: #1FBA95;
+  border-style: solid;
+  color: #1FBA95;
+  background-color: #E8F8F4;
+}
+
+#cancelButton {
+  border-radius:3px 3px 3px 3px;
+  border-color: red;
+  border-style: solid;
+  color: red;
+  background-color: #FBEFF0;
+}
+
+#constraintchange {
+  width: 50px;
+  padding-left: 15px;
+}
+
+/* add and minus button*/
+.addMinus {
+  float: left;
+  width: 20px;
+  height: 20px;
+  padding: 0px;
+
+  background: white;
+  border: 1px solid #2B3F54;
+  color: #2B3F54;
+  text-align: center;
+
+  font: 13px Arial, sans-serif
+}
+
+.addMinus:hover {
+  background: #2B3F54 ;
+  cursor: pointer;
+}
+
+.minusSign {
+  line-height: 20px;
+  margin-bottom: 1px;
+  border-radius: 0 4px 4px 0;
+}
+
+.plusSign {
+  line-height: 20px;
+  border-radius: 4px 0 0 4px;
+}
+
+.minusSign:hover,
+.plusSign:hover {
+  color: white;
+}
+/* end add and minus button */
 /* end modal */
+
+/* team box */
+.tabs {
+    width:100%;
+    display:inline-block;
+
+    margin-left: auto ;
+    margin-right: auto ;
+    background-color: white;
+}
+
+.tab-links {
+    list-style-type: none; /*to remove bullets*/
+    text-align: center;
+    margin: 0px;
+    padding: 0px;
+    width: 100%;
+    overflow: hidden;
+}
+
+/*----- Tab Links -----*/
+/* Clearfix */
+.tab-links:after {
+    display:block;
+    clear:both;
+    content:'';
+}
+
+.tab-links li {
+    margin:0px 5px;
+    float:left;
+    list-style:none;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+    border: 1px solid black;
+
+    padding: 2px;
+    width: 33.3%;
+    margin-left: auto ;
+    margin-right: auto ;
+}
+
+.tab-links a {
+    padding-bottom: 5px;
+    padding-top: 5px;
+    display:inline-block;
+    border-radius:3px 3px 0px 0px;
+    font-size:13px;
+    color:#4c4c4c;
+}
+
+.tab-links a:hover {
+    background:#a7cce5;
+    width: 100%;
+    text-decoration:none;
+}
+
+li.active a, li.active a:hover {
+    background:#fff;
+    color:#4c4c4c;
+    font-weight:600;
+    width: 100%;
+}
+
+/*----- Content of Tabs -----*/
+.tab-content {
+    padding:15px;
+    border-radius:3px;
+    box-shadow:-1px 1px 1px rgba(0,0,0,0.15);
+    background:#fff;
+    border-top: 1px solid black;
+}
+
+.tab {
+    display:none;
+}
+
+.tab.active {
+    display:block;
+}
+
+.team-header {
+  color: white;
+  background-color: #2b3F54;
+  margin: 0;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 5px;
+}
+
+.team {
+  border: 1px solid black;
+  padding: 0;
+}
+/* end team */
+
+.each-student {
+  list-style: none;
+}

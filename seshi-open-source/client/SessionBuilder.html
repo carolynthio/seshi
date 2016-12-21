@@ -29,7 +29,7 @@
       <div id="left" class="col-md-4">
 	<!--Paper List-->
 	<div>
-	  <h3 id="paperlist-header">Paper List</h3>
+	  <h3 id="paperlist-header">Student Roster</h3>
 	</div>
 
 	<div id="paperlist-filters">
@@ -102,14 +102,16 @@
 
 <div id="middle" class="col-md-7 container-fluid">
   {{> constraints}}
-	<div class="row">
+	<!-- <div class="row">
 	  <div class="col-md-12">
 	    <h3>My Workspace
 	      <span id="workspace-count">Sessions in my workspace: {{numWorkspaceSessions}}</span>
 	    </h3>
 	  </div>
-	</div>
+	</div> -->
 	<div id="sessionarea">
+    <br>
+    {{> team}}
 	  {{#each workspaceSessions}}
           {{#if watchedSession}}
 	  <div>
@@ -442,14 +444,14 @@
 				<div class="modal-body">
 					<div class="col-md-4">
 						<div class="row">
-							<font size="3" style="font-family: 'Helevitca Neue'; float: left; padding-left: 10px;padding-top: 10px; padding-bottom: 10px; color: #2B3F54">Suggested Teams</font>
+							<h4 style="font-family: Helvetica, Arial, sans-serif; float: left; padding-left: 10px;padding-top: 10px; padding-bottom: 10px; color: #2B3F54">Remaining constraints</h4>
 						</div>
 						<table>
 							<tbody>
 								<tr>
 									<td colspan="2">
-										<div class="scrollit" style="overflow:scroll;height:250px;">
-											<table>
+										<div class="scrollit" style="overflow:scroll; height:190px; width: 190px;border: 1px solid #2B3F54;">
+											<table id="remainingConstraints">
 												<tr class="clickable-row" width="100%">
 													<td class="individual" id="NumberOfTeams">
 														Number of teams:
@@ -480,24 +482,33 @@
 					</div>
 					<div class="col-md-4">
 						<div class="row">
-						<font size="3" style="font-family: 'Helevitca Neue'; float: left; padding-left: 10px;padding-top: 10px; padding-bottom: 10px; color: #2B3F54">Specifics</font>
+						<h4 size="3" style="font-family: Helvetica, Arial, sans-serif; float: left; padding-left: 50px;padding-top: 10px; padding-bottom: 30px; color: #2B3F54"> </h4>
 						</div>
-						<div class="scrollit" id="specifics" style="background: #ffffff;height:150px;border: 2px solid #979797;">
+						<div class="scrollit" id="specifics" style="background: #ffffff;height:70px;border: 1px solid black;">
 							<center><p id="constrainttitle">Constraint to be modified</p></center>
-							<input type="text" value="" placeholder="enter a number" id="constraintchange">
+              <div style="padding-left: 75px; padding-right: 75px;">
+				         <input type="number" value="" min="0" placeholder="0" id="constraintchange">
+              </div>
 						</div>
-						<button type="button" id="add_button">Add</button>
+            <div style="padding-top: 5px;">
+              <div class="addMinus plusSign" id="add_button">
+                &#43;
+              </div>
+              <div class="addMinus minusSign" id="removeButton">
+                &#8211;
+              </div>
+            </div>
 
 					</div>
 					<div class="col-md-4">
 						<div class="row">
-						<font size="3" style="font-family: 'Helevitca Neue'; float: left; padding-left: 10px;padding-top: 10px; padding-bottom: 10px; color: #2B3F54">Current constraints</font>
+						<h4 style="font-family: Helvetica, Arial, sans-serif; float: left; padding-left: 10px;padding-top: 10px; padding-bottom: 10px; color: #2B3F54">Current constraints</h4>
 						</div>
 						<table>
 							<tbody>
 								<tr>
 									<td colspan="2">
-										<div class="scrollit" style="overflow:scroll;height:250px;">
+										<div class="scrollit" style="overflow:scroll;height:190px; width: 190px; border: 1px solid black;">
 											<table id="currentconstraints">
 											</table>
 										</div>
@@ -511,10 +522,44 @@
 				</div>
 
 			</div>
-
+      <br>
 			<div class="modal-footer">
-				<button type="button" id="nda_button">Save changes</button>
+				<button id="saveButton">Save changes</button>
+        <button id="cancelButton"> Cancel </button>
 			</div>
 		</div>
 	</div>
+</template>
+
+<template name="team">
+  <div class="team col-md-6">
+    <div class="tabs">
+      <h5 class="team-header">Team 1</h5>
+      <ul class="tab-links">
+          <li class="active"><a href="#tab1">Names</a></li>
+          <li><a href="#tab2">General</a></li>
+          <li><a href="#tab3">Availability</a></li>
+      </ul>
+
+      <div class="tab-content">
+          <div id="tab1" class="tab active">
+              <table class="student-names">
+                <tr class="each-student">
+                  <td> Student 1 </td>
+                </tr>
+              </table>
+          </div>
+
+          <div id="tab2" class="tab">
+              <p>Tab #2 content goes here!</p>
+              <p>Donec pulvinar neque sed semper lacinia. Curabitur lacinia ullamcorper nibh; quis imperdiet velit eleifend ac. Donec blandit mauris eget aliquet lacinia! Donec pulvinar massa interdum risus ornare mollis. In hac habitasse platea dictumst. Ut euismod tempus hendrerit. Morbi ut adipiscing nisi. Etiam rutrum sodales gravida! Aliquam tellus orci, iaculis vel.</p>
+          </div>
+
+          <div id="tab3" class="tab">
+              <p>Tab #3 content goes here!</p>
+              <p>Donec pulvinar neque sed semper lacinia. Curabitur lacinia ullamcorper nibh; quis imperdiet velit eleifend ac. Donec blandit mauris eget aliquet lacinia! Donec pulvinar massa interdum ri.</p>
+          </div>
+      </div>
+    </div>
+  </div>
 </template>

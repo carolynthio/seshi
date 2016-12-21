@@ -1956,7 +1956,7 @@ Template.constraintModalTemplate.events({
 
 			// console.log(childSnapshot.key);
 			var name_cell = document.createElement('td');
-			name_cell.setAttribute("id", "individual");
+			name_cell.setAttribute("id", currConstraint);
 			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
 			new_row.appendChild(name_cell);
 			table.appendChild(new_row);
@@ -1967,11 +1967,32 @@ Template.constraintModalTemplate.events({
     	}
   },
 
+  'click #removeButton' : function (e) {
+    $('#currentconstraints .highlight').remove();
+  },
+
   'click .clickable-row': function(e) {
       var row_id = e.target.id;
     	var constrainttitle = document.getElementById("constrainttitle");
 
     	constrainttitle.innerHTML = row_id;
+
+      $('.highlight').removeClass('highlight');
+      $(e.target).addClass('highlight');
   }
 
+});
+
+Template.team.events({
+  'click .tabs .tab-links a' : function(e)  {
+      var currentAttrValue = e.target.getAttribute('href');
+
+      // Show/Hide Tabs
+      $('.tabs ' + currentAttrValue).show().siblings().hide();
+
+      // Change/remove current tab to active
+      $(e.target).parent('li').addClass('active').siblings().removeClass('active');
+
+      e.preventDefault();
+  }
 });
