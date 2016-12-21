@@ -100,7 +100,8 @@
       </div>
 
 
-      <div id="middle" class="col-md-5 container-fluid">
+<div id="middle" class="col-md-7 container-fluid">
+  {{> constraints}}
 	<div class="row">
 	  <div class="col-md-12">
 	    <h3>My Workspace
@@ -122,20 +123,20 @@
 	</div>
      </div>
 
-      <div id="right" class="col-md-2">
+      <!-- <div id="right" class="col-md-2"> -->
 
 
-	<h3>Session List</h3>
+	<!-- <h3>Session List</h3>
 	<div id="sessionlist-buttons">
-	  <button class="btn btn-xs btn-default unapprovedSessions"><!--{{numUnapproved}} -->sessions not yet approved </button><br/>
-	  <button class="btn btn-xs btn-default validSessions"><!--{{numValid}} -->valid sessions w/ 3+ papers </button>
-	</div>
+	  <button class="btn btn-xs btn-default unapprovedSessions">sessions not yet approved </button><br/>
+	  <button class="btn btn-xs btn-default validSessions">valid sessions w/ 3+ papers </button>
+	</div> -->
 	<!-- SESSION LIST STARTS HERE -->
 
-	<div class="session-search-input">
+	<!-- <div class="session-search-input">
 	  {{> EasySearch.Input index=SessionsIndex id="session-search" autocomplete="off" placeholder="Search name, id, or paper info" }}	</div>
 	<div class='current-session-status'><span id="session-count">Showing {{numNamedAndFiltered}} sessions {{#if sessionInputIsNotEmpty}} containing "{{sessionSearchKey}}" {{/if}}{{sessionFilterStatus}}</span></div>
-	<div class="show-all-session-status"><a class="show-all-session-link">Show all {{#if sessionInputIsNotEmpty}} <!--{{numSearchSessions}}-->sessions containing "{{sessionSearchKey}}"{{else}}<!--{{numTotalSessions}} -->sessions{{/if}}</a></div>
+	<div class="show-all-session-status"><a class="show-all-session-link">Show all {{#if sessionInputIsNotEmpty}} sessions containing "{{sessionSearchKey}}"{{else}}sessions{{/if}}</a></div>
 	<div class="sessionExpandButtons">
 	  See all: <button class="btn btn-xs btn-info toggle-papers">papers</button>
 	  <button class="btn btn-xs btn-info toggle-contributors">makers</button>
@@ -178,7 +179,7 @@
 	</div>
 
 
-      </div>
+      </div> -->
 
     </div>
   </div>
@@ -391,4 +392,129 @@
     <span class='glyphicon glyphicon-off'></span>
     </a>
   </nav>
+</template>
+
+<template name="constraints">
+  <table id="constraintsTable">
+    <tr class="constraints-row">
+      <td style="color: #2B3F54">
+        <div id="mode">
+          <b>SELECT MODE</b>
+          <i class="fa fa-question-circle" aria-hidden="true"></i>
+        </div>
+        <div class="onoffswitch">
+          <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" checked>
+          <label class="onoffswitch-label" for="myonoffswitch">
+              <span class="onoffswitch-inner"></span>
+              <span class="onoffswitch-switch"></span>
+          </label>
+        </div>
+      </td>
+      <td style="color: #2B3F54">
+        <b>STUDENTS PER TEAM</b>
+        <input type="number" id="numStudents" min="0">
+      </td>
+
+    </tr>
+    <tr class="constraints-row">
+      <td>
+        <button id="constraintsButton">Constraints</button>
+      </td>
+      <td></td>
+    </tr>
+    <tr class="constraints-row">
+      <button id="optimizeTeamsButton">Optimize Teams</button>
+      <td></td>
+    </tr>
+  </table>
+</template>
+
+<template name="constraintModalTemplate">
+  <div id="constraintModal" class="modal">
+		<!-- Modal content -->
+
+		<div class="modal-content">
+			<div class="modal-header">
+				<span class="close" id="modelclose">×</span>
+				<h4>Customize Constraints</h4>
+			</div>
+			<div class="row">
+				<div class="modal-body">
+					<div class="col-md-4">
+						<div class="row">
+							<font size="3" style="font-family: 'Helevitca Neue'; float: left; padding-left: 10px;padding-top: 10px; padding-bottom: 10px; color: #2B3F54">Suggested Teams</font>
+						</div>
+						<table>
+							<tbody>
+								<tr>
+									<td colspan="2">
+										<div class="scrollit" style="overflow:scroll;height:250px;">
+											<table>
+												<tr class="clickable-row" width="100%">
+													<td class="individual" id="NumberOfTeams">
+														Number of teams:
+													</td>
+												</tr>
+												<tr class="clickable-row" width="100%">
+													<td class="individual" id="StudentPerTeam">
+														Student per team:
+													</td>
+												</tr>
+												<tr class="clickable-row" width="100%">
+													<td class="individual" id="MinOverlapInAvailability">
+														Min.overlap in availability:
+													</td>
+												</tr>
+												<tr class="clickable-row" width="100%">
+													<td class="individual"  id="GenderBalance">
+														Gender Balance:
+													</td>
+												</tr>
+											</table>
+										</div>
+									</td>
+								</tr>
+
+							</tbody>
+						</table>
+					</div>
+					<div class="col-md-4">
+						<div class="row">
+						<font size="3" style="font-family: 'Helevitca Neue'; float: left; padding-left: 10px;padding-top: 10px; padding-bottom: 10px; color: #2B3F54">Specifics</font>
+						</div>
+						<div class="scrollit" id="specifics" style="background: #ffffff;height:150px;border: 2px solid #979797;">
+							<center><p id="constrainttitle">Constraint to be modified</p></center>
+							<input type="text" value="" placeholder="enter a number" id="constraintchange">
+						</div>
+						<button type="button" id="add_button">Add</button>
+
+					</div>
+					<div class="col-md-4">
+						<div class="row">
+						<font size="3" style="font-family: 'Helevitca Neue'; float: left; padding-left: 10px;padding-top: 10px; padding-bottom: 10px; color: #2B3F54">Current constraints</font>
+						</div>
+						<table>
+							<tbody>
+								<tr>
+									<td colspan="2">
+										<div class="scrollit" style="overflow:scroll;height:250px;">
+											<table id="currentconstraints">
+											</table>
+										</div>
+									</td>
+								</tr>
+
+							</tbody>
+						</table>
+					</div>
+
+				</div>
+
+			</div>
+
+			<div class="modal-footer">
+				<button type="button" id="nda_button">Save changes</button>
+			</div>
+		</div>
+	</div>
 </template>

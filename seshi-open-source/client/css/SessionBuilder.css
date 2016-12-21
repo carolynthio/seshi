@@ -223,11 +223,6 @@ body {
 	height: 100%;
 }
 
-#left, #middle{
-	height: 100%;
-	border-right: 1px solid black;
-}
-
  #sessionarea {
      min-height: 720px;
  }
@@ -241,6 +236,7 @@ body {
 
 #left {
   margin-left: 45px;
+  border-right: 1px solid black;
 }
 
 .contributors {
@@ -588,3 +584,135 @@ nav.sidebar ul.level1 ul.level2 li a {
   padding-left: 75px;
   border-bottom: 1px solid black;
 }
+
+tr.constraints-row {
+  border-bottom: 1px solid #E6E6E6;
+  height: 40px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+#constraintsTable {
+  width: 100%;
+}
+
+#optimizeTeamsButton {
+  width: 200px;
+  background-color: #1FBA95;
+  color: white;
+  margin-top: 5px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+#constraintsButton {
+  width: 100px;
+  background-color: #2b3F54;
+  color: white;
+  margin-top: 5px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+/* Mode selector */
+.onoffswitch {
+    float: left;
+    position: relative; width: 118px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 20px;
+}
+.onoffswitch-inner {
+    display: block; width: 200%; margin-left: -100%;
+    transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    display: block; float: left; width: 50%; height: 30px; padding: 0; line-height: 30px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: "Suggested";
+    padding-left: 10px;
+    background-color: #1FBA95; color: #FFFFFF;
+}
+.onoffswitch-inner:after {
+    content: "Manual";
+    padding-right: 10px;
+    background-color: #6F6F6F; color: #FFFFFF;
+    text-align: right;
+}
+.onoffswitch-switch {
+    display: block; width: 18px; margin: 6px;
+    background: #FFFFFF;
+    position: absolute; top: 0; bottom: 4px;
+    right: 84px;
+    border: 2px solid #999999; border-radius: 20px;
+    transition: all 0.3s ease-in 0s;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+}
+/* end mode selector */
+
+#mode {
+  float: left;
+  margin-right:10px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+#numStudents {
+  width: 60px;
+  margin-left: 5px;
+}
+
+/* Modal Styling */
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+}
+
+.modal-header {
+  background-color: #2B3F54;
+  color: white;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+/* The Close Button */
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.column-left{ float: left; width: 33%; }
+.column-right{ float: right; width: 33%; }
+.column-center{ display: inline-block; width: 33%; }
+
+#remainingConstraints{
+  border: 1px solid #2B3F54;
+}
+
+#currentConstraints{
+  border: 1px solid #2B3F54;
+  width: 200px;
+  height:200px;
+}
+
+/* end modal */

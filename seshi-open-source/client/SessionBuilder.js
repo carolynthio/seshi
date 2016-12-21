@@ -1845,6 +1845,7 @@ function unsatKPapers(papers, matchedSessions, k){
     return papersWithout;
 }
 
+/* Navigation Bar */
 Template.navBar.events({
   'click .sidebar' : function (){
     $(function () {
@@ -1928,4 +1929,49 @@ Template.navBar.events({
         return (new SideBAR).ignite();
     });
   }
+});
+
+Template.constraints.events({
+  'click #constraintsButton': function() {
+    Modal.show('constraintModalTemplate');
+  }
+});
+
+Template.constraintModalTemplate.events({
+  'click #modelclose' : function() {
+    Modal.hide('constraintModalTemplate');
+  },
+
+  'click #add_button' : function() {
+      var constraintvalue = document.getElementById("constraintchange").value;
+    	var constrainttitle = document.getElementById("constrainttitle");
+    	console.log(constraintvalue);
+    	console.log(constrainttitle);
+
+    	if(constraintvalue.length != 0){
+    		var table = document.getElementById("currentconstraints");
+    		var currConstraint = constrainttitle.innerHTML;
+    		var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-row");
+
+			// console.log(childSnapshot.key);
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", "individual");
+			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+
+    	}
+    	else{
+    		alert("You need to input a value first!")
+    	}
+  },
+
+  'click .clickable-row': function(e) {
+      var row_id = e.target.id;
+    	var constrainttitle = document.getElementById("constrainttitle");
+
+    	constrainttitle.innerHTML = row_id;
+  }
+
 });
