@@ -1245,15 +1245,16 @@ Template.paperWithSessions.helpers({
 
 });
 
-Meteor.call('callPython', 3, "1,2,3,4,5,6,7",
-  function(error, result) {
-    if (error) {
-      console.log(error);
-    }
-    console.log("woo: " + result);
-    Session.set('teams', result); // not sure
-    console.log(Session.get('teams')); // nothing prints
-  });
+// THIS WORKS YAY
+// Meteor.call('callPython', 3, "1,2,3,4,5,6,7",
+//   function(error, result) {
+//     if (error) {
+//       console.log(error);
+//     }
+//     console.log("woo: " + result);
+//     Session.set('teams', result); // not sure
+//     console.log("teams: " + Session.get('teams')); // nothing prints
+//   });
 
 Template.studentRoster.events({
   'submit .csv-file': function(event) {
@@ -1934,11 +1935,76 @@ Template.navBar.events({
 Template.constraints.events({
   'click #constraintsButton': function() {
     Modal.show('constraintModalTemplate');
+  },
+
+  'click #optimizeTeamsButton': function() {
+    if ($('#numStudents').val() != "") {
+      Meteor.call('callPython', $('#numStudents').val(), "1,2,3,4,5,6,7",
+        function(error, result) {
+          if (error) {
+            console.log(error);
+          }
+          console.log("woo: " + result);
+          Session.set('teams', result);
+          console.log("teams: " + Session.get('teams'));
+
+          var stringTeams = Session.get('teams').toString();
+
+          // For some reason we need to subtract 2 to get the last character
+          var length = stringTeams.length - 2;
+          substringTeams = stringTeams.substring(1, length);
+          console.log("SUBSTRING: " + substringTeams);
+
+          // replace ' with "
+          var replaceQuotesString = substringTeams.replace(/\'/g,"\"");
+          console.log(replaceQuotesString);
+
+          //splitting the string representation of array of arrays 
+          var array1 = replaceQuotesString.split('], ');
+          console.log(array1);
+
+          // declare a 2D array
+          var finalArray = new Array(array1.length); // represent array of teams
+          for (i= 0; i < array1.length; i++) {
+
+            // add missing bracket
+            if (i != array1.length-1) {
+              array1[i] += "]";
+            }
+
+            // parse element into an array
+            var array2 = JSON.parse(array1[i]);
+            console.log("array2: " + array2);
+            var tempArray = [array2];
+            finalArray[i] = tempArray;
+
+          }
+          console.log("FINAL ARRAY: " + finalArray[0] + " next element: " + finalArray[1] + " all: " + finalArray);
+
+          // print onto screen
+          var div = document.getElementById('pythonCode');
+
+          // goes through all the different teams to print
+          for(i=0; i < finalArray.length; i++) {
+            div.innerHTML = div.innerHTML + finalArray[i] + "<br>";
+          }
+
+        });
+        // console.log("outside meteor.call: " + Session.get('teams'));
+
+    }
+    else {
+      console.log("Please enter number of students");
+    }
   }
 });
 
 Template.constraintModalTemplate.events({
   'click #modelclose' : function() {
+    Modal.hide('constraintModalTemplate');
+  },
+
+  'click #cancelButton' : function() {
     Modal.hide('constraintModalTemplate');
   },
 
