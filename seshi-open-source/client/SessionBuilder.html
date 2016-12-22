@@ -109,11 +109,38 @@
 	    </h3>
 	  </div>
 	</div> -->
-	<div id="sessionarea">
+	<div id="sessionarea" style="overflow-y: scroll; height:720px;">
     <div id="pythonCode">
     </div>
     <br>
-    {{> team}}
+    <div class="teamColumn">
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+    </div>
+
+    <div class="teamColumn">
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+      {{> team}}
+    </div>
+
+    <br>
+    <!-- {{> team}} -->
 	  {{#each workspaceSessions}}
           {{#if watchedSession}}
 	  <div>
@@ -533,7 +560,8 @@
 </template>
 
 <template name="team">
-  <div class="team col-md-6" id={{this._id}} style="position: absolute; top:{{top}}px; left:{{left}}px">
+  <!-- style="position: absolute; top:{{top}}px; left:{{left}}px" class = col-md-6 -->
+  <div class="team" id={{this._id}} >
     <div class="tabs">
       <h5 class="team-header">Team 1</h5>
       <ul class="tab-links">

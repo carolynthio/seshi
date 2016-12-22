@@ -227,6 +227,22 @@ body {
      min-height: 720px;
  }
 
+/* Making teams into two columns and draggable */
+ .teamColumn {
+     float: left;
+     margin: 6px;
+     height: 700px;
+     overflow: auto;
+ }
+
+ .team {
+     margin: 0 5px 5px 5px;
+     width: 380px;
+     cursor: pointer;
+     border: 1px solid black;
+     padding: 0;
+ }
+ /* end teams */
 
 #left, #middle, #right {
       min-height: 760px;
@@ -876,7 +892,6 @@ tr.constraints-row {
 }
 
 li.active a, li.active a:hover {
-    background:#fff;
     color:#4c4c4c;
     font-weight:600;
     width: 100%;
@@ -908,10 +923,6 @@ li.active a, li.active a:hover {
   padding-left: 5px;
 }
 
-.team {
-  border: 1px solid black;
-  padding: 0;
-}
 /* end team */
 
 .each-student {

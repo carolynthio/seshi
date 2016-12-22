@@ -254,15 +254,26 @@ Template.session.rendered = function(){
   });
 }
 
-// Template.team.rendered = function(){
-//     $('#sessionarea .team').draggable({
-//       stop: function() {
-//         var id = $(this).attr('id');
-//         var pos = $(this).position();
-//       },
-//       grid: [5, 5]
-//     });
-//   }
+// Making the teams box draggable
+Template.team.rendered = function(){
+    // $('#sessionarea .team').draggable({
+    //   stop: function() {
+    //     var id = $(this).attr('id');
+    //     var pos = $(this).position();
+    //   },
+    //   // grid: [418, 112]
+    //   grid: [20, 20]
+    // });
+
+    var sortlists = $(".teamColumn").sortable({
+     connectWith : ".teamColumn",
+     items       : ".team:not(.excludeThisCss)",
+     tolerance   : 'pointer',
+     revert      : 'invalid',
+     forceHelperSize: true
+
+})
+  }
 
 Template.paperSession.helpers({
     numPapersInSession:  function(){
