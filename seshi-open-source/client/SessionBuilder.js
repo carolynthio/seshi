@@ -255,7 +255,7 @@ Template.session.rendered = function(){
 }
 
 // Making the teams box draggable
-Template.team.rendered = function(){
+// Template.team.rendered = function(){
     // $('#sessionarea .team').draggable({
     //   stop: function() {
     //     var id = $(this).attr('id');
@@ -265,15 +265,15 @@ Template.team.rendered = function(){
     //   grid: [20, 20]
     // });
 
-    var sortlists = $(".teamColumn").sortable({
-     connectWith : ".teamColumn",
-     items       : ".team:not(.excludeThisCss)",
-     tolerance   : 'pointer',
-     revert      : 'invalid',
-     forceHelperSize: true
-
-})
-  }
+//     var sortlists = $(".teamColumn").sortable({
+//      connectWith : ".teamColumn",
+//      items       : ".team:not(.excludeThisCss)",
+//      tolerance   : 'pointer',
+//      revert      : 'invalid',
+//      forceHelperSize: true
+//
+// })
+  // }
 
 Template.paperSession.helpers({
     numPapersInSession:  function(){
@@ -1523,6 +1523,19 @@ Template.SessionBuilder.events({
     'click #sessionSortFewest' : function(){
  	Session.set("sessionSort", {sort: {numPapers: 1}});
     },
+
+    // Tab functionality for team boxes
+    'click .tabs .tab-links a' : function(e)  {
+        var currentAttrValue = e.target.getAttribute('href');
+
+        // Show/Hide Tabs
+        $('.tabs ' + currentAttrValue).show().siblings().hide();
+
+        // Change/remove current tab to active
+        $(e.target).parent('li').addClass('active').siblings().removeClass('active');
+
+        e.preventDefault();
+    }
 });
 
 
@@ -1959,7 +1972,7 @@ Template.constraints.events({
 
   'click #optimizeTeamsButton': function() {
     if ($('#numStudents').val() != "") {
-      Meteor.call('callPython', $('#numStudents').val(), "1,2,3,4,5,6,7",
+      Meteor.call('callPython', $('#numStudents').val(), "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
         function(error, result) {
           if (error) {
             console.log(error);
@@ -1995,18 +2008,66 @@ Template.constraints.events({
             // parse element into an array
             var array2 = JSON.parse(array1[i]);
             console.log("array2: " + array2);
-            var tempArray = [array2];
+            var tempArray = array2;
             finalArray[i] = tempArray;
 
           }
           console.log("FINAL ARRAY: " + finalArray[0] + " next element: " + finalArray[1] + " all: " + finalArray);
 
           // print onto screen
-          var div = document.getElementById('pythonCode');
+          // var div = document.getElementById('pythonCode');
 
           // goes through all the different teams to print
           for(i=0; i < finalArray.length; i++) {
-            div.innerHTML = div.innerHTML + finalArray[i] + "<br>";
+            // div.innerHTML = div.innerHTML + finalArray[i] + "<br>";
+
+            var team =
+              "<div class=\"team\" id=\"team" + i + "\">" +
+                "<div class=\"tabs\">" +
+                  "<h5 class=\"team-header\">Team "+ i + "</h5>" +
+                  "<ul class=\"tab-links\">" +
+                      "<li class=\"active\"><a href=\"#tab1_" + i +"\">Names</a></li>" +
+                      "<li><a href=\"#tab2_" + i +"\">General</a></li>" +
+                      "<li><a href=\"#tab3_" + i +"\">Availability</a></li>" +
+                  "</ul>" +
+
+                  "<div class=\"tab-content\">" +
+                      "<div id=\"tab1_" + i +"\" class=\"tab active\">" +
+                          "<table class=\"student-names\" id=\"studentNames" + i + "\">" +
+
+                          "</table>" +
+                      "</div>" +
+
+                      "<div id=\"tab2_" + i +"\" class=\"tab\">" +
+                          "<p>Tab #2 content goes here!</p>" +
+                          "<p>Donec pulvinar neque sed semper lacinia. Curabitur lacinia ullamcorper nibh; quis imperdiet velit eleifend ac. Donec blandit mauris eget aliquet lacinia! Donec pulvinar massa interdum risus ornare mollis. In hac habitasse platea dictumst. Ut euismod tempus hendrerit. Morbi ut adipiscing nisi. Etiam rutrum sodales gravida! Aliquam tellus orci, iaculis vel.</p>" +
+                      "</div>" +
+
+                      "<div id=\"tab3_" + i +"\" class=\"tab\">" +
+                          "<p>Tab #3 content goes here!</p>" +
+                          "<p>Donec pulvinar neque sed semper lacinia. Curabitur lacinia ullamcorper nibh; quis imperdiet velit eleifend ac. Donec blandit mauris eget aliquet lacinia! Donec pulvinar massa interdum ri.</p>" +
+                      "</div>" +
+                  "</div>" +
+                "</div>" +
+              "</div>";
+
+              // alternate between columns
+              if (i%2 == 0) {
+                $('#teamColumn1').append(team);
+              } else {
+                $('#teamColumn2').append(team);
+              }
+
+              // Append student to each team
+              for (j=0; j < finalArray[i].length; j++) {
+                var student =
+                  "<tr class=\"each-student\">" +
+                    "<td> Student " + finalArray[i][j] + " </td>" +
+                  "</tr>";
+
+                var studentNames = "#studentNames" + i
+                $(studentNames).append(student);
+              }
           }
 
         });
@@ -2016,6 +2077,15 @@ Template.constraints.events({
     else {
       console.log("Please enter number of students");
     }
+
+    var sortlists = $(".teamColumn").sortable({
+     connectWith : ".teamColumn",
+     items       : ".team:not(.excludeThisCss)",
+     tolerance   : 'pointer',
+     revert      : 'invalid',
+     forceHelperSize: true
+
+   })
   },
 
   'click .remove' : function(e) {
@@ -2102,16 +2172,16 @@ Template.constraintModalTemplate.events({
 
 });
 
-Template.team.events({
-  'click .tabs .tab-links a' : function(e)  {
-      var currentAttrValue = e.target.getAttribute('href');
-
-      // Show/Hide Tabs
-      $('.tabs ' + currentAttrValue).show().siblings().hide();
-
-      // Change/remove current tab to active
-      $(e.target).parent('li').addClass('active').siblings().removeClass('active');
-
-      e.preventDefault();
-  }
-});
+// Template.team.events({
+//   'click .tabs .tab-links a' : function(e)  {
+//       var currentAttrValue = e.target.getAttribute('href');
+//
+//       // Show/Hide Tabs
+//       $('.tabs ' + currentAttrValue).show().siblings().hide();
+//
+//       // Change/remove current tab to active
+//       $(e.target).parent('li').addClass('active').siblings().removeClass('active');
+//
+//       e.preventDefault();
+//   }
+// });

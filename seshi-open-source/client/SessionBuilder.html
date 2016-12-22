@@ -113,34 +113,13 @@
     <div id="pythonCode">
     </div>
     <br>
-    <div class="teamColumn">
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
+    <div class="teamColumn" id="teamColumn1">
     </div>
 
-    <div class="teamColumn">
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
-      {{> team}}
+    <div class="teamColumn" id="teamColumn2">
     </div>
 
     <br>
-    <!-- {{> team}} -->
 	  {{#each workspaceSessions}}
           {{#if watchedSession}}
 	  <div>
@@ -559,9 +538,8 @@
 	</div>
 </template>
 
-<template name="team">
-  <!-- style="position: absolute; top:{{top}}px; left:{{left}}px" class = col-md-6 -->
-  <div class="team" id={{this._id}} >
+<!-- <template name="team">
+  <div class="team" >
     <div class="tabs">
       <h5 class="team-header">Team 1</h5>
       <ul class="tab-links">
@@ -591,4 +569,4 @@
       </div>
     </div>
   </div>
-</template>
+</template> -->
