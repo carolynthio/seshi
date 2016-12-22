@@ -611,6 +611,40 @@ tr.constraints-row {
   font-family: Helvetica, Arial, sans-serif;
 }
 
+.constraint-tag {
+  font-size: 14px;
+  padding: .1em .4em .1em;
+  margin: 0 .2em;
+  border: 1px solid black
+}
+.constraint-tag a {
+  color: #bbb;
+  cursor: pointer;
+  opacity: 0.6;
+}
+.constraint-tag a:hover {
+  opacity: 1.0
+}
+.constraint-tag .remove {
+  vertical-align: bottom;
+  top: -5px;
+}
+.constraint-tag a {
+  margin: 0 0 0 .3em;
+}
+.constraint-tag a .glyphicon-white {
+  color: #2B3F54;
+  margin-bottom: -2px;
+}
+
+#constraints-td {
+  display: inline-block;
+}
+
+/* Don't show scroll bar */
+::-webkit-scrollbar {
+    display: none;
+}
 /* Mode selector */
 .onoffswitch {
     float: left;

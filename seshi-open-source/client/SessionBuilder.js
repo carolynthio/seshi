@@ -113,7 +113,7 @@ Template.SessionBuilder.rendered = function(){
 
     // accept dragged in sessions
     $('#sessionarea').droppable({
-    	accept: '.session-item, .paper-item, .paper',// .session',
+    	accept: '.session-item, .paper-item, .paper .team',// .session',
     	hoverClass: 'ui-state-hover',
     	greedy: true,
     	drop: function (e, u){
@@ -254,6 +254,15 @@ Template.session.rendered = function(){
   });
 }
 
+// Template.team.rendered = function(){
+//     $('#sessionarea .team').draggable({
+//       stop: function() {
+//         var id = $(this).attr('id');
+//         var pos = $(this).position();
+//       },
+//       grid: [5, 5]
+//     });
+//   }
 
 Template.paperSession.helpers({
     numPapersInSession:  function(){
@@ -1959,7 +1968,7 @@ Template.constraints.events({
           var replaceQuotesString = substringTeams.replace(/\'/g,"\"");
           console.log(replaceQuotesString);
 
-          //splitting the string representation of array of arrays 
+          //splitting the string representation of array of arrays
           var array1 = replaceQuotesString.split('], ');
           console.log(array1);
 
@@ -1996,6 +2005,10 @@ Template.constraints.events({
     else {
       console.log("Please enter number of students");
     }
+  },
+
+  'click .remove' : function(e) {
+    $(e.target).parents("span:first").remove();
   }
 });
 
@@ -2045,6 +2058,35 @@ Template.constraintModalTemplate.events({
 
       $('.highlight').removeClass('highlight');
       $(e.target).addClass('highlight');
+  },
+
+  'click #saveButton' : function() {
+    var table = $("#currentconstraints");
+
+    // table is not empty
+    if (table.children().length != 0) {
+        for (i = 0; i < table.children().length; i++) {
+          var rowId = table.children().children()[i].id; // id of constraint
+          var outerSpan = document.createElement('span');
+          outerSpan.setAttribute("class", "constraint-tag");
+
+          var innerSpan = document.createElement('span');
+          innerSpan.appendChild(document.createTextNode(rowId)); // add the row id to span
+
+          // Creating the x for the box
+          var aTag = document.createElement('a');
+          var iTag = document.createElement('i');
+          iTag.setAttribute("class", "remove glyphicon glyphicon-remove-sign glyphicon-white");
+          aTag.appendChild(iTag);
+
+          // Adding the elements to the outer span
+          outerSpan.appendChild(innerSpan);
+          outerSpan.appendChild(aTag);
+          $('#constraints-td').append(outerSpan); // add after constraint button
+        }
+    }
+
+    Modal.hide('constraintModalTemplate');
   }
 
 });
