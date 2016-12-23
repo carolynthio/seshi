@@ -928,3 +928,24 @@ li.active a, li.active a:hover {
 .each-student {
   list-style: none;
 }
+
+.student {
+  border: 1px solid black;
+  background-color: white;
+  margin: 5px;
+}
+
+.student-name {
+  margin-left: 10px;
+  color: #2b3F54;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 14px;
+}
+
+.student-gender{
+  margin-left: 10px;
+  color: #2b3F54;
+  font-family: Helvetica, Arial, sans-serif;
+  font-size: 12px;
+
+}

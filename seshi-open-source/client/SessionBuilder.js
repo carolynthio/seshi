@@ -60,9 +60,6 @@ Meteor.startup(function (){
 	});
     });
 
-    /* Nav Bar */
-    /* end nav bar */
-
 })
 
 /* Helper functions */
@@ -515,6 +512,11 @@ Template.SessionBuilder.helpers({
 	// });
 
 	return papers;
+    },
+
+    // student roster
+    students: function() {
+      return Session.get("students");
     },
 
     searchResults : function() {
@@ -1276,13 +1278,13 @@ Template.paperWithSessions.helpers({
 //     console.log("teams: " + Session.get('teams')); // nothing prints
 //   });
 
-Template.studentRoster.events({
-  'submit .csv-file': function(event) {
-    console.log(event.target.csvfile);
-    return false;
-  }
-
-});
+// Template.studentRoster.events({
+//   'submit .csv-file': function(event) {
+//     console.log(event.target.csvfile);
+//     return false;
+//   }
+//
+// });
 
 /*******************************************************************
 Session template helpers
@@ -1972,7 +1974,12 @@ Template.constraints.events({
 
   'click #optimizeTeamsButton': function() {
     if ($('#numStudents').val() != "") {
-      Meteor.call('callPython', $('#numStudents').val(), "1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20",
+      // Converts object array to string 
+      var studentNames = Session.get("students").map(function(item) {
+          return item['Name'];
+      });
+      // console.log(JSON.stringify(Session.get("students")));
+      Meteor.call('callPython', $('#numStudents').val(), studentNames,
         function(error, result) {
           if (error) {
             console.log(error);
@@ -2062,7 +2069,7 @@ Template.constraints.events({
               for (j=0; j < finalArray[i].length; j++) {
                 var student =
                   "<tr class=\"each-student\">" +
-                    "<td> Student " + finalArray[i][j] + " </td>" +
+                    "<td>" + finalArray[i][j] + " </td>" +
                   "</tr>";
 
                 var studentNames = "#studentNames" + i

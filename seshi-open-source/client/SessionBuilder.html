@@ -74,11 +74,11 @@
 	  <button class="btn btn-xs btn-success toggle-paper-sessions">sessions</button>
 	</div>
 
-  {{> studentRoster}}
+  {{> upload}}
 
-	<ul id="paper-deck" class="deck ui-sortable">
+	<!-- <ul id="paper-deck" class="deck ui-sortable"> -->
 	  <!--	<li class="sort-disabled"></li>-->
-	  {{#if inputIsNotEmpty}}
+	  <!-- {{#if inputIsNotEmpty}}
 	  {{#each searchResults}}
           {{#if passPaperFilters}}
 	  <div>
@@ -95,7 +95,12 @@
 	  {{/if}}
 	  {{/each}}
 	  {{/if}}
-	</ul>
+	</ul> -->
+  <ul id="paper-deck" class="deck ui-sortable">
+    {{#each students}}
+      {{> studentRoster}}
+    {{/each}}
+  </ul>
 
       </div>
 
@@ -267,11 +272,27 @@
   </li>
 </template>
 
+<template name="upload">
+  <h4 class="page-header">Upload a CSV</h4>
+
+  {{#unless uploading}}
+    <input type="file" name="uploadCSV">
+  {{else}}
+    <p><i class="fa fa-spin fa-refresh"></i> Uploading files...</p>
+  {{/unless}}
+</template>
+
 <template name="studentRoster">
-  <form class="csv-file">
-    <input type="file" name="csvfile" id="csvFileInput">
-    <input type="submit" value="Upload">
-  </form>
+  <li>
+    <div class="student">
+      <div class="student-name">
+        {{this.Name}}
+      </div>
+      <div class="student-gender">
+        {{this.Sex}}
+      </div>
+    </div>
+  </li>
 </template>
 
 <template name="paperSession">
@@ -432,7 +453,7 @@
       </td>
     </tr>
     <tr class="constraints-row">
-      <button id="optimizeTeamsButton">Optimize Teams</button>
+      <button id="optimizeTeamsButton">Create Teams</button>
       <td></td>
     </tr>
   </table>

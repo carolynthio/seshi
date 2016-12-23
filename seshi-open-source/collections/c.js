@@ -22,6 +22,7 @@ SOFTWARE.
 Papers = new Meteor.Collection("papers");
 Sessions = new Meteor.Collection("sessions");
 Logs = new Meteor.Collection("logs");
+Students = new Meteor.Collection("students");
 
 Meteor.methods({
     updateAccepted: function(paperIds){
@@ -34,4 +35,3 @@ Meteor.methods({
 		      {multi:true});
     }
 });
-
