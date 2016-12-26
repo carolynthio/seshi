@@ -32,47 +32,49 @@
 	  <h3 id="paperlist-header">Student Roster</h3>
 	</div>
 
-	<div id="paperlist-filters">
-	<b>Need your help:</b>
-	<span id="filters" class="list-buttons btn-group">
-	  <button class="btn btn-xs btn-default without-session"><!--{{numPapersNotInSession}} -->papers not in any valid sessions </button><br/>
-	  <button class="btn btn-xs btn-default without-approved"><!--{{numPapersNotInApprovedSession}} -->papers not in an approved session</button><br/>
-	  <button class="btn btn-xs btn-default without-two-approved"><!--{{numPapersNotInTwoApprovedSessions}} -->papers in &lt; 2 approved sessions</button><br/>
-	</span>
-	</div>
-	  Keyword:
-	<span class="keyword-buttons list-buttons btn-group">
-	  <button id="keyword-filter" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
-	    {{getKeywordFilterText}} ({{countSelectedKeywordMatches}})
-	    <span class="caret"></span>
-	    <span class="sr-only">Toggle Dropdown</span>
-	  </button>
-	  <ul class="dropdown-menu" role="menu">
-	    <li class='keyword-options'><a class='keyword-option'>All ({{countAll}})</a></li>
-	    {{#each getKeywords}}
-	    {{#if hasKeywordMatches}}
-	    <li class='keyword-options'><a class='keyword-option'>{{this}} ({{countKeywordMatches}})</a></li>
-  	    {{/if}}
-	    {{/each}}
-	  </ul>
-	</span>
-	<!-- PAPER LIST STARTS HERE -->
-	<div class="paper-search-input">
-	  {{> EasySearch.Input index=PapersIndex id="paper-search" autocomplete="off" placeholder="Search title, author, abstract, keyword, or id" }}
-	</div>
+  <div class="hidden">
+  	<div id="paperlist-filters">
+  	<b>Need your help:</b>
+  	<span id="filters" class="list-buttons btn-group">
+  	  <button class="btn btn-xs btn-default without-session"><!--{{numPapersNotInSession}} -->papers not in any valid sessions </button><br/>
+  	  <button class="btn btn-xs btn-default without-approved"><!--{{numPapersNotInApprovedSession}} -->papers not in an approved session</button><br/>
+  	  <button class="btn btn-xs btn-default without-two-approved"><!--{{numPapersNotInTwoApprovedSessions}} -->papers in &lt; 2 approved sessions</button><br/>
+  	</span>
+  	</div>
+  	  Keyword:
+  	<span class="keyword-buttons list-buttons btn-group">
+  	  <button id="keyword-filter" class="btn btn-default btn-sm dropdown-toggle" data-toggle="dropdown">
+  	    {{getKeywordFilterText}} ({{countSelectedKeywordMatches}})
+  	    <span class="caret"></span>
+  	    <span class="sr-only">Toggle Dropdown</span>
+  	  </button>
+  	  <ul class="dropdown-menu" role="menu">
+  	    <li class='keyword-options'><a class='keyword-option'>All ({{countAll}})</a></li>
+  	    {{#each getKeywords}}
+  	    {{#if hasKeywordMatches}}
+  	    <li class='keyword-options'><a class='keyword-option'>{{this}} ({{countKeywordMatches}})</a></li>
+    	    {{/if}}
+  	    {{/each}}
+  	  </ul>
+  	</span>
+  	<!-- PAPER LIST STARTS HERE -->
+  	<!-- <div class="paper-search-input">
+  	  {{> EasySearch.Input index=PapersIndex id="paper-search" autocomplete="off" placeholder="Search title, author, abstract, keyword, or id" }}
+  	</div> -->
 
 
 
-	<div class='current-status'><span id="paper-count">Showing {{numPapersDisplayed}} papers {{#if inputIsNotEmpty}} containing "{{searchKey}}" {{/if}}{{keywordStatus}}{{filterStatus}}</span></div>
-	<div class="show-all-status"><a class="show-all-link">Show all {{#if inputIsNotEmpty}}<!--{{numSearchPapers}} -->papers containing "{{searchKey}}"{{else}}<!--{{numTotalPapers}}-->papers{{/if}}</a></div>
+  	<div class='current-status'><span id="paper-count">Showing {{numPapersDisplayed}} papers {{#if inputIsNotEmpty}} containing "{{searchKey}}" {{/if}}{{keywordStatus}}{{filterStatus}}</span></div>
+  	<div class="show-all-status"><a class="show-all-link">Show all {{#if inputIsNotEmpty}}<!--{{numSearchPapers}} -->papers containing "{{searchKey}}"{{else}}<!--{{numTotalPapers}}-->papers{{/if}}</a></div>
 
-	<div id="paperlist-buttons">
-	  See all:
-	  <button class="btn btn-xs btn-success toggle-authors">authors</button>
-	  <button class="btn btn-xs btn-success toggle-abstracts">abstracts</button>
-	  <button class="btn btn-xs btn-success toggle-keywords">keywords</button>
-	  <button class="btn btn-xs btn-success toggle-paper-sessions">sessions</button>
-	</div>
+  	<div id="paperlist-buttons">
+  	  See all:
+  	  <button class="btn btn-xs btn-success toggle-authors">authors</button>
+  	  <button class="btn btn-xs btn-success toggle-abstracts">abstracts</button>
+  	  <button class="btn btn-xs btn-success toggle-keywords">keywords</button>
+  	  <button class="btn btn-xs btn-success toggle-paper-sessions">sessions</button>
+  	</div>
+  </div>
 
   {{> upload}}
 
@@ -96,7 +98,8 @@
 	  {{/each}}
 	  {{/if}}
 	</ul> -->
-  <ul id="paper-deck" class="deck ui-sortable">
+  {{> filter}}
+  <ul id="paper-deck" >
     {{#each students}}
       {{> studentRoster}}
     {{/each}}
@@ -273,23 +276,45 @@
 </template>
 
 <template name="upload">
-  <h4 class="page-header">Upload a CSV</h4>
-
   {{#unless uploading}}
-    <input type="file" name="uploadCSV">
+    <input type="file" name="uploadCSV" style="display: inline;">
+    <button id="submitFile" disabled>Create Student Roster</button>
   {{else}}
     <p><i class="fa fa-spin fa-refresh"></i> Uploading files...</p>
   {{/unless}}
 </template>
 
+<template name="filter">
+  <form>
+    <div class="multiselect">
+        <div class="selectBox">
+            <select>
+                <option>Filters</option>
+            </select>
+            <div class="overSelect"></div>
+        </div>
+        <div id="filter-checkboxes">
+            <label for="genderCheck"><input type="checkbox" id="genderCheck"/>Gender</label>
+            <label for="leadershipCheck"><input type="checkbox" id="leadershipCheck"/>Leadership</label>
+        </div>
+    </div>
+  </form>
+</template>
+
 <template name="studentRoster">
   <li>
-    <div class="student">
+    <div class="student draggable-student">
+      <i class="fa fa-chevron-down student-details" aria-hidden="true" style="float:right; margin-right: 10px;"></i>
       <div class="student-name">
         {{this.Name}}
       </div>
-      <div class="student-gender">
-        {{this.Sex}}
+      <div class="student-attributes hidden">
+        <div class="student-gender">
+          {{this.Sex}}
+        </div>
+        <div class="student-leadership">
+          {{this.[Leadership Role]}}
+        </div>
       </div>
     </div>
   </li>
@@ -557,6 +582,10 @@
 			</div>
 		</div>
 	</div>
+</template>
+
+<template name="calendar">
+  {{> fullcalendar options}}
 </template>
 
 <!-- <template name="team">

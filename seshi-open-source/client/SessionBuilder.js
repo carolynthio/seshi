@@ -1278,13 +1278,36 @@ Template.paperWithSessions.helpers({
 //     console.log("teams: " + Session.get('teams')); // nothing prints
 //   });
 
-// Template.studentRoster.events({
-//   'submit .csv-file': function(event) {
-//     console.log(event.target.csvfile);
-//     return false;
-//   }
-//
-// });
+Template.studentRoster.rendered = function(){
+    // make each student in roster draggable within list
+  //   var sortlists = $(".student-names").sortable({
+  //    connectWith : ".student-names",
+  //    items       : ".student:not(.each-student)",
+  //    tolerance   : 'pointer',
+  //    revert      : 'invalid',
+  //    forceHelperSize: true
+   //
+  //  });
+
+  var studentList = $(".draggable-student").draggable({
+    connectToSortable: '.each-team',
+    helper: 'clone',
+    revert: 'invalid'
+  });
+};
+
+Template.studentRoster.events({
+  // Click student to display more info
+  'click .student-details' : function(e) {
+    if ($(e.target).parents(".student").find(".student-attributes").hasClass("hidden")) {
+      $(e.target).parents(".student").find(".student-attributes").removeClass("hidden");
+      $(e.target).parents(".student").find(".student-attributes").find("div").removeClass("hidden");
+    } else {
+      $(e.target).parents(".student").find(".student-attributes").addClass("hidden");
+    }
+  }
+
+});
 
 /*******************************************************************
 Session template helpers
@@ -1535,6 +1558,9 @@ Template.SessionBuilder.events({
 
         // Change/remove current tab to active
         $(e.target).parent('li').addClass('active').siblings().removeClass('active');
+
+        // render calendar within tab
+        $('.fc').fullCalendar('render');
 
         e.preventDefault();
     }
@@ -1974,11 +2000,11 @@ Template.constraints.events({
 
   'click #optimizeTeamsButton': function() {
     if ($('#numStudents').val() != "") {
-      // Converts object array to string 
+      // Converts object array to string
       var studentNames = Session.get("students").map(function(item) {
           return item['Name'];
       });
-      // console.log(JSON.stringify(Session.get("students")));
+
       Meteor.call('callPython', $('#numStudents').val(), studentNames,
         function(error, result) {
           if (error) {
@@ -2040,9 +2066,9 @@ Template.constraints.events({
 
                   "<div class=\"tab-content\">" +
                       "<div id=\"tab1_" + i +"\" class=\"tab active\">" +
-                          "<table class=\"student-names\" id=\"studentNames" + i + "\">" +
+                          "<ul class=\"student-names each-team\" id=\"studentNames" + i + "\">" +
 
-                          "</table>" +
+                          "</ul>" +
                       "</div>" +
 
                       "<div id=\"tab2_" + i +"\" class=\"tab\">" +
@@ -2051,8 +2077,8 @@ Template.constraints.events({
                       "</div>" +
 
                       "<div id=\"tab3_" + i +"\" class=\"tab\">" +
-                          "<p>Tab #3 content goes here!</p>" +
-                          "<p>Donec pulvinar neque sed semper lacinia. Curabitur lacinia ullamcorper nibh; quis imperdiet velit eleifend ac. Donec blandit mauris eget aliquet lacinia! Donec pulvinar massa interdum ri.</p>" +
+                          // "<p>Tab #3 content goes here!</p>" +
+                          // "<p>Donec pulvinar neque sed semper lacinia. Curabitur lacinia ullamcorper nibh; quis imperdiet velit eleifend ac. Donec blandit mauris eget aliquet lacinia! Donec pulvinar massa interdum ri.</p>" +
                       "</div>" +
                   "</div>" +
                 "</div>" +
@@ -2068,14 +2094,33 @@ Template.constraints.events({
               // Append student to each team
               for (j=0; j < finalArray[i].length; j++) {
                 var student =
-                  "<tr class=\"each-student\">" +
-                    "<td>" + finalArray[i][j] + " </td>" +
-                  "</tr>";
+                  "<li class=\"each-student student\">" +
+                    finalArray[i][j] +
+                  "</li>";
 
                 var studentNames = "#studentNames" + i
                 $(studentNames).append(student);
               }
+
+              // insert calendar template
+              Blaze.render( Template.calendar, $( '#tab3_'+i ).get(0) );
           }
+
+          // each student in the team
+          var sortlists = $(".student-names").sortable({
+           connectWith : ".student-names",
+           items       : ".student",
+           tolerance   : 'pointer',
+           revert      : 'invalid',
+           forceHelperSize: true
+
+         });
+
+         var dropped = $(".student-names").droppable({
+            drop : function(event,ui) {
+                 ui.helper.children(".student-details").hide();
+            }
+         });
 
         });
         // console.log("outside meteor.call: " + Session.get('teams'));
@@ -2092,7 +2137,8 @@ Template.constraints.events({
      revert      : 'invalid',
      forceHelperSize: true
 
-   })
+    });
+
   },
 
   'click .remove' : function(e) {
@@ -2179,16 +2225,39 @@ Template.constraintModalTemplate.events({
 
 });
 
-// Template.team.events({
-//   'click .tabs .tab-links a' : function(e)  {
-//       var currentAttrValue = e.target.getAttribute('href');
-//
-//       // Show/Hide Tabs
-//       $('.tabs ' + currentAttrValue).show().siblings().hide();
-//
-//       // Change/remove current tab to active
-//       $(e.target).parent('li').addClass('active').siblings().removeClass('active');
-//
-//       e.preventDefault();
-//   }
-// });
+Template.filter.events({
+  'click .selectBox' : function() {
+    var checkboxes = document.getElementById("filter-checkboxes");
+    if (checkboxes.style.display == "none") {
+        checkboxes.style.display = "block";
+    } else {
+        checkboxes.style.display = "none";
+    }
+
+    if ($('#genderCheck:checkbox:checked').length != 0) {
+      $(".student-gender, .student-attributes").removeClass("hidden");
+    } else {
+      $(".student-gender").addClass("hidden");
+    }
+
+    if ($('#leadershipCheck:checkbox:checked').length != 0) {
+      $(".student-leadership, .student-attributes").removeClass("hidden");
+    } else {
+      $(".student-leadership").addClass("hidden");
+    }
+  }
+});
+
+Template.calendar.helpers({
+  options: function() {
+        return {
+            defaultView: 'agendaWeek',
+            aspectRatio: 2,
+            header : false,
+            allDaySlot: false,
+            columnFormat: 'ddd',
+            minTime: "08:00:00", //8am
+            maxTime: "21:00:00" //9pm
+        };
+    }
+});

@@ -925,14 +925,12 @@ li.active a, li.active a:hover {
 
 /* end team */
 
-.each-student {
-  list-style: none;
-}
-
+/* Student Roster */
 .student {
   border: 1px solid black;
   background-color: white;
   margin: 5px;
+  list-style: none;
 }
 
 .student-name {
@@ -942,10 +940,49 @@ li.active a, li.active a:hover {
   font-size: 14px;
 }
 
-.student-gender{
+.student-gender, .student-leadership{
   margin-left: 10px;
   color: #2b3F54;
   font-family: Helvetica, Arial, sans-serif;
   font-size: 12px;
 
+}
+/* end student roster */
+
+/* filter */
+.multiselect {
+    width: 200px;
+}
+.selectBox {
+    position: relative;
+}
+.selectBox select {
+    width: 100%;
+    font-weight: bold;
+}
+.overSelect {
+    position: absolute;
+    left: 0; right: 0; top: 0; bottom: 0;
+}
+#filter-checkboxes {
+    display: none;
+    border: 1px #dadada solid;
+}
+#filter-checkboxes label {
+    display: block;
+}
+#filter-checkboxes label:hover {
+    background-color: #1e90ff;
+}
+/* end filter */
+
+#submitFile {
+  background-color: #1FBA95;
+  color: white;
+  margin-top: 5px;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+#submitFile:disabled {
+  background-color: #E6E6E6;
 }

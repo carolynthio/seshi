@@ -9,16 +9,14 @@ Template.upload.helpers({
 });
 
 Template.upload.events({
-  'change [name="uploadCSV"]' ( event, template ) {
-    // We'll handle the conversion and upload here.
-  }
-});
+  'change [name="uploadCSV"]' () {
+    $('#submitFile').removeAttr('disabled');
+  },
 
-Template.upload.events({
-  'change [name="uploadCSV"]' ( event, template ) {
+  'click #submitFile' ( event, template ) {
     template.uploading.set( true );
-
-    Papa.parse( event.target.files[0], {
+    var csv_file = $('input[name="uploadCSV"]')[0].files[0];
+    Papa.parse( csv_file, {
       header: true,
       complete( results, file ) {
         Meteor.call( 'parseUpload', results.data, ( error, response ) => {
