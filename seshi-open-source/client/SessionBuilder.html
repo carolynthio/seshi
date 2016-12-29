@@ -67,16 +67,20 @@
   	<div class='current-status'><span id="paper-count">Showing {{numPapersDisplayed}} papers {{#if inputIsNotEmpty}} containing "{{searchKey}}" {{/if}}{{keywordStatus}}{{filterStatus}}</span></div>
   	<div class="show-all-status"><a class="show-all-link">Show all {{#if inputIsNotEmpty}}<!--{{numSearchPapers}} -->papers containing "{{searchKey}}"{{else}}<!--{{numTotalPapers}}-->papers{{/if}}</a></div>
 
-  	<div id="paperlist-buttons">
-  	  See all:
-  	  <button class="btn btn-xs btn-success toggle-authors">authors</button>
-  	  <button class="btn btn-xs btn-success toggle-abstracts">abstracts</button>
-  	  <button class="btn btn-xs btn-success toggle-keywords">keywords</button>
-  	  <button class="btn btn-xs btn-success toggle-paper-sessions">sessions</button>
-  	</div>
+
   </div>
 
   {{> upload}}
+
+  <div id="paperlist-buttons">
+    Filters:
+    <!-- <button class="btn btn-xs btn-success toggle-authors">authors</button>
+    <button class="btn btn-xs btn-success toggle-abstracts">abstracts</button>
+    <button class="btn btn-xs btn-success toggle-keywords">keywords</button>
+    <button class="btn btn-xs btn-success toggle-paper-sessions">sessions</button> -->
+    <button class="btn btn-xs btn-success toggle-gender">gender</button>
+    <button class="btn btn-xs btn-success toggle-leadership">leadership</button>
+  </div>
 
 	<!-- <ul id="paper-deck" class="deck ui-sortable"> -->
 	  <!--	<li class="sort-disabled"></li>-->
@@ -98,7 +102,6 @@
 	  {{/each}}
 	  {{/if}}
 	</ul> -->
-  {{> filter}}
   <ul id="paper-deck" >
     {{#each students}}
       {{> studentRoster}}
@@ -284,7 +287,7 @@
   {{/unless}}
 </template>
 
-<template name="filter">
+<!-- <template name="filter">
   <form>
     <div class="multiselect">
         <div class="selectBox">
@@ -299,7 +302,7 @@
         </div>
     </div>
   </form>
-</template>
+</template> -->
 
 <template name="studentRoster">
   <li>
@@ -308,13 +311,11 @@
       <div class="student-name">
         {{this.Name}}
       </div>
-      <div class="student-attributes hidden">
-        <div class="student-gender">
-          {{this.Sex}}
-        </div>
-        <div class="student-leadership">
-          {{this.[Leadership Role]}}
-        </div>
+      <div class="student-attribute student-gender {{#if genderCollapsed}} hidden {{else}} show {{/if}}">
+        {{this.Sex}}
+      </div>
+      <div class="student-attribute student-leadership {{#if leadershipCollapsed}} hidden {{else}} show {{/if}}">
+        {{this.[Leadership Role]}}
       </div>
     </div>
   </li>

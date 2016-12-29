@@ -39,7 +39,10 @@ Session.set("showUnapprovedSessions", false);
 Session.set("showValidSessions", false);
 Session.set('paperSearchVal', "");
 Session.set('sessionSearchVal', "");
-Session.set('anonymousName', "Anonymous")
+Session.set('anonymousName', "Anonymous");
+
+Session.set("showAllGenders", true);
+Session.set("showAllLeadership", true);
 
 Meteor.startup(function (){
     Session.set("searchResults", []); //Papers.find({active:true}).fetch());
@@ -1186,6 +1189,14 @@ Template.paper.events({
     }
 });
 
+Template.studentRoster.helpers({
+  genderCollapsed : function(){
+    return !Session.get('showAllGenders');
+  },
+  leadershipCollapsed : function(){
+    return !Session.get('showAllLeadership');
+  },
+});
 Template.paperWithSessions.helpers({
     paperSessions : function(){
 	var sessionIDs = this.sessions;
@@ -1292,19 +1303,18 @@ Template.studentRoster.rendered = function(){
   var studentList = $(".draggable-student").draggable({
     connectToSortable: '.each-team',
     helper: 'clone',
-    revert: 'invalid'
+    revert: 'invalid',
+    start: function (e,u){
+  	    $(u.helper).addClass("dragged-wide-student")
+  	},
   });
 };
 
 Template.studentRoster.events({
   // Click student to display more info
   'click .student-details' : function(e) {
-    if ($(e.target).parents(".student").find(".student-attributes").hasClass("hidden")) {
-      $(e.target).parents(".student").find(".student-attributes").removeClass("hidden");
-      $(e.target).parents(".student").find(".student-attributes").find("div").removeClass("hidden");
-    } else {
-      $(e.target).parents(".student").find(".student-attributes").addClass("hidden");
-    }
+    toggleDetails($(e.target).parents('.student').find('.student-gender'), '.toggle-gender');
+    toggleDetails($(e.target).parents('.student').find('.student-leadership'), '.toggle-leadership');
   }
 
 });
@@ -1440,6 +1450,16 @@ Template.SessionBuilder.events({
     'click .toggle-authors' : function(){
 	toggleButton('showAllAuthors', '#paper-deck .paper .authors-container',
 		     '.toggle-authors', 'btn-info', 'btn-success');
+    },
+
+    'click .toggle-gender' : function(){
+    toggleButton('showAllGenders', '#paper-deck .student .student-gender',
+         '.toggle-gender', 'btn-info', 'btn-success');
+    },
+
+    'click .toggle-leadership' : function(){
+    toggleButton('showAllLeadership', '#paper-deck .student .student-leadership',
+         '.toggle-leadership', 'btn-info', 'btn-success');
     },
 
     'click .toggle-paper-sessions' : function(){
@@ -2077,8 +2097,6 @@ Template.constraints.events({
                       "</div>" +
 
                       "<div id=\"tab3_" + i +"\" class=\"tab\">" +
-                          // "<p>Tab #3 content goes here!</p>" +
-                          // "<p>Donec pulvinar neque sed semper lacinia. Curabitur lacinia ullamcorper nibh; quis imperdiet velit eleifend ac. Donec blandit mauris eget aliquet lacinia! Donec pulvinar massa interdum ri.</p>" +
                       "</div>" +
                   "</div>" +
                 "</div>" +
@@ -2118,7 +2136,10 @@ Template.constraints.events({
 
          var dropped = $(".student-names").droppable({
             drop : function(event,ui) {
+              // may change later to just be objects
                  ui.helper.children(".student-details").hide();
+                 ui.helper.children(".student-attribute").removeClass("show").addClass("hidden");
+                 ui.helper.css("height", "22px");
             }
          });
 
@@ -2225,28 +2246,28 @@ Template.constraintModalTemplate.events({
 
 });
 
-Template.filter.events({
-  'click .selectBox' : function() {
-    var checkboxes = document.getElementById("filter-checkboxes");
-    if (checkboxes.style.display == "none") {
-        checkboxes.style.display = "block";
-    } else {
-        checkboxes.style.display = "none";
-    }
-
-    if ($('#genderCheck:checkbox:checked').length != 0) {
-      $(".student-gender, .student-attributes").removeClass("hidden");
-    } else {
-      $(".student-gender").addClass("hidden");
-    }
-
-    if ($('#leadershipCheck:checkbox:checked').length != 0) {
-      $(".student-leadership, .student-attributes").removeClass("hidden");
-    } else {
-      $(".student-leadership").addClass("hidden");
-    }
-  }
-});
+// Template.filter.events({
+//   'click .selectBox' : function() {
+//     var checkboxes = document.getElementById("filter-checkboxes");
+//     if (checkboxes.style.display == "none") {
+//         checkboxes.style.display = "block";
+//     } else {
+//         checkboxes.style.display = "none";
+//     }
+//
+//     if ($('#genderCheck:checkbox:checked').length != 0) {
+//       $(".student-gender, .student-attributes").removeClass("hidden");
+//     } else {
+//       $(".student-gender").addClass("hidden");
+//     }
+//
+//     if ($('#leadershipCheck:checkbox:checked').length != 0) {
+//       $(".student-leadership, .student-attributes").removeClass("hidden");
+//     } else {
+//       $(".student-leadership").addClass("hidden");
+//     }
+//   }
+// });
 
 Template.calendar.helpers({
   options: function() {

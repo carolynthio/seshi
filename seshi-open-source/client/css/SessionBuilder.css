@@ -79,6 +79,9 @@ body{
     width: 300px;
 }
 
+.dragged-wide-student {
+    width: 298px;
+}
 
 .dragged-session {
     width: 300px;
@@ -950,7 +953,7 @@ li.active a, li.active a:hover {
 /* end student roster */
 
 /* filter */
-.multiselect {
+/*.multiselect {
     width: 200px;
 }
 .selectBox {
@@ -973,7 +976,7 @@ li.active a, li.active a:hover {
 }
 #filter-checkboxes label:hover {
     background-color: #1e90ff;
-}
+}*/
 /* end filter */
 
 #submitFile {
