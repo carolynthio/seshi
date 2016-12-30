@@ -10,7 +10,7 @@ Meteor.methods({
     // console.log("after spawn");
     // var output = "";
     var sync = Meteor.wrapAsync(exec);
-    var cmd = "python /Users/carolynthio/Desktop/randomTeams.py " + number + " " + list;
+    var cmd = "python assets/app/randomTeams.py " + " " + number + " " + list;
     var result = sync(cmd);
 
     // process.stdout.on('data', function (data){
