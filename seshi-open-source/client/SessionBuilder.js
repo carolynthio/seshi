@@ -1196,6 +1196,12 @@ Template.studentRoster.helpers({
   leadershipCollapsed : function(){
     return !Session.get('showAllLeadership');
   },
+  isLeader: function(leader) {
+    return leader === "1";
+  },
+  isFemale: function(gender) {
+    return gender === "1";
+  }
 });
 Template.paperWithSessions.helpers({
     paperSessions : function(){
@@ -1528,24 +1534,38 @@ Template.SessionBuilder.events({
     },
 
     'click input[type=checkbox]': function(e, u){
-	var numChecked = $(e.target).parent().find('input[name="approval"]:checked').length;
-	var sessionID = $(e.target).closest('div.session').attr("id");
-	if (numChecked == 3){
-	    Sessions.update({_id: sessionID},
-			    {$set: {approved: true},
-			     $push: {contributors : logSessionAction('approve')}
-			    });
-	    logAction('approve', {sessionID: sessionID});
-	    // toggle the approve
-	    $(e.target).closest('div.session').find('.approve-session-button').trigger('click');
-	}else{
-	    if(Sessions.findOne({_id: sessionID}).approved){
-		// TODO: inefficient?
-		logAction('unapprove', {sessionID: sessionID});
-		Sessions.update({_id: sessionID},
-				{$set: {approved: false}});
-	    }
-	}
+      var id = $(e.target)[0].id;
+      if (id != "myonoffswitch") {
+      	var numChecked = $(e.target).parent().find('input[name="approval"]:checked').length;
+      	var sessionID = $(e.target).closest('div.session').attr("id");
+      	if (numChecked == 3){
+      	    Sessions.update({_id: sessionID},
+      			    {$set: {approved: true},
+      			     $push: {contributors : logSessionAction('approve')}
+      			    });
+      	    logAction('approve', {sessionID: sessionID});
+      	    // toggle the approve
+      	    $(e.target).closest('div.session').find('.approve-session-button').trigger('click');
+      	}else{
+      	    if(Sessions.findOne({_id: sessionID}).approved){
+      		// TODO: inefficient?
+      		logAction('unapprove', {sessionID: sessionID});
+      		Sessions.update({_id: sessionID},
+      				{$set: {approved: false}});
+      	    }
+      	}
+      }
+      // Manual and Suggested switch
+      else {
+        // It is manual
+        if ($('#' + id+ ':checked').length == 0) {
+          console.log("IT IS manual");
+        }
+        // It is suggested
+        else {
+          console.log("IT IS Suggested");
+        }
+      }
     },
 
 
@@ -2022,8 +2042,16 @@ Template.constraints.events({
     if ($('#numStudents').val() != "") {
       // Converts object array to string
       var studentNames = Session.get("students").map(function(item) {
-          return item['Name'];
+          return item['name'];
       });
+      // var studentIds = Session.get("students").map(function(item) {
+      //     return item._id;
+      // });
+      console.log("STUDENTNAMES");
+      console.log(studentNames);
+      // console.log("ID"); // right now id is undefined?
+      // console.log(studentIds);
+      // console.log(Session.get("students"));
 
       Meteor.call('callPython', $('#numStudents').val(), studentNames,
         function(error, result) {
@@ -2114,6 +2142,7 @@ Template.constraints.events({
                 var student =
                   "<li class=\"each-student student\">" +
                     finalArray[i][j] +
+                    "<i class=\"swap fa fa-exchange\" aria-hidden=\"true\" style=\"float:right;margin-right: 10px;margin-top: 3px;\"></i>" +
                   "</li>";
 
                 var studentNames = "#studentNames" + i

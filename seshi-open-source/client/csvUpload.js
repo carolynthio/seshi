@@ -25,6 +25,7 @@ Template.upload.events({
           } else {
             template.uploading.set( false );
             Bert.alert( 'Upload complete!', 'success', 'growl-top-right' );
+            console.log("IN CSVUPLOAD.JS CLIENT: " + JSON.stringify(results.data))
             Session.set("students", results.data);
           }
         });

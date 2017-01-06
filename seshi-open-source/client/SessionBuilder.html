@@ -309,13 +309,14 @@
     <div class="student draggable-student">
       <i class="fa fa-chevron-down student-details" aria-hidden="true" style="float:right; margin-right: 10px;"></i>
       <div class="student-name">
-        {{this.Name}}
+        {{this.name}}
       </div>
       <div class="student-attribute student-gender {{#if genderCollapsed}} hidden {{else}} show {{/if}}">
-        {{this.Sex}}
+        {{#if isFemale this.gender}} Female {{else}} Male {{/if}}
       </div>
       <div class="student-attribute student-leadership {{#if leadershipCollapsed}} hidden {{else}} show {{/if}}">
-        {{this.[Leadership Role]}}
+        <!-- {{this.[Leadership Role]}} -->
+        {{#if isLeader this.leadership}} Leader {{else}} Follower {{/if}}
       </div>
     </div>
   </li>

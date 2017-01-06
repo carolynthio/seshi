@@ -24,6 +24,7 @@
 body{
     font-family: Helvetica, Arial, sans-serif;
     height: 100%;
+    overflow: hidden;
 }
 .gamechangestar {
     color: green;
@@ -231,10 +232,18 @@ body {
  }
 
 /* Making teams into two columns and draggable */
+.each-student i.swap {
+  display: none;
+}
+
+.each-student:hover i.swap {
+  display: block;
+  color:#1FBA95;
+}
  .teamColumn {
      float: left;
      margin: 6px;
-     height: 700px;
+     height: 590px;
      overflow: auto;
  }
 
@@ -276,7 +285,7 @@ body {
 
 #paper-deck {
 	background-color: #eee;
-	height: 500px;
+	height: 600px;
 	overflow: auto;
 	list-style: none;
 	list-style-type: none;
