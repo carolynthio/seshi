@@ -121,6 +121,9 @@
 	  </div>
 	</div> -->
 	<div id="sessionarea" style="overflow-y: scroll; height:720px;">
+    {{#unless creatingTeams}}
+      <p><i class="fa fa-spin fa-refresh"></i> Creating Teams...</p>
+    {{/unless}}
     <div id="pythonCode">
     </div>
     <br>
@@ -129,7 +132,6 @@
 
     <div class="teamColumn" id="teamColumn2">
     </div>
-
     <br>
 	  {{#each workspaceSessions}}
           {{#if watchedSession}}
@@ -469,7 +471,9 @@
         </div>
         <div style="color: #2B3F54; float: right;">
           <b>STUDENTS PER TEAM</b>
-          <input type="number" id="numStudents" min="0">
+          <input type="number" placeholder="min" id="numStudentsLo" min="0">
+          -
+          <input type="number" placeholder="max" id="numStudentsHi" min="0">
         </div>
       </td>
 

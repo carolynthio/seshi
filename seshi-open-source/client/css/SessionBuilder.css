@@ -728,7 +728,7 @@ tr.constraints-row {
   padding-top: 10px;
   padding-bottom: 10px;
 }
-#numStudents {
+#numStudentsLo, #numStudentsHi {
   width: 60px;
   margin-left: 5px;
 }

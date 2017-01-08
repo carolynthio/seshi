@@ -779,7 +779,10 @@ Template.SessionBuilder.helpers({
     numUnnamed : function(){
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
 	return Sessions.find({name: {$in: nullNames}}).count();
-    }
+  },
+  creatingTeams() {
+    return Template.instance().creatingTeams.get();
+  }
 });
 
 
@@ -2032,74 +2035,107 @@ Template.navBar.events({
     });
   }
 });
+Template.SessionBuilder.onCreated( () => {
+  Template.instance().creatingTeams = new ReactiveVar( true );
+});
+
+Template.constraints.onCreated(function() {
+  var parentInstance = this.view.parentView.templateInstance();
+  this.creatingTeams = parentInstance.creatingTeams;
+})
 
 Template.constraints.events({
   'click #constraintsButton': function() {
     Modal.show('constraintModalTemplate');
   },
 
-  'click #optimizeTeamsButton': function() {
-    if ($('#numStudents').val() != "") {
+  'click #optimizeTeamsButton': function(event, template) {
+    template.creatingTeams.set( false );
+    if (($('#numStudentsLo').val() != "") && ($('#numStudentsHi').val() != "")) {
       // Converts object array to string
-      var studentNames = Session.get("students").map(function(item) {
-          return item['name'];
-      });
+      // var studentNames = Session.get("students").map(function(item) {
+      //     return item['name'];
+      // });
       // var studentIds = Session.get("students").map(function(item) {
       //     return item._id;
       // });
-      console.log("STUDENTNAMES");
-      console.log(studentNames);
+      // console.log("STUDENTNAMES");
+      // console.log(studentNames);
       // console.log("ID"); // right now id is undefined?
       // console.log(studentIds);
       // console.log(Session.get("students"));
 
-      Meteor.call('callPython', $('#numStudents').val(), studentNames,
+      // Meteor.call('createTeams', $('#numStudentsLo').val(), $('#numStudentsHi').val(),
+      //   function(error, result) {
+      //     if (error) {
+      //       console.log("Error creating Teams: " + error);
+      //     }
+      //
+      //     console.log("creating teams with new algorithm")
+      //     console.log(result);
+      //
+      //   });
+
+      // Meteor.call('callPython', $('#numStudentsLo').val(), studentNames,
+      Meteor.call('createTeams', $('#numStudentsLo').val(), $('#numStudentsHi').val(),
         function(error, result) {
           if (error) {
             console.log(error);
           }
+          template.creatingTeams.set( true );
           console.log("woo: " + result);
-          Session.set('teams', result);
-          console.log("teams: " + Session.get('teams'));
+          var listOfJsonStrings = result.split(" $ ");
+          var listOfTeams = [];
 
-          var stringTeams = Session.get('teams').toString();
-
-          // For some reason we need to subtract 2 to get the last character
-          var length = stringTeams.length - 2;
-          substringTeams = stringTeams.substring(1, length);
-          console.log("SUBSTRING: " + substringTeams);
-
-          // replace ' with "
-          var replaceQuotesString = substringTeams.replace(/\'/g,"\"");
-          console.log(replaceQuotesString);
-
-          //splitting the string representation of array of arrays
-          var array1 = replaceQuotesString.split('], ');
-          console.log(array1);
-
-          // declare a 2D array
-          var finalArray = new Array(array1.length); // represent array of teams
-          for (i= 0; i < array1.length; i++) {
-
-            // add missing bracket
-            if (i != array1.length-1) {
-              array1[i] += "]";
-            }
-
-            // parse element into an array
-            var array2 = JSON.parse(array1[i]);
-            console.log("array2: " + array2);
-            var tempArray = array2;
-            finalArray[i] = tempArray;
-
+          // Convert string representation back into an object
+          for (i = 0; i < listOfJsonStrings.length-1; i++) {
+            listOfTeams.push(JSON.parse(listOfJsonStrings[i]));
           }
-          console.log("FINAL ARRAY: " + finalArray[0] + " next element: " + finalArray[1] + " all: " + finalArray);
+          console.log("%%%%%%%%%%%%%%%%%%%%%%%%");
+          console.log(listOfTeams);
+
+          // Session.set('teams', result);
+          // console.log("teams: " + Session.get('teams'));
+          //
+          // var stringTeams = Session.get('teams').toString();
+          //
+          // // For some reason we need to subtract 2 to get the last character
+          // var length = stringTeams.length - 2;
+          // substringTeams = stringTeams.substring(1, length);
+          // console.log("SUBSTRING: " + substringTeams);
+          //
+          // // replace ' with "
+          // var replaceQuotesString = substringTeams.replace(/\'/g,"\"");
+          // console.log(replaceQuotesString);
+          //
+          // //splitting the string representation of array of arrays
+          // var array1 = replaceQuotesString.split('], ');
+          // console.log(array1);
+          //
+          // // declare a 2D array
+          // var finalArray = new Array(array1.length); // represent array of teams
+          // for (i= 0; i < array1.length; i++) {
+          //
+          //   // add missing bracket
+          //   if (i != array1.length-1) {
+          //     array1[i] += "]";
+          //   }
+          //
+          //   // parse element into an array
+          //   var array2 = JSON.parse(array1[i]);
+          //   console.log("array2: " + array2);
+          //   var tempArray = array2;
+          //   finalArray[i] = tempArray;
+          //
+          // }
+          // console.log("FINAL ARRAY: " + finalArray[0] + " next element: " + finalArray[1] + " all: " + finalArray);
 
           // print onto screen
           // var div = document.getElementById('pythonCode');
 
           // goes through all the different teams to print
-          for(i=0; i < finalArray.length; i++) {
+          // for(i=0; i < finalArray.length; i++) {
+          for (i=0; i < listOfTeams.length; i++) {
             // div.innerHTML = div.innerHTML + finalArray[i] + "<br>";
 
             var team =
@@ -2137,11 +2173,14 @@ Template.constraints.events({
                 $('#teamColumn2').append(team);
               }
 
+              console.log("!!!!!!!!!!!!!!!!!!!!!!!");
+              console.log(listOfTeams[i].member);
               // Append student to each team
-              for (j=0; j < finalArray[i].length; j++) {
+              for (j=0; j < listOfTeams[i].member.length; j++) {
                 var student =
                   "<li class=\"each-student student\">" +
-                    finalArray[i][j] +
+                    // finalArray[i][j] +
+                    listOfTeams[i].member[j].name +
                     "<i class=\"swap fa fa-exchange\" aria-hidden=\"true\" style=\"float:right;margin-right: 10px;margin-top: 3px;\"></i>" +
                   "</li>";
 

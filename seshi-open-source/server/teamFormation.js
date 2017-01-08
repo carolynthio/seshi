@@ -23,6 +23,13 @@ Meteor.methods({
     // console.log("outside stdout: " + output);
     return result;
   },
+  createTeams: function(minStudents, maxStudents) {
+    var sync = Meteor.wrapAsync(exec);
+    var cmd = "python assets/app/teamFormationAlgorithm.py " + " " + minStudents + " " + maxStudents;
+    var result = sync(cmd);
+
+    return result;
+  },
 
 
 });
