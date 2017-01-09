@@ -25,6 +25,7 @@ class team:
 		self.class_avg_leadership = class_avg_leadership
 		self.class_avg_gender = class_avg_gender
 		self.score = self.calScore();
+		self.overlappingSchedule = self.teamSchedule(combination)
 
 	def __str__(self):
 		res = "";
@@ -45,6 +46,18 @@ class team:
 			totalScore += calLeadership(self.member, self.class_avg_leadership)
 		return totalScore;
 
+	# Returns the overlapping team schedule
+	def teamSchedule(self, students_in_this_team):
+		if (len(students_in_this_team) == 0):
+			return 100 ;
+
+		temp_schedule = students_in_this_team[0].student_schedule;
+
+		for i in range(1,len(students_in_this_team)):
+			temp_schedule = overlap(temp_schedule,students_in_this_team[i].student_schedule);
+
+		schedule = [temp_schedule[x:x+13] for x in range(0, len(temp_schedule), 13)]
+		return schedule;
 
 	def getScore(self):
 		return self.score;
@@ -78,18 +91,6 @@ def calSchedule(students_in_this_team):
 	#print temp_schedule;
 
 	return sum(temp_schedule);
-
-# Returns the overlapping team schedule
-def teamSchedule(students_in_this_team):
-	if (len(students_in_this_team) == 0):
-		return 100 ;
-
-	temp_schedule = students_in_this_team[0].student_schedule;
-
-	for i in range(1,len(students_in_this_team)):
-		temp_schedule = overlap(temp_schedule,students_in_this_team[i].student_schedule);
-
-	return temp_schedule;
 
 # Calculate the schedule score
 def calScheduleScore(students_in_this_team):

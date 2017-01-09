@@ -1602,8 +1602,10 @@ Template.SessionBuilder.events({
         // Change/remove current tab to active
         $(e.target).parent('li').addClass('active').siblings().removeClass('active');
 
+        var id = $(e.target)[0].hash;
+
         // render calendar within tab
-        $('.fc').fullCalendar('render');
+        $(id).fullCalendar('render');
 
         e.preventDefault();
     }
@@ -2156,11 +2158,10 @@ Template.constraints.events({
                       "</div>" +
 
                       "<div id=\"tab2_" + i +"\" class=\"tab\">" +
-                          "<p>Tab #2 content goes here!</p>" +
-                          "<p>Donec pulvinar neque sed semper lacinia. Curabitur lacinia ullamcorper nibh; quis imperdiet velit eleifend ac. Donec blandit mauris eget aliquet lacinia! Donec pulvinar massa interdum risus ornare mollis. In hac habitasse platea dictumst. Ut euismod tempus hendrerit. Morbi ut adipiscing nisi. Etiam rutrum sodales gravida! Aliquam tellus orci, iaculis vel.</p>" +
+                          listOfTeams[i].score.toFixed(3) +
                       "</div>" +
 
-                      "<div id=\"tab3_" + i +"\" class=\"tab\">" +
+                      "<div id=\"tab3_" + i +"\" class=\"tab tab3\">" +
                       "</div>" +
                   "</div>" +
                 "</div>" +
@@ -2173,8 +2174,6 @@ Template.constraints.events({
                 $('#teamColumn2').append(team);
               }
 
-              console.log("!!!!!!!!!!!!!!!!!!!!!!!");
-              console.log(listOfTeams[i].member);
               // Append student to each team
               for (j=0; j < listOfTeams[i].member.length; j++) {
                 var student =
@@ -2189,7 +2188,39 @@ Template.constraints.events({
               }
 
               // insert calendar template
-              Blaze.render( Template.calendar, $( '#tab3_'+i ).get(0) );
+              // Blaze.render( Template.calendar, $( '#tab3_'+i ).get(0) );
+
+              // Creating events to calendar
+              var eventList = []
+              for (k=0; k < listOfTeams[i].overlappingSchedule.length; k++) {
+                var startTime = 8;
+                for (m=0; m < listOfTeams[i].overlappingSchedule[k].length; m++) {
+                  var eachDayArray = listOfTeams[i].overlappingSchedule[k];
+                  if (eachDayArray[m]) {
+                    var newEvent = {
+                      title: "Available",
+                      start: startTime.toString() + ":00",
+                      end: (startTime+1).toString() + ":00",
+                      dow: [k]
+                    };
+                    eventList.push(newEvent);
+                  }
+                  startTime++;
+                }
+              }
+
+              // Create calendar for each tab
+              $( '#tab3_'+i ).fullCalendar({
+                    defaultView: 'agendaWeek',
+                    aspectRatio: 2,
+                    header : false,
+                    allDaySlot: false,
+                    columnFormat: 'ddd',
+                    minTime: "08:00:00", //8am
+                    maxTime: "21:00:00", //9pm
+                    events: eventList
+              });
+
           }
 
           // each student in the team
@@ -2337,16 +2368,16 @@ Template.constraintModalTemplate.events({
 //   }
 // });
 
-Template.calendar.helpers({
-  options: function() {
-        return {
-            defaultView: 'agendaWeek',
-            aspectRatio: 2,
-            header : false,
-            allDaySlot: false,
-            columnFormat: 'ddd',
-            minTime: "08:00:00", //8am
-            maxTime: "21:00:00" //9pm
-        };
-    }
-});
+// Template.calendar.helpers({
+//   options: function() {
+//         return {
+//             defaultView: 'agendaWeek',
+//             aspectRatio: 2,
+//             header : false,
+//             allDaySlot: false,
+//             columnFormat: 'ddd',
+//             minTime: "08:00:00", //8am
+//             maxTime: "21:00:00" //9pm
+//         };
+//     }
+// });
