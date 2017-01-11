@@ -2,6 +2,8 @@
 Created on Dec 15, 2016
 '''
 
+import json
+
 class student:
     '''
     classdocs
@@ -91,6 +93,9 @@ class student:
 
     def __repr__(self):
         return str(self.__dict__);
+
+    def toJSON(self):
+		return json.dumps(self, default=lambda o: o.__dict__,sort_keys=True)
 
 # StudentA =student("A","Male","Balanced",0)
 # StudentA.student_schedule=["1","2","3"]

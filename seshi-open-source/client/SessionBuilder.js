@@ -1608,6 +1608,53 @@ Template.SessionBuilder.events({
         $(id).fullCalendar('render');
 
         e.preventDefault();
+    },
+    'click .each-student' : function(e) {
+      var className = $(e.target)[0].classList[0];
+      $('.suggestedSwaps').removeClass('suggestedSwaps');
+      if (className != "swap") {
+        $('.clickedStudent').removeClass('clickedStudent');
+        $(e.target).addClass('clickedStudent');
+
+        $('.swap').css("display", "none");
+        $(e.target).find('.swap').css({"display": "block", "color":"#1FBA95"});
+      }
+    },
+
+    'click .swap' : function(e) {
+      var student = $(e.target).parent()[0];
+      var name = student.getAttribute("name");
+      var gender = student.getAttribute("gender");
+      var leadership = student.getAttribute("leadership");
+      var schedule = student.getAttribute("schedule");
+
+      Meteor.call('swapStudents', name, gender, leadership, schedule, "'" + Session.get("teams") + "'",
+        function(error, result) {
+          if (error) {
+            console.log(error);
+          }
+
+          // Result is a string representation of list of tuples (student dict, score)
+          console.log("SWAPPING STUDENTS FUNCTION CALL: " + result);
+
+          var resultAsString = result.split(" $ ");
+          var suggestedSwaps = [];
+
+          // Convert string representation back into an object
+          for (i = 0; i < resultAsString.length-1; i++) {
+            var dict_score = resultAsString[i].split(" & ");
+            dict_score[0] = JSON.parse(dict_score[0]);
+            dict_score[1] = parseFloat(dict_score[1]);
+            suggestedSwaps.push(dict_score[0]); // Only push the student object since it is already in sorted order
+          }
+
+          console.log("SUGGESTED SWAPS!!!!!!!!!!!!!!!");
+          console.log(suggestedSwaps);
+
+          for (j = 0; j < suggestedSwaps.length; j++) {
+            $('li[name=\"' + suggestedSwaps[j].name + '\"]').addClass("suggestedSwaps");
+          }
+      });
     }
 });
 
@@ -2086,6 +2133,7 @@ Template.constraints.events({
           }
           template.creatingTeams.set( true );
           console.log("woo: " + result);
+          Session.set("teams", result);
           var listOfJsonStrings = result.split(" $ ");
           var listOfTeams = [];
 
@@ -2158,7 +2206,7 @@ Template.constraints.events({
                       "</div>" +
 
                       "<div id=\"tab2_" + i +"\" class=\"tab\">" +
-                          listOfTeams[i].score.toFixed(3) +
+                          "Overall Score: " + listOfTeams[i].score.toFixed(3) +
                       "</div>" +
 
                       "<div id=\"tab3_" + i +"\" class=\"tab tab3\">" +
@@ -2176,8 +2224,13 @@ Template.constraints.events({
 
               // Append student to each team
               for (j=0; j < listOfTeams[i].member.length; j++) {
+                var member = listOfTeams[i].member[j];
                 var student =
-                  "<li class=\"each-student student\">" +
+                  "<li class=\"each-student student\"" +
+                  "name=\""+ member.name +"\"" +
+                  "gender=\""+ member.gender +"\"" +
+                  "leadership=\""+ member.leadership +"\"" +
+                  "schedule=\""+ member.student_schedule.toString() +"\">" +
                     // finalArray[i][j] +
                     listOfTeams[i].member[j].name +
                     "<i class=\"swap fa fa-exchange\" aria-hidden=\"true\" style=\"float:right;margin-right: 10px;margin-top: 3px;\"></i>" +
@@ -2276,11 +2329,9 @@ Template.constraintModalTemplate.events({
   },
 
   'click #add_button' : function() {
-      var constraintvalue = document.getElementById("constraintchange").value;
-    	var constrainttitle = document.getElementById("constrainttitle");
-    	console.log(constraintvalue);
-    	console.log(constrainttitle);
-
+  	  var constrainttitle = document.getElementById("constrainttitle");
+  	  if(constrainttitle.innerHTML == "MinOverlapInAvailability"){
+  	    var constraintvalue = document.getElementById("constraintchange").value;
     	if(constraintvalue.length != 0){
     		var table = document.getElementById("currentconstraints");
     		var currConstraint = constrainttitle.innerHTML;
@@ -2294,24 +2345,107 @@ Template.constraintModalTemplate.events({
 			new_row.appendChild(name_cell);
 			table.appendChild(new_row);
 
+			var changedConstraint = document.getElementById(constrainttitle.innerHTML);
+			changedConstraint.remove();
+
     	}
     	else{
     		alert("You need to input a value first!")
     	}
+
+  	  }
+  	  else if(constrainttitle.innerHTML == "GenderBalance" || constrainttitle.innerHTML == "Leadership"){
+  	  	console.log("balanceCheck");
+  	  	    var constraintvalue = document.getElementById('balancevalue').checked;
+  	  		var table = document.getElementById("currentconstraints");
+    		var currConstraint = constrainttitle.innerHTML;
+    		var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-row");
+
+			// console.log(childSnapshot.key);
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", currConstraint);
+			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+
+			var changedConstraint = document.getElementById(constrainttitle.innerHTML);
+			changedConstraint.remove();
+
+  	  }
+
+  	  constrainttitle.innerHTML = "Constraint to be modified";
+  	  var constraintModifier = document.getElementById("constrainttochange");
+    	while (constraintModifier.hasChildNodes()) {
+    		constraintModifier.removeChild(constraintModifier.lastChild);
+		}
+
+
   },
 
   'click #removeButton' : function (e) {
-    $('#currentconstraints .highlight').remove();
+  	console.log();
+  	var new_row = document.createElement('tr');
+	new_row.setAttribute("class", "clickable-row");
+
+			// console.log(childSnapshot.key);
+	var table = document.getElementById("remainingConstraints");
+	var name_cell = document.createElement('td');
+	name_cell.setAttribute("id", $('#currentconstraints .highlight').attr('id'));
+	name_cell.appendChild(document.createTextNode($('#currentconstraints .highlight').attr('id')));
+	new_row.appendChild(name_cell);
+	if($('#currentconstraints .highlight').attr('id') != null){
+		table.appendChild(new_row);
+    	$('#currentconstraints .highlight').remove();
+    	constrainttitle.innerHTML = "Constraint to be modified";
+  	  	var constraintModifier = document.getElementById("constrainttochange");
+    	while (constraintModifier.hasChildNodes()) {
+    		constraintModifier.removeChild(constraintModifier.lastChild);
+		}
+
+	}
+
   },
 
   'click .clickable-row': function(e) {
       var row_id = e.target.id;
+
     	var constrainttitle = document.getElementById("constrainttitle");
+    	var constraintModifier = document.getElementById("constrainttochange");
+    	while (constraintModifier.hasChildNodes()) {
+    		constraintModifier.removeChild(constraintModifier.lastChild);
+		}
 
     	constrainttitle.innerHTML = row_id;
+    	if(constrainttitle.innerHTML == "MinOverlapInAvailability"){
+    		// <input type="number" value="" min="0" placeholder="0" id="constraintchange"
+    		var inputBox = document.createElement('input');
+    		inputBox.setAttribute("type", "number");
+    		inputBox.setAttribute("value", "");
+    		inputBox.setAttribute("min", "0");
+    		inputBox.setAttribute("placeholder", "0");
+    		inputBox.setAttribute("id", "constraintchange");
+
+    		constraintModifier.appendChild(inputBox);
+
+    	}
+    	if(constrainttitle.innerHTML == "GenderBalance" || constrainttitle.innerHTML == "Leadership"){
+    		var balanceSwitch = document.createElement('label');
+    		balanceSwitch.setAttribute('class', 'switch');
+    		var balanceInput = document.createElement('input');
+    		balanceInput.setAttribute('type', 'checkbox');
+    		balanceInput.setAttribute('id', 'balancevalue');
+    		var balanceDiv = document.createElement('div');
+    		balanceDiv.setAttribute('class', 'slider round');
+    		balanceSwitch.appendChild(balanceInput);
+    		balanceSwitch.appendChild(balanceDiv);
+    		constraintModifier.appendChild(balanceSwitch);
+    		_
+    	}
 
       $('.highlight').removeClass('highlight');
       $(e.target).addClass('highlight');
+      console.log(constrainttitle.innerHTML);
   },
 
   'click #saveButton' : function() {

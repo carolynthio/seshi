@@ -4,7 +4,6 @@ from student import student
 from team import team
 from team import calSchedule
 from team import overlap
-from swapping_student import *
 import sys
 import time
 import numpy as np

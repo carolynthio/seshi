@@ -31,5 +31,14 @@ Meteor.methods({
     return result;
   },
 
+  swapStudents: function(name, gender, leadership, schedule, teams) {
+    var sync = Meteor.wrapAsync(exec);
+    var cmd = "python assets/app/swapping_student.py " + " " + name + " " +
+                    gender + " " + leadership + " " + schedule + " " + teams;
+    var result = sync(cmd);
+
+    return result;
+  }
+
 
 });
