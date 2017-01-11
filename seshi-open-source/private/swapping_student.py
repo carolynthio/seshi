@@ -16,11 +16,17 @@ def currentTeam(student, finalTeams):
 def suggestSwaps_bos(studentToSwap,allformedteams):
     suggestedTeam_suggest=[]
     maxSuggestions = 3
+    notInTeam = True
     for team in allformedteams:
-        if studentToSwap not in team.member:
+        for eachStudent in team.member:
+            if eachStudent.__dict__ == studentToSwap.__dict__:
+                notInTeam = False
+        if notInTeam:
+        # if studentToSwap not in team.member:
             temp_list=temporaryswapandgetscore(studentToSwap, team,allformedteams)
             for element in temp_list:
                 suggestedTeam_suggest.append(element)
+        notInTeam = True
 
 
     sorted_team = sorted(suggestedTeam_suggest, key=lambda tup: tup[1], reverse=True)
@@ -92,6 +98,11 @@ studentToSwap.student_schedule = map(int, studentToSwap.student_schedule)
 
 final_teams_args = sys.argv[5].split(' $ ')
 
+# print sys.argv[1]
+# print sys.argv[2]
+# print sys.argv[3]
+# print sys.argv[4]
+# print sys.argv[5]
 
 final_teams_objs = []
 for i in range(0,len(final_teams_args)-1):

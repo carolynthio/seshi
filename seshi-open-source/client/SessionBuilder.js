@@ -1652,9 +1652,59 @@ Template.SessionBuilder.events({
           console.log(suggestedSwaps);
 
           for (j = 0; j < suggestedSwaps.length; j++) {
-            $('li[name=\"' + suggestedSwaps[j].name + '\"]').addClass("suggestedSwaps");
+            var listElement = 'li[name=\"' + suggestedSwaps[j].name + '\"]';
+            $(listElement).addClass("suggestedSwaps");
+            var gender, leadership;
+            if (suggestedSwaps[j].gender == 1) {
+              gender = "Female";
+            } else {
+              gender = "Male";
+            }
+            if (suggestedSwaps[j].leadership == 1) {
+              leadership = "Leader";
+            } else {
+              leadership = "Follower";
+            }
+            var modalPopover =
+            "<div>" +
+              "<div>" + gender + "</div>" +
+              "<div>" + leadership + "</div>" +
+              "<hr>" +
+              "<div class=\"swapButtons\">" +
+                "<button class=\"swapButton\">Swap</button>" +
+                "<button class=\"cancelSwap\">Cancel</button>" +
+              "</div>" +
+            "</div>";
+            var modalTitle = "<div>" + suggestedSwaps[j].name + "</div>";
+            $(listElement).attr("data-placement", "top");
+            $(listElement).attr("data-trigger", "manual");
+            $(listElement).attr("data-html", "true");
+            $(listElement).attr("data-toggle", "popover");
+            $(listElement).attr("data-content", modalPopover);
+            $(listElement).attr("title", modalTitle);
+
           }
       });
+    },
+    'click .cancelSwap' : function(e) {
+      $(".popover").popover("hide");
+    },
+
+    'mouseenter .suggestedSwaps' : function(e) {
+      $(e.target).popover("show");
+
+    },
+
+    'mouseleave .popover' : function(e) {
+      $(e.target).popover('hide');
+    },
+
+    'mouseleave .suggestedSwaps' : function(e) {
+      setTimeout(function () {
+            if (!$(".popover:hover").length) {
+                $(e.target).popover("hide");
+            }
+        }, 300);
     }
 });
 

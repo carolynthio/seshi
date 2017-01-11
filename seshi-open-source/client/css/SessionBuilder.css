@@ -236,11 +236,6 @@ body {
   display: none;
 }
 
-/*.each-student:hover i.swap {
-  display: block;
-  color:#1FBA95;
-}*/
-
 .clickedStudent {
   outline: none;
   border-color: #80B1EB;
@@ -251,6 +246,23 @@ body {
   outline: none;
   border-color: #1FBA95;
   box-shadow: 0 0 10px #1FBA95;
+}
+
+.swapButton {
+  margin-right: 10px;
+  border-radius:3px 3px 3px 3px;
+  border-style: solid;
+  color: white;
+  background-color: #1FBA95;
+  border-color: #1FBA95;
+}
+
+.cancelSwap {
+  border-radius:3px 3px 3px 3px;
+  border-color: #6F6F6F;
+  border-style: solid;
+  color: #6F6F6F;
+  background-color: white;
 }
  .teamColumn {
      float: left;
