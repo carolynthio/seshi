@@ -26,3 +26,11 @@ Meteor.publish('papers-sub', function() {
 Meteor.publish('sessions-sub', function() {
   return Sessions.find();
 });
+
+Meteor.publish('students-sub', function() {
+  return Students.find();
+});
+
+Meteor.publish('files-sub', function() {
+  return Files.find();
+});

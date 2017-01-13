@@ -25,13 +25,15 @@ Router.configure({
 });
 
 Router.map(function() {
-    this.route('SessionBuilder', 
+    this.route('SessionBuilder',
 	       {
 		   waitOn: function () {
-		       return [Meteor.subscribe('papers-sub'), 
-			       Meteor.subscribe('sessions-sub')];
+		       return [Meteor.subscribe('papers-sub'),
+			       Meteor.subscribe('sessions-sub'),
+             Meteor.subscribe('files-sub'),
+             Meteor.subscribe('students-sub')];
 		   },
-		   
+
 		   action: function () {
 		       if (this.ready())
 			   this.render();
@@ -41,12 +43,12 @@ Router.map(function() {
 	       });
 
     //this.route('SessionBuilder');
-    this.route('accept', 
+    this.route('accept',
 	       {
 		   waitOn: function () {
 		       return Meteor.subscribe('papers-sub');
 		   },
-		   
+
 		   action: function () {
 		       if (this.ready())
 			   this.render();
@@ -54,16 +56,18 @@ Router.map(function() {
 			   this.render('loading');
 		   }
 	       });
-    
+
     this.route('login', {path:'/'});
-    
-    this.route('opty', 
+
+    this.route('opty',
 	       {
 		   waitOn: function () {
-		       return [Meteor.subscribe('papers-sub'), 
-			       Meteor.subscribe('sessions-sub')];
+		       return [Meteor.subscribe('papers-sub'),
+			       Meteor.subscribe('sessions-sub'),
+             Meteor.subscribe('files-sub'),
+             Meteor.subscribe('students-sub')];
 		   },
-		   
+
 		   action: function () {
 		       if (this.ready())
 			   this.render();
@@ -71,7 +75,7 @@ Router.map(function() {
 			   this.render('loading');
 		   }
 	       });
-    
+
     this.route('stress', {
         path: '/stress/:workername/:interval',
         action: function() {

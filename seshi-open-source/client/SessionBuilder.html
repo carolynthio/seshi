@@ -22,7 +22,7 @@
   <div class="session-builder container-fluid clusterinterface">
     <div id="titlebar">
 			<!-- <i class="fa fa-paw"></i> -->
-			<h3 id="title-header">TEAMME</h3>
+			<h3 id="title-header">Team Tools</h3>
 	</div>
     {{> navBar}}
     <div class="row">
@@ -78,8 +78,8 @@
     <button class="btn btn-xs btn-success toggle-abstracts">abstracts</button>
     <button class="btn btn-xs btn-success toggle-keywords">keywords</button>
     <button class="btn btn-xs btn-success toggle-paper-sessions">sessions</button> -->
-    <button class="btn btn-xs btn-success toggle-gender">gender</button>
-    <button class="btn btn-xs btn-success toggle-leadership">leadership</button>
+    <button class="filter btn btn-xs btn-success toggle-gender">gender</button>
+    <button class="filter btn btn-xs btn-success toggle-leadership">leadership</button>
   </div>
 
 	<!-- <ul id="paper-deck" class="deck ui-sortable"> -->
@@ -307,21 +307,23 @@
 </template> -->
 
 <template name="studentRoster">
+  {{#if this.name}}
   <li>
     <div class="student draggable-student">
       <i class="fa fa-chevron-down student-details" aria-hidden="true" style="float:right; margin-right: 10px;"></i>
-      <div class="student-name">
-        {{this.name}}
-      </div>
-      <div class="student-attribute student-gender {{#if genderCollapsed}} hidden {{else}} show {{/if}}">
-        {{#if isFemale this.gender}} Female {{else}} Male {{/if}}
-      </div>
-      <div class="student-attribute student-leadership {{#if leadershipCollapsed}} hidden {{else}} show {{/if}}">
-        <!-- {{this.[Leadership Role]}} -->
-        {{#if isLeader this.leadership}} Leader {{else}} Follower {{/if}}
-      </div>
+        <div class="student-name">
+          {{this.name}}
+        </div>
+        <div class="student-attribute student-gender {{#if genderCollapsed}} hidden {{else}} show {{/if}}">
+          {{#if isFemale this.gender}} Female {{else}} Male {{/if}}
+        </div>
+        <div class="student-attribute student-leadership {{#if leadershipCollapsed}} hidden {{else}} show {{/if}}">
+          <!-- {{this.[Leadership Role]}} -->
+          {{#if isLeader this.leadership}} Leader {{else}} Follower {{/if}}
+        </div>
     </div>
   </li>
+  {{/if}}
 </template>
 
 <template name="paperSession">
@@ -479,12 +481,12 @@
 
     </tr>
     <tr class="constraints-row" style="white-space: nowrap; width:700px">
-      <button id="constraintsButton">Constraints</button>
+      <button id="constraintsButton">Set Constraints</button>
       <td id="constraints-td" style="display: inline-block; width: 700px; overflow-x: scroll;">
       </td>
     </tr>
     <tr class="constraints-row">
-      <button id="optimizeTeamsButton">Create Teams</button>
+      <button id="optimizeTeamsButton">Update Teams</button>
       <td></td>
     </tr>
   </table>

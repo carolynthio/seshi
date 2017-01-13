@@ -242,6 +242,10 @@ body {
   box-shadow: 0 0 10px #80B1EB;
 }
 
+i.swap:hover {
+  opacity: .5;
+}
+
 .suggestedSwaps {
   outline: none;
   border-color: #1FBA95;
@@ -656,7 +660,7 @@ tr.constraints-row {
 }
 
 #constraintsButton {
-  width: 100px;
+  width: 125px;
   background-color: #2b3F54;
   color: white;
   margin-top: 5px;
@@ -1011,6 +1015,28 @@ li.active a, li.active a:hover {
     background-color: #1e90ff;
 }*/
 /* end filter */
+
+.filter.btn-success {
+  color: #fff;
+  background-color: #1FBA95;
+  border-color: #1FBA95;
+}
+
+.filter.btn-success:hover,
+.filter.btn-success:focus {
+  opacity: 0.5 !important;
+}
+
+.filter.btn-info {
+  color: #fff;
+  background-color: #E6E6E6;
+  border-color: #E6E6E6;
+}
+
+.filter.btn-info:hover,
+.filter.btn-info:focus {
+  opacity: 0.5 !important;
+}
 
 #submitFile {
   background-color: #1FBA95;

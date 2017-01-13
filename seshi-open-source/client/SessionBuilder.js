@@ -43,6 +43,9 @@ Session.set('anonymousName', "Anonymous");
 
 Session.set("showAllGenders", true);
 Session.set("showAllLeadership", true);
+Session.set("studentRosterFile", {});
+Session.set("manualMode", false);
+Session.set("suggestedMode", true);
 
 Meteor.startup(function (){
     Session.set("searchResults", []); //Papers.find({active:true}).fetch());
@@ -519,7 +522,8 @@ Template.SessionBuilder.helpers({
 
     // student roster
     students: function() {
-      return Session.get("students");
+      return Students.find().fetch();
+      // return Session.get("students");
     },
 
     searchResults : function() {
@@ -1308,7 +1312,6 @@ Template.studentRoster.rendered = function(){
   //    forceHelperSize: true
    //
   //  });
-
   var studentList = $(".draggable-student").draggable({
     connectToSortable: '.each-team',
     helper: 'clone',
@@ -1317,6 +1320,9 @@ Template.studentRoster.rendered = function(){
   	    $(u.helper).addClass("dragged-wide-student")
   	},
   });
+  if (Session.get("suggestedMode")) {
+    $(".draggable-student").draggable('disable');
+  }
 };
 
 Template.studentRoster.events({
@@ -1563,10 +1569,15 @@ Template.SessionBuilder.events({
         // It is manual
         if ($('#' + id+ ':checked').length == 0) {
           console.log("IT IS manual");
+          Session.set("manualMode", true);
+          $(".draggable-student").draggable('enable');
+
         }
         // It is suggested
         else {
+          Session.set("suggestedMode", true);
           console.log("IT IS Suggested");
+          $(".draggable-student").draggable('disable');
         }
       }
     },
@@ -1671,7 +1682,7 @@ Template.SessionBuilder.events({
               "<div>" + leadership + "</div>" +
               "<hr>" +
               "<div class=\"swapButtons\">" +
-                "<button class=\"swapButton\">Swap</button>" +
+                "<button class=\"swapButton\" name=\""+ suggestedSwaps[j].name +"\">Swap</button>" +
                 "<button class=\"cancelSwap\">Cancel</button>" +
               "</div>" +
             "</div>";
@@ -1690,6 +1701,18 @@ Template.SessionBuilder.events({
       $(".popover").popover("hide");
     },
 
+    'click .swapButton' : function(e) {
+      var swappingWith = $('.clickedStudent');
+      var name = $(e.target)[0].name;
+      var currentElement = $("li[name=" + name + "]");
+
+      var swappingWithList = swappingWith.parent("ul");
+      var currentElementList = currentElement.parent("ul");
+
+      $(currentElement).remove().addBack().appendTo(swappingWithList);
+      $(swappingWith).remove().addBack().appendTo(currentElementList);
+    },
+
     'mouseenter .suggestedSwaps' : function(e) {
       $(e.target).popover("show");
 
@@ -1704,7 +1727,12 @@ Template.SessionBuilder.events({
             if (!$(".popover:hover").length) {
                 $(e.target).popover("hide");
             }
-        }, 300);
+        }, 500);
+    },
+
+    // collapse each team
+    'click .team-header' : function(e) {
+      $(e.target).next().slideToggle();
     }
 });
 
@@ -2149,8 +2177,9 @@ Template.constraints.events({
   },
 
   'click #optimizeTeamsButton': function(event, template) {
+    $('.teamColumn').empty(); // Clear contents of teams
     template.creatingTeams.set( false );
-    if (($('#numStudentsLo').val() != "") && ($('#numStudentsHi').val() != "")) {
+    if (($('#numStudentsLo').val() != "") && ($('#numStudentsHi').val() != "") && Session.get("studentRosterFile")) {
       // Converts object array to string
       // var studentNames = Session.get("students").map(function(item) {
       //     return item['name'];
@@ -2175,6 +2204,8 @@ Template.constraints.events({
       //
       //   });
 
+      console.log(Files.findOne());
+      console.log(Session.get("studentRoster"));
       // Meteor.call('callPython', $('#numStudentsLo').val(), studentNames,
       Meteor.call('createTeams', $('#numStudentsLo').val(), $('#numStudentsHi').val(),
         function(error, result) {
@@ -2240,8 +2271,8 @@ Template.constraints.events({
 
             var team =
               "<div class=\"team\" id=\"team" + i + "\">" +
+                "<h5 class=\"team-header\">Team "+ i + "</h5>" +
                 "<div class=\"tabs\">" +
-                  "<h5 class=\"team-header\">Team "+ i + "</h5>" +
                   "<ul class=\"tab-links\">" +
                       "<li class=\"active\"><a href=\"#tab1_" + i +"\">Names</a></li>" +
                       "<li><a href=\"#tab2_" + i +"\">General</a></li>" +
@@ -2301,7 +2332,7 @@ Template.constraints.events({
                   var eachDayArray = listOfTeams[i].overlappingSchedule[k];
                   if (eachDayArray[m]) {
                     var newEvent = {
-                      title: "Available",
+                      title: " ",
                       start: startTime.toString() + ":00",
                       end: (startTime+1).toString() + ":00",
                       dow: [k]
@@ -2319,6 +2350,8 @@ Template.constraints.events({
                     header : false,
                     allDaySlot: false,
                     columnFormat: 'ddd',
+                    slotDuration: "00:60:00",
+                    displayEventTime: false,
                     minTime: "08:00:00", //8am
                     maxTime: "21:00:00", //9pm
                     events: eventList
