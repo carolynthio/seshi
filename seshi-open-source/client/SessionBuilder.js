@@ -1724,6 +1724,104 @@ Template.SessionBuilder.events({
 
       $(currentElement).remove().addBack().appendTo(swappingWithList);
       $(swappingWith).remove().addBack().appendTo(currentElementList);
+
+      // Updating information of each team on swap - swappingWithList
+      var students = [];
+      $('#' + swappingWithList[0].id + ' li').each(function(i) {
+        var eachStudent = {};
+        eachStudent.name = this.getAttribute("name");
+        eachStudent.schedule = this.getAttribute("schedule");
+        eachStudent.gender = this.getAttribute("gender");
+        eachStudent.leadership = this.getAttribute("leadership");
+        students.push(eachStudent);
+       //  console.log(this); // prints out each li
+      });
+      // TODO: May need to also pass in constraintsList once UI is set up
+      var scoreAndSched = []
+      var ulElement = swappingWithList[0].id;
+      Meteor.call('updateTeams', JSON.stringify(students), Session.get("classAvgGender"),
+                   Session.get("classAvgLeadership"), Session.get("constraintsList"),
+        function(error, result) {
+          if (error) {
+            console.log(error);
+          }
+          scoreAndSched = result.split(" & ");
+
+          // Updates score
+          $('#' + ulElement).parents('.team').children('.team-header').children('.compatibility').text(parseFloat(scoreAndSched[0]).toFixed(3));
+
+          // Update calendar
+          var schedule = JSON.parse(scoreAndSched[1]);
+          var eventList = []
+          for (k=0; k < schedule.length; k++) {
+            var startTime = 8;
+            for (m=0; m < schedule[k].length; m++) {
+              var eachDayArray = schedule[k];
+              if (eachDayArray[m]) {
+                var newEvent = {
+                  title: " ",
+                  start: startTime.toString() + ":00",
+                  end: (startTime+1).toString() + ":00",
+                  dow: [k]
+                };
+                eventList.push(newEvent);
+              }
+              startTime++;
+            }
+          }
+          var tabId = $('#' + ulElement).parents('.tabs').children().children('.tab3')[0].id;
+          $( '#' + tabId ).fullCalendar('removeEvents');
+          $( '#' + tabId ).fullCalendar('addEventSource', eventList);
+      });
+      //////////////////////////////////////////////////////// Now with currentElementList
+      students = [];
+      $('#' + currentElementList[0].id + ' li').each(function(i) {
+        var eachStudent = {};
+        eachStudent.name = this.getAttribute("name");
+        eachStudent.schedule = this.getAttribute("schedule");
+        eachStudent.gender = this.getAttribute("gender");
+        eachStudent.leadership = this.getAttribute("leadership");
+        students.push(eachStudent);
+       //  console.log(this); // prints out each li
+      });
+      // TODO: May need to also pass in constraintsList once UI is set up
+      scoreAndSched = []
+      ulElement = currentElementList[0].id;
+      Meteor.call('updateTeams', JSON.stringify(students), Session.get("classAvgGender"),
+                   Session.get("classAvgLeadership"), Session.get("constraintsList"),
+        function(error, result) {
+          if (error) {
+            console.log(error);
+          }
+
+          scoreAndSched = result.split(" & ");
+
+          // Updates score
+          $('#' + ulElement).parents('.team').children('.team-header').children('.compatibility').text(parseFloat(scoreAndSched[0]).toFixed(3));
+
+          // Update calendar
+          var schedule = JSON.parse(scoreAndSched[1]);
+          var eventList = []
+          for (k=0; k < schedule.length; k++) {
+            var startTime = 8;
+            for (m=0; m < schedule[k].length; m++) {
+              var eachDayArray = schedule[k];
+              if (eachDayArray[m]) {
+                var newEvent = {
+                  title: " ",
+                  start: startTime.toString() + ":00",
+                  end: (startTime+1).toString() + ":00",
+                  dow: [k]
+                };
+                eventList.push(newEvent);
+              }
+              startTime++;
+            }
+          }
+          var tabId = $('#' + ulElement).parents('.tabs').children().children('.tab3')[0].id;
+          $( '#' + tabId ).fullCalendar('removeEvents');
+          $( '#' + tabId ).fullCalendar('addEventSource', eventList);
+      });
     },
 
     'mouseenter .suggestedSwaps' : function(e) {
