@@ -911,7 +911,7 @@ tr.constraints-row {
     border: 1px solid black;
 
     padding: 2px;
-    width: 33.3%;
+    width: 50%;
     margin-left: auto ;
     margin-right: auto ;
 }
@@ -961,6 +961,12 @@ li.active a, li.active a:hover {
   padding-top: 5px;
   padding-bottom: 5px;
   padding-left: 5px;
+  padding-right: 5px;
+  height: 30px;
+}
+
+.compatibility {
+  float: right;
 }
 
 /* end team */

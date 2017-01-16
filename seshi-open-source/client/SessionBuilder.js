@@ -46,6 +46,9 @@ Session.set("showAllLeadership", true);
 Session.set("studentRosterFile", {});
 Session.set("manualMode", false);
 Session.set("suggestedMode", true);
+Session.set("classAvgGender", "");
+Session.set("classAvgLeadership", "");
+Session.set("constraintsList", "");
 
 Meteor.startup(function (){
     Session.set("searchResults", []); //Papers.find({active:true}).fetch());
@@ -1615,10 +1618,20 @@ Template.SessionBuilder.events({
 
         var id = $(e.target)[0].hash;
 
+        console.log(id);
         // render calendar within tab
         $(id).fullCalendar('render');
 
         e.preventDefault();
+    },
+    'click .showSchedule' : function(e) {
+      var currentAttrValue = e.target.getAttribute('href');
+      $('.tabs ' + currentAttrValue).toggle();
+
+      // render calendar within tab
+      $(currentAttrValue).fullCalendar('render');
+
+      e.preventDefault();
     },
     'click .each-student' : function(e) {
       var className = $(e.target)[0].classList[0];
@@ -1732,7 +1745,7 @@ Template.SessionBuilder.events({
 
     // collapse each team
     'click .team-header' : function(e) {
-      $(e.target).next().slideToggle();
+      $(e.target).next(".tabs").slideToggle();
     }
 });
 
@@ -2222,6 +2235,9 @@ Template.constraints.events({
           for (i = 0; i < listOfJsonStrings.length-1; i++) {
             listOfTeams.push(JSON.parse(listOfJsonStrings[i]));
           }
+          Session.set("classAvgGender", listOfTeams[0].class_avg_gender);
+          Session.set("classAvgLeadership", listOfTeams[0].class_avg_leadership);
+          Session.set("constraintsList", listOfTeams[0].constraintsList);
           console.log("%%%%%%%%%%%%%%%%%%%%%%%%");
           console.log(listOfTeams);
 
@@ -2271,13 +2287,18 @@ Template.constraints.events({
 
             var team =
               "<div class=\"team\" id=\"team" + i + "\">" +
-                "<h5 class=\"team-header\">Team "+ i + "</h5>" +
+                "<div class=\"team-header\">" +
+                  "<div style=\"float: left\">Team "+ i + "</div>" +
+                  "<div class=\"compatibility\">" + listOfTeams[i].score.toFixed(3) + "</div>" +
+                  "<i href=\"#tab3_" + i +"\" style=\"margin-left: 2px\" class=\"fa fa-calendar showSchedule\" aria-hidden=\"true\"></i>" +
+                  // "</div>" +
+                "</div>" +
                 "<div class=\"tabs\">" +
-                  "<ul class=\"tab-links\">" +
-                      "<li class=\"active\"><a href=\"#tab1_" + i +"\">Names</a></li>" +
-                      "<li><a href=\"#tab2_" + i +"\">General</a></li>" +
-                      "<li><a href=\"#tab3_" + i +"\">Availability</a></li>" +
-                  "</ul>" +
+                  // "<ul class=\"tab-links\">" +
+                  //     "<li class=\"active\"><a href=\"#tab1_" + i +"\">Names</a></li>" +
+                  //     // "<li><a href=\"#tab2_" + i +"\">General</a></li>" +
+                  //     "<li><a href=\"#tab3_" + i +"\">Availability</a></li>" +
+                  // "</ul>" +
 
                   "<div class=\"tab-content\">" +
                       "<div id=\"tab1_" + i +"\" class=\"tab active\">" +
@@ -2286,9 +2307,9 @@ Template.constraints.events({
                           "</ul>" +
                       "</div>" +
 
-                      "<div id=\"tab2_" + i +"\" class=\"tab\">" +
-                          "Overall Score: " + listOfTeams[i].score.toFixed(3) +
-                      "</div>" +
+                      // "<div id=\"tab2_" + i +"\" class=\"tab\">" +
+                      //     "Overall Score: " + listOfTeams[i].score.toFixed(3) +
+                      // "</div>" +
 
                       "<div id=\"tab3_" + i +"\" class=\"tab tab3\">" +
                       "</div>" +
@@ -2365,7 +2386,60 @@ Template.constraints.events({
            items       : ".student",
            tolerance   : 'pointer',
            revert      : 'invalid',
-           forceHelperSize: true
+           forceHelperSize: true,
+           // Updating information of each team on drop
+           update: function () {
+             console.log(this); // prints out each ul
+             var students = [];
+             $('#' + this.id + ' li').each(function(i) {
+               var eachStudent = {};
+               eachStudent.name = this.getAttribute("name");
+               eachStudent.schedule = this.getAttribute("schedule");
+               eachStudent.gender = this.getAttribute("gender");
+               eachStudent.leadership = this.getAttribute("leadership");
+               students.push(eachStudent);
+              //  console.log(this); // prints out each li
+             });
+             // TODO: May need to also pass in constraintsList once UI is set up
+             var scoreAndSched = []
+             var ulElement = this.id;
+             Meteor.call('updateTeams', JSON.stringify(students), Session.get("classAvgGender"),
+                          Session.get("classAvgLeadership"), Session.get("constraintsList"),
+               function(error, result) {
+                 if (error) {
+                   console.log(error);
+                 }
+
+                 scoreAndSched = result.split(" & ");
+                 console.log(scoreAndSched);
+
+                 // Updates score
+                 $('#' + ulElement).parents('.team').children('.team-header').children('.compatibility').text(parseFloat(scoreAndSched[0]).toFixed(3));
+
+                 // Update calendar
+                 var schedule = JSON.parse(scoreAndSched[1]);
+                 var eventList = []
+                 for (k=0; k < schedule.length; k++) {
+                   var startTime = 8;
+                   for (m=0; m < schedule[k].length; m++) {
+                     var eachDayArray = schedule[k];
+                     if (eachDayArray[m]) {
+                       var newEvent = {
+                         title: " ",
+                         start: startTime.toString() + ":00",
+                         end: (startTime+1).toString() + ":00",
+                         dow: [k]
+                       };
+                       eventList.push(newEvent);
+                     }
+                     startTime++;
+                   }
+                 }
+                 var tabId = $('#' + ulElement).parents('.tabs').children().children('.tab3')[0].id;
+                 $( '#' + tabId ).fullCalendar('removeEvents');
+                 $( '#' + tabId ).fullCalendar('addEventSource', eventList);
+             });
+           }
 
          });
 
