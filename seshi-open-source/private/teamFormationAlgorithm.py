@@ -11,6 +11,7 @@ import operator
 
 import sys
 import json
+import ast
 
 start_time = time.time()
 
@@ -123,24 +124,37 @@ mini_common_time_slots = 8;
 number_student_per_team_lo = int(sys.argv[1]);
 number_student_per_team_hi = int(sys.argv[2]);
 
-filename = "assets/app/Dataset1.csv"; # TODO: Will need to change to read from file input
+# filename = "assets/app/Dataset1.csv"; # TODO: Will need to change to read from file input
 # filename = "Dataset1.csv";
 students = [];
 weight1 = 1;
 
 ''' import student from the file '''
 
-with open (filename,'rU') as data_file:
-	student_data = csv.reader(data_file);
-	next(student_data, None); # skip the header
-	for row in student_data:
-		temp = student(row[0],float(row[1]),float(row[2]),debug);
-		temp_list = row[3:];
-		temp_list = map(int,temp_list);
-		temp_schedule = temp_list;
-		students.append(temp);
-		temp.student_schedule = temp_schedule;
+# with open (filename,'rU') as data_file:
+# 	student_data = csv.reader(data_file);
+# 	next(student_data, None); # skip the header
+# 	for row in student_data:
+# 		temp = student(row[0],float(row[1]),float(row[2]),debug);
+# 		temp_list = row[3:];
+# 		temp_list = map(int,temp_list);
+# 		temp_schedule = temp_list;
+# 		students.append(temp);
+# 		temp.student_schedule = temp_schedule;
 
+studentList = ast.literal_eval(sys.argv[3])
+for s in studentList:
+	temp = student(s['name'], float(s['gender']), float(s['leadership']), debug)
+	temp_schedule = [s['sun8a'],s['sun9a'],s['sun10a'],s['sun11a'],s['sun12p'],s['sun1p'],s['sun2p'],s['sun3p'],s['sun4p'],s['sun5p'],s['sun6p'],s['sun7p'],s['sun8p'], \
+				s['mon8a'],s['mon9a'],s['mon10a'],s['mon11a'],s['mon12p'],s['mon1p'],s['mon2p'],s['mon3p'],s['mon4p'],s['mon5p'],s['mon6p'],s['mon7p'],s['mon8p'], \
+				s['tues8a'],s['tues9a'],s['tues10a'],s['tues11a'],s['tues12p'],s['tues1p'],s['tues2p'],s['tues3p'],s['tues4p'],s['tues5p'],s['tues6p'],s['tues7p'],s['tues8p'], \
+				s['wed8a'],s['wed9a'],s['wed10a'],s['wed11a'],s['wed12p'],s['wed1p'],s['wed2p'],s['wed3p'],s['wed4p'],s['wed5p'],s['wed6p'],s['wed7p'],s['wed8p'], \
+				s['thur8a'],s['thur9a'],s['thur10a'],s['thur11a'],s['thur12p'],s['thur1p'],s['thur2p'],s['thur3p'],s['thur4p'],s['thur5p'],s['thur6p'],s['thur7p'],s['thur8p'], \
+				s['fri8a'],s['fri9a'],s['fri10a'],s['fri11a'],s['fri12p'],s['fri1p'],s['fri2p'],s['fri3p'],s['fri4p'],s['fri5p'],s['fri6p'],s['fri7p'],s['fri8p'], \
+				s['sat8a'],s['sat9a'],s['sat10a'],s['sat11a'],s['sat12p'],s['sat1p'],s['sat2p'],s['sat3p'],s['sat4p'],s['sat5p'],s['sat6p'],s['sat7p'],s['sat8p']]
+	temp_schedule = map(int,temp_schedule)
+	students.append(temp)
+	temp.student_schedule = temp_schedule
 studentRoster = students;
 studentToSwap = students[0]
 gender = [s.gender for s in students]

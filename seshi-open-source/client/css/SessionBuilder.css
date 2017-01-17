@@ -232,6 +232,14 @@ body {
  }
 
 /* Making teams into two columns and draggable */
+.each-team {
+  min-height: 20px;
+}
+
+.placeholder {
+  background-color: #E6E6E6;
+}
+
 .each-student i.swap {
   display: none;
 }

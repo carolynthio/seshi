@@ -1844,6 +1844,14 @@ Template.SessionBuilder.events({
     // collapse each team
     'click .team-header' : function(e) {
       $(e.target).next(".tabs").slideToggle();
+      $('.team-title').blur();
+    },
+
+    'click .team-title' : function(e) {
+      var editable = $(e.target);
+      setTimeout(function() {
+        editable.trigger('focus');
+      }, 200);
     }
 });
 
@@ -2315,10 +2323,9 @@ Template.constraints.events({
       //
       //   });
 
-      console.log(Files.findOne());
-      console.log(Session.get("studentRoster"));
+      var listOfStudents = JSON.stringify(Students.find({"name": {$exists: true, $ne: ""}}).fetch());
       // Meteor.call('callPython', $('#numStudentsLo').val(), studentNames,
-      Meteor.call('createTeams', $('#numStudentsLo').val(), $('#numStudentsHi').val(),
+      Meteor.call('createTeams', $('#numStudentsLo').val(), $('#numStudentsHi').val(),listOfStudents,
         function(error, result) {
           if (error) {
             console.log(error);
@@ -2386,7 +2393,7 @@ Template.constraints.events({
             var team =
               "<div class=\"team\" id=\"team" + i + "\">" +
                 "<div class=\"team-header\">" +
-                  "<div style=\"float: left\">Team "+ i + "</div>" +
+                  "<div class=\"team-title\" contentEditable=\"true\" style=\"float: left\">Team "+ i + "</div>" +
                   "<div class=\"compatibility\">" + listOfTeams[i].score.toFixed(3) + "</div>" +
                   "<i href=\"#tab3_" + i +"\" style=\"margin-left: 2px\" class=\"fa fa-calendar showSchedule\" aria-hidden=\"true\"></i>" +
                   // "</div>" +
@@ -2485,6 +2492,7 @@ Template.constraints.events({
            tolerance   : 'pointer',
            revert      : 'invalid',
            forceHelperSize: true,
+           placeholder: "placeholder",
            // Updating information of each team on drop
            update: function () {
              console.log(this); // prints out each ul
