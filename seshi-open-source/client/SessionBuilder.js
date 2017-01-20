@@ -49,6 +49,10 @@ Session.set("suggestedMode", true);
 Session.set("classAvgGender", "");
 Session.set("classAvgLeadership", "");
 Session.set("constraintsList", "");
+Session.set("missingFields", false);
+Session.set('availability', '');
+Session.set('leadership', '');
+Session.set('genderbalance', '');
 
 Meteor.startup(function (){
     Session.set("searchResults", []); //Papers.find({active:true}).fetch());
@@ -527,6 +531,10 @@ Template.SessionBuilder.helpers({
     students: function() {
       return Students.find().fetch();
       // return Session.get("students");
+    },
+
+    missingFields: function (){
+      return Session.get("missingFields");
     },
 
     searchResults : function() {
@@ -1211,6 +1219,16 @@ Template.studentRoster.helpers({
   },
   isFemale: function(gender) {
     return gender === "1";
+  },
+  scheduleArray: function(s) {
+    var array = [s['sun8a'],s['sun9a'],s['sun10a'],s['sun11a'],s['sun12p'],s['sun1p'],s['sun2p'],s['sun3p'],s['sun4p'],s['sun5p'],s['sun6p'],s['sun7p'],s['sun8p'],
+  				s['mon8a'],s['mon9a'],s['mon10a'],s['mon11a'],s['mon12p'],s['mon1p'],s['mon2p'],s['mon3p'],s['mon4p'],s['mon5p'],s['mon6p'],s['mon7p'],s['mon8p'],
+  				s['tues8a'],s['tues9a'],s['tues10a'],s['tues11a'],s['tues12p'],s['tues1p'],s['tues2p'],s['tues3p'],s['tues4p'],s['tues5p'],s['tues6p'],s['tues7p'],s['tues8p'],
+  				s['wed8a'],s['wed9a'],s['wed10a'],s['wed11a'],s['wed12p'],s['wed1p'],s['wed2p'],s['wed3p'],s['wed4p'],s['wed5p'],s['wed6p'],s['wed7p'],s['wed8p'],
+  				s['thur8a'],s['thur9a'],s['thur10a'],s['thur11a'],s['thur12p'],s['thur1p'],s['thur2p'],s['thur3p'],s['thur4p'],s['thur5p'],s['thur6p'],s['thur7p'],s['thur8p'],
+  				s['fri8a'],s['fri9a'],s['fri10a'],s['fri11a'],s['fri12p'],s['fri1p'],s['fri2p'],s['fri3p'],s['fri4p'],s['fri5p'],s['fri6p'],s['fri7p'],s['fri8p'],
+  				s['sat8a'],s['sat9a'],s['sat10a'],s['sat11a'],s['sat12p'],s['sat1p'],s['sat2p'],s['sat3p'],s['sat4p'],s['sat5p'],s['sat6p'],s['sat7p'],s['sat8p']];
+    return array.toString();
   }
 });
 Template.paperWithSessions.helpers({
@@ -1573,14 +1591,21 @@ Template.SessionBuilder.events({
         if ($('#' + id+ ':checked').length == 0) {
           console.log("IT IS manual");
           Session.set("manualMode", true);
+          Session.set("suggestedMode", false);
           $(".draggable-student").draggable('enable');
+          $('.teamColumn').empty();
+
+
 
         }
         // It is suggested
         else {
           Session.set("suggestedMode", true);
+          Session.set("manualMode", false);
           console.log("IT IS Suggested");
           $(".draggable-student").draggable('disable');
+          $('.teamColumn').empty();
+
         }
       }
     },
@@ -2292,36 +2317,117 @@ Template.constraints.onCreated(function() {
 
 Template.constraints.events({
   'click #constraintsButton': function() {
-    Modal.show('constraintModalTemplate');
-  },
+		Modal.show('constraintModalTemplate');
+		if(Session.get('availability') == ''){
+			var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-row");
+
+			// console.log(childSnapshot.key);
+			var table = document.getElementById("remainingConstraints");
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", 'availability');
+			name_cell.appendChild(document.createTextNode('availability' + ": "));
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+			var constraintModifier = document.getElementById("constrainttochange");
+			constrainttitle.innerHTML = "";
+			var add_button = document.getElementById("add_button");
+			add_button.style.visibility = "hidden" ;
+			var remove_button = document.getElementById("removeButton");
+			remove_button.style.visibility = "hidden";
+
+		}
+		else{
+			var constraintvalue = Session.get('availability');
+			var table = document.getElementById("currentconstraints");
+			var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-cons");
+
+			// console.log(childSnapshot.key);
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", 'availability');
+			name_cell.appendChild(document.createTextNode('availability' + ": " + constraintvalue));
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+
+		}
+
+		if(Session.get('leadership') == ''){
+			var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-row");
+
+			// console.log(childSnapshot.key);
+			var table = document.getElementById("remainingConstraints");
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", 'leadership');
+			name_cell.appendChild(document.createTextNode('leadership' + ": "));
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+			var constraintModifier = document.getElementById("constrainttochange");
+			constrainttitle.innerHTML = "";
+			var add_button = document.getElementById("add_button");
+			add_button.style.visibility = "hidden" ;
+			var remove_button = document.getElementById("removeButton");
+			remove_button.style.visibility = "hidden";
+
+		}
+		else{
+			var constraintvalue = Session.get('leadership');
+			var table = document.getElementById("currentconstraints");
+			var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-cons");
+
+			// console.log(childSnapshot.key);
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", 'leadership');
+			name_cell.appendChild(document.createTextNode('leadership' + ": " + constraintvalue));
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+
+		}
+
+		if(Session.get('genderbalance') == ''){
+			var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-row");
+
+			// console.log(childSnapshot.key);
+			var table = document.getElementById("remainingConstraints");
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", 'genderbalance');
+			name_cell.appendChild(document.createTextNode('genderbalance' + ": "));
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+			var constraintModifier = document.getElementById("constrainttochange");
+			constrainttitle.innerHTML = "";
+			var add_button = document.getElementById("add_button");
+			add_button.style.visibility = "hidden" ;
+			var remove_button = document.getElementById("removeButton");
+			remove_button.style.visibility = "hidden";
+
+		}
+		else{
+			var constraintvalue = Session.get('genderbalance');
+			var table = document.getElementById("currentconstraints");
+			var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-cons");
+
+			// console.log(childSnapshot.key);
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", 'genderbalance');
+			name_cell.appendChild(document.createTextNode('genderbalance' + ": " + constraintvalue));
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+		}
+
+
+	},
 
   'click #optimizeTeamsButton': function(event, template) {
     $('.teamColumn').empty(); // Clear contents of teams
     template.creatingTeams.set( false );
-    if (($('#numStudentsLo').val() != "") && ($('#numStudentsHi').val() != "") && Session.get("studentRosterFile")) {
-      // Converts object array to string
-      // var studentNames = Session.get("students").map(function(item) {
-      //     return item['name'];
-      // });
-      // var studentIds = Session.get("students").map(function(item) {
-      //     return item._id;
-      // });
-      // console.log("STUDENTNAMES");
-      // console.log(studentNames);
-      // console.log("ID"); // right now id is undefined?
-      // console.log(studentIds);
-      // console.log(Session.get("students"));
-
-      // Meteor.call('createTeams', $('#numStudentsLo').val(), $('#numStudentsHi').val(),
-      //   function(error, result) {
-      //     if (error) {
-      //       console.log("Error creating Teams: " + error);
-      //     }
-      //
-      //     console.log("creating teams with new algorithm")
-      //     console.log(result);
-      //
-      //   });
+    Session.set("missingFields", false);
+    if (($('#numStudentsLo').val() != "") && ($('#numStudentsHi').val() != "") &&
+      (Students.find({"name": {$exists: true, $ne: ""}}).count() != 0) && Session.get("suggestedMode")) {
 
       var listOfStudents = JSON.stringify(Students.find({"name": {$exists: true, $ne: ""}}).fetch());
       // Meteor.call('callPython', $('#numStudentsLo').val(), studentNames,
@@ -2343,53 +2449,8 @@ Template.constraints.events({
           Session.set("classAvgGender", listOfTeams[0].class_avg_gender);
           Session.set("classAvgLeadership", listOfTeams[0].class_avg_leadership);
           Session.set("constraintsList", listOfTeams[0].constraintsList);
-          console.log("%%%%%%%%%%%%%%%%%%%%%%%%");
-          console.log(listOfTeams);
 
-          // Session.set('teams', result);
-          // console.log("teams: " + Session.get('teams'));
-          //
-          // var stringTeams = Session.get('teams').toString();
-          //
-          // // For some reason we need to subtract 2 to get the last character
-          // var length = stringTeams.length - 2;
-          // substringTeams = stringTeams.substring(1, length);
-          // console.log("SUBSTRING: " + substringTeams);
-          //
-          // // replace ' with "
-          // var replaceQuotesString = substringTeams.replace(/\'/g,"\"");
-          // console.log(replaceQuotesString);
-          //
-          // //splitting the string representation of array of arrays
-          // var array1 = replaceQuotesString.split('], ');
-          // console.log(array1);
-          //
-          // // declare a 2D array
-          // var finalArray = new Array(array1.length); // represent array of teams
-          // for (i= 0; i < array1.length; i++) {
-          //
-          //   // add missing bracket
-          //   if (i != array1.length-1) {
-          //     array1[i] += "]";
-          //   }
-          //
-          //   // parse element into an array
-          //   var array2 = JSON.parse(array1[i]);
-          //   console.log("array2: " + array2);
-          //   var tempArray = array2;
-          //   finalArray[i] = tempArray;
-          //
-          // }
-          // console.log("FINAL ARRAY: " + finalArray[0] + " next element: " + finalArray[1] + " all: " + finalArray);
-
-          // print onto screen
-          // var div = document.getElementById('pythonCode');
-
-          // goes through all the different teams to print
-          // for(i=0; i < finalArray.length; i++) {
           for (i=0; i < listOfTeams.length; i++) {
-            // div.innerHTML = div.innerHTML + finalArray[i] + "<br>";
-
             var team =
               "<div class=\"team\" id=\"team" + i + "\">" +
                 "<div class=\"team-header\">" +
@@ -2429,6 +2490,11 @@ Template.constraints.events({
                 $('#teamColumn2').append(team);
               }
 
+              // TODO: Add if statement about constraintList
+              // var constraintViolation = "<i style=\"color:#FFCC00\" class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>";
+              // var teamHeader = '#team' + i + ' .team-header';
+              // $(teamHeader).append(constraintViolation);
+
               // Append student to each team
               for (j=0; j < listOfTeams[i].member.length; j++) {
                 var member = listOfTeams[i].member[j];
@@ -2446,9 +2512,6 @@ Template.constraints.events({
                 var studentNames = "#studentNames" + i
                 $(studentNames).append(student);
               }
-
-              // insert calendar template
-              // Blaze.render( Template.calendar, $( '#tab3_'+i ).get(0) );
 
               // Creating events to calendar
               var eventList = []
@@ -2561,8 +2624,169 @@ Template.constraints.events({
         });
         // console.log("outside meteor.call: " + Session.get('teams'));
 
+    } // End if
+    else if(($('#numStudentsLo').val() != "")  &&
+      (Students.find({"name": {$exists: true, $ne: ""}}).count() != 0) && Session.get("manualMode")){
+        template.creatingTeams.set( true );
+      var numberOfStudents = Students.find({"name": {$exists: true, $ne: ""}}).count();
+      var numberOfTeams = Math.ceil(numberOfStudents / $('#numStudentsLo').val());
+      for (i=0; i < numberOfTeams; i++) {
+        var team =
+          "<div class=\"team\" id=\"team" + i + "\">" +
+            "<div class=\"team-header\">" +
+              "<div class=\"team-title\" contentEditable=\"true\" style=\"float: left\">Team "+ i + "</div>" +
+              "<div class=\"compatibility\"></div>" +
+              "<i href=\"#tab3_" + i +"\" style=\"margin-left: 2px\" class=\"fa fa-calendar showSchedule\" aria-hidden=\"true\"></i>" +
+              // "</div>" +
+            "</div>" +
+            "<div class=\"tabs\">" +
+              // "<ul class=\"tab-links\">" +
+              //     "<li class=\"active\"><a href=\"#tab1_" + i +"\">Names</a></li>" +
+              //     // "<li><a href=\"#tab2_" + i +"\">General</a></li>" +
+              //     "<li><a href=\"#tab3_" + i +"\">Availability</a></li>" +
+              // "</ul>" +
+
+              "<div class=\"tab-content\">" +
+                  "<div id=\"tab1_" + i +"\" class=\"tab active\">" +
+                      "<ul class=\"student-names each-team\" id=\"studentNames" + i + "\">" +
+
+                      "</ul>" +
+                  "</div>" +
+
+                  // "<div id=\"tab2_" + i +"\" class=\"tab\">" +
+                  //     "Overall Score: " + listOfTeams[i].score.toFixed(3) +
+                  // "</div>" +
+
+                  "<div id=\"tab3_" + i +"\" class=\"tab tab3\">" +
+                  "</div>" +
+              "</div>" +
+            "</div>" +
+          "</div>";
+
+          // alternate between columns
+          if (i%2 == 0) {
+            $('#teamColumn1').append(team);
+          } else {
+            $('#teamColumn2').append(team);
+          }
+
+          // Create calendar for each tab
+          $( '#tab3_'+i ).fullCalendar({
+                defaultView: 'agendaWeek',
+                aspectRatio: 2,
+                header : false,
+                allDaySlot: false,
+                columnFormat: 'ddd',
+                slotDuration: "00:60:00",
+                displayEventTime: false,
+                minTime: "08:00:00", //8am
+                maxTime: "21:00:00" //9pm
+          });
+
+      }
+
+      // each student in the team
+      var sortlists = $(".student-names").sortable({
+       connectWith : ".student-names",
+       items       : ".student",
+       tolerance   : 'pointer',
+       revert      : 'invalid',
+       forceHelperSize: true,
+       stack: ".student-names",
+       placeholder: "placeholder" //,
+       // Updating information of each team on drop
+      //  update: function () {
+      //    console.log(this); // prints out each ul
+      //    var students = [];
+      //    $('#' + this.id + ' li').each(function(i) {
+      //      console.log(this);
+      //      var eachStudent = {};
+      //      eachStudent.name = this.getAttribute("name");
+      //      eachStudent.schedule = this.getAttribute("schedule");
+      //      eachStudent.gender = this.getAttribute("gender");
+      //      eachStudent.leadership = this.getAttribute("leadership");
+      //      students.push(eachStudent);
+      //     //  console.log(this); // prints out each li
+      //    });
+      //    // TODO: May need to also pass in constraintsList once UI is set up
+      //    var scoreAndSched = []
+      //    var ulElement = this.id;
+      //    Meteor.call('updateTeams', JSON.stringify(students), Session.get("classAvgGender"),
+      //                 Session.get("classAvgLeadership"), Session.get("constraintsList"),
+      //      function(error, result) {
+      //        if (error) {
+      //          console.log(error);
+      //        }
+       //
+      //        scoreAndSched = result.split(" & ");
+      //        console.log(scoreAndSched);
+       //
+      //        // Updates score
+      //        $('#' + ulElement).parents('.team').children('.team-header').children('.compatibility').text(parseFloat(scoreAndSched[0]).toFixed(3));
+       //
+      //        // Update calendar
+      //        var schedule = JSON.parse(scoreAndSched[1]);
+      //        var eventList = []
+      //        for (k=0; k < schedule.length; k++) {
+      //          var startTime = 8;
+      //          for (m=0; m < schedule[k].length; m++) {
+      //            var eachDayArray = schedule[k];
+      //            if (eachDayArray[m]) {
+      //              var newEvent = {
+      //                title: " ",
+      //                start: startTime.toString() + ":00",
+      //                end: (startTime+1).toString() + ":00",
+      //                dow: [k]
+      //              };
+      //              eventList.push(newEvent);
+      //            }
+      //            startTime++;
+      //          }
+      //        }
+      //        var tabId = $('#' + ulElement).parents('.tabs').children().children('.tab3')[0].id;
+      //        $( '#' + tabId ).fullCalendar('removeEvents');
+      //        $( '#' + tabId ).fullCalendar('addEventSource', eventList);
+      //    });
+      //  }
+
+     });
+
+     // On drop change from div to list item
+     var dropped = $(".student-names").droppable({
+        drop : function(event,ui) {
+          // Only change if it is not already a list element
+          if(ui.draggable[0].nodeName != "LI") {
+            var leadership;
+            var gender;
+            if (ui.helper.children(".student-gender").text().trim() == "Female") {
+              gender = 1;
+            } else {
+              gender = 0;
+            }
+            if (ui.helper.children(".student-leadership").text().trim() == "Leader") {
+              leadership = 1
+            } else {
+              leadership = 0;
+            }
+            var listStudent = "<li class=\"each-student student\"" +
+            "name=\""+ ui.helper.children(".student-name").text().trim() +"\"" +
+            "gender=\""+ gender +"\"" +
+            "leadership=\""+ leadership +"\"" +
+            "schedule=\""+ ui.helper.children(".student-schedule").text().trim() +"\">" +
+              // finalArray[i][j] +
+              ui.helper.children(".student-name").text().trim() +
+              // "<i class=\"swap fa fa-exchange\" aria-hidden=\"true\" style=\"float:right;margin-right: 10px;margin-top: 3px;\"></i>" +
+            "</li>";
+            $(ui.draggable).replaceWith(listStudent);
+          }
+        }
+     });
+
+
     }
     else {
+      template.creatingTeams.set(true); // Dont show creating team spinner
+      Session.set("missingFields", true);
       console.log("Please enter number of students");
     }
 
@@ -2575,55 +2799,40 @@ Template.constraints.events({
 
     });
 
+    // Update text on button
+    $('#optimizeTeamsButton').html('Update Teams');
+
   },
 
   'click .remove' : function(e) {
-    $(e.target).parents("span:first").remove();
-  }
+	$(e.target).parents("span:first").remove();
+},
+'click .glyphicon-remove-sign' : function(e) {
+	var row_id = e.target.id;
+	Session.set(row_id, '');
+	$(e.target).parents("span:first").remove();
+
+}
 });
 
 Template.constraintModalTemplate.events({
-  'click #modelclose' : function() {
-    Modal.hide('constraintModalTemplate');
-  },
+	'click #modelclose' : function() {
+		Modal.hide('constraintModalTemplate');
+	},
 
-  'click #cancelButton' : function() {
-    Modal.hide('constraintModalTemplate');
-  },
+	'click #cancelButton' : function() {
+		Modal.hide('constraintModalTemplate');
+	},
 
-  'click #add_button' : function() {
-  	  var constrainttitle = document.getElementById("constrainttitle");
-  	  if(constrainttitle.innerHTML == "MinOverlapInAvailability"){
-  	    var constraintvalue = document.getElementById("constraintchange").value;
-    	if(constraintvalue.length != 0){
-    		var table = document.getElementById("currentconstraints");
-    		var currConstraint = constrainttitle.innerHTML;
-    		var new_row = document.createElement('tr');
-			new_row.setAttribute("class", "clickable-row");
-
-			// console.log(childSnapshot.key);
-			var name_cell = document.createElement('td');
-			name_cell.setAttribute("id", currConstraint);
-			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
-			new_row.appendChild(name_cell);
-			table.appendChild(new_row);
-
-			var changedConstraint = document.getElementById(constrainttitle.innerHTML);
-			changedConstraint.remove();
-
-    	}
-    	else{
-    		alert("You need to input a value first!")
-    	}
-
-  	  }
-  	  else if(constrainttitle.innerHTML == "GenderBalance" || constrainttitle.innerHTML == "Leadership"){
-  	  	console.log("balanceCheck");
-  	  	    var constraintvalue = document.getElementById('balancevalue').checked;
-  	  		var table = document.getElementById("currentconstraints");
-    		var currConstraint = constrainttitle.innerHTML;
-    		var new_row = document.createElement('tr');
-			new_row.setAttribute("class", "clickable-row");
+	'click #add_button' : function() {
+		var constrainttitle = document.getElementById("constrainttitle");
+		if(constrainttitle.innerHTML == "availability"){
+			var constraintvalue = document.getElementById("constraintchange").value;
+			if(constraintvalue.length != 0){
+				var table = document.getElementById("currentconstraints");
+				var currConstraint = constrainttitle.innerHTML;
+				var new_row = document.createElement('tr');
+				new_row.setAttribute("class", "clickable-cons");
 
 			// console.log(childSnapshot.key);
 			var name_cell = document.createElement('td');
@@ -2631,56 +2840,182 @@ Template.constraintModalTemplate.events({
 			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
 			new_row.appendChild(name_cell);
 			table.appendChild(new_row);
+			Session.set('availability', constraintvalue);
 
 			var changedConstraint = document.getElementById(constrainttitle.innerHTML);
 			changedConstraint.remove();
 
-  	  }
-
-  	  constrainttitle.innerHTML = "Constraint to be modified";
-  	  var constraintModifier = document.getElementById("constrainttochange");
-    	while (constraintModifier.hasChildNodes()) {
-    		constraintModifier.removeChild(constraintModifier.lastChild);
 		}
-
-
-  },
-
-  'click #removeButton' : function (e) {
-  	console.log();
-  	var new_row = document.createElement('tr');
-	new_row.setAttribute("class", "clickable-row");
-
-			// console.log(childSnapshot.key);
-	var table = document.getElementById("remainingConstraints");
-	var name_cell = document.createElement('td');
-	name_cell.setAttribute("id", $('#currentconstraints .highlight').attr('id'));
-	name_cell.appendChild(document.createTextNode($('#currentconstraints .highlight').attr('id')));
-	new_row.appendChild(name_cell);
-	if($('#currentconstraints .highlight').attr('id') != null){
-		table.appendChild(new_row);
-    	$('#currentconstraints .highlight').remove();
-    	constrainttitle.innerHTML = "Constraint to be modified";
-  	  	var constraintModifier = document.getElementById("constrainttochange");
-    	while (constraintModifier.hasChildNodes()) {
-    		constraintModifier.removeChild(constraintModifier.lastChild);
+		else{
+			alert("You need to input a value first!")
 		}
 
 	}
+	else if(constrainttitle.innerHTML == "leadership"){
+		console.log("balanceCheck");
+		var constraintvalue = document.getElementById('balancevalue').checked;
+		var table = document.getElementById("currentconstraints");
+		var currConstraint = constrainttitle.innerHTML;
+		var new_row = document.createElement('tr');
+		new_row.setAttribute("class", "clickable-cons");
 
-  },
+			// console.log(childSnapshot.key);
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", currConstraint);
+			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
+			Session.set('leadership', document.getElementById('balancevalue').checked);
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
 
-  'click .clickable-row': function(e) {
-      var row_id = e.target.id;
+			var changedConstraint = document.getElementById(constrainttitle.innerHTML);
+			changedConstraint.remove();
 
-    	var constrainttitle = document.getElementById("constrainttitle");
-    	var constraintModifier = document.getElementById("constrainttochange");
-    	while (constraintModifier.hasChildNodes()) {
-    		constraintModifier.removeChild(constraintModifier.lastChild);
+		}
+		else if(constrainttitle.innerHTML == "genderbalance"){
+			console.log("balanceCheck");
+			var constraintvalue = document.getElementById('balancevalue').checked;
+			var table = document.getElementById("currentconstraints");
+			var currConstraint = constrainttitle.innerHTML;
+			var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-cons");
+
+			// console.log(childSnapshot.key);
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", currConstraint);
+			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
+			Session.set('genderbalance', document.getElementById('balancevalue').checked);
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+
+			var changedConstraint = document.getElementById(constrainttitle.innerHTML);
+			changedConstraint.remove();
+
 		}
 
+
+		constrainttitle.innerHTML = "";
+		var constraintModifier = document.getElementById("constrainttochange");
+		while (constraintModifier.hasChildNodes()) {
+			constraintModifier.removeChild(constraintModifier.lastChild);
+		}
+
+		var add_button = document.getElementById("add_button");
+		add_button.style.visibility = "hidden" ;
+		var remove_button = document.getElementById("removeButton");
+		remove_button.style.visibility = "hidden";
+
+
+	},
+
+	'click #removeButton' : function (e) {
+		console.log();
+		var constrainttitle = document.getElementById("constrainttitle");
+		var new_row = document.createElement('tr');
+		new_row.setAttribute("class", "clickable-row");
+
+			// console.log(childSnapshot.key);
+			var table = document.getElementById("remainingConstraints");
+			var name_cell = document.createElement('td');
+			var removeid = $('#currentconstraints .highlight').attr('id');
+			name_cell.setAttribute("id", $('#currentconstraints .highlight').attr('id'));
+			name_cell.appendChild(document.createTextNode($('#currentconstraints .highlight').attr('id') + ": "));
+			new_row.appendChild(name_cell);
+			if($('#currentconstraints .highlight').attr('id') != null){
+				table.appendChild(new_row);
+				$('#currentconstraints .highlight').remove();
+				constrainttitle.innerHTML = "Constraint to be modified";
+				var constraintModifier = document.getElementById("constrainttochange");
+				while (constraintModifier.hasChildNodes()) {
+					constraintModifier.removeChild(constraintModifier.lastChild);
+				}
+
+			}
+			Session.set(removeid, '');
+			console.log(removeid + ": " + Session.get(removeid));
+			constrainttitle.innerHTML = "";
+			var add_button = document.getElementById("add_button");
+			add_button.style.visibility = "hidden" ;
+			var remove_button = document.getElementById("removeButton");
+			remove_button.style.visibility = "hidden";
+
+		},
+		'click .clickable-cons': function(e) {
+			var row_id = e.target.id;
+			var add_button = document.getElementById("add_button");
+			add_button.innerHTML = "Save change";
+			add_button.style.visibility = "visible" ;
+			var remove_button = document.getElementById("removeButton");
+			remove_button.style.visibility = "visible";
+			var constrainttitle = document.getElementById("constrainttitle");
+			var constraintModifier = document.getElementById("constrainttochange");
+			var constraintHint = document.getElementById("constrainttip");
+			while (constraintModifier.hasChildNodes()) {
+				constraintModifier.removeChild(constraintModifier.lastChild);
+			}
+
+			constrainttitle.innerHTML = row_id;
+			if(constrainttitle.innerHTML == "availability"){
+    		// <input type="number" value="" min="0" placeholder="0" id="constraintchange"
+    		var inputBox = document.createElement('input');
+    		inputBox.setAttribute("type", "number");
+    		inputBox.setAttribute("value", Session.get('availability'));
+    		inputBox.setAttribute("min", "0");
+    		inputBox.setAttribute("placeholder", "0");
+    		inputBox.setAttribute("id", "constraintchange");
+    		constraintHint.innerHTML = "information about Availability!"
+    		constraintModifier.appendChild(inputBox);
+
+    	}
+    	if(constrainttitle.innerHTML == "genderbalance"){
+    		var balanceSwitch = document.createElement('label');
+    		balanceSwitch.setAttribute('class', 'switch');
+    		var balanceInput = document.createElement('input');
+    		balanceInput.setAttribute('type', 'checkbox');
+    		balanceInput.setAttribute('id', 'balancevalue');
+    		balanceInput.checked = Session.get('genderbalance');
+    		var balanceDiv = document.createElement('div');
+    		balanceDiv.setAttribute('class', 'slider round');
+    		balanceSwitch.appendChild(balanceInput);
+    		balanceSwitch.appendChild(balanceDiv);
+    		constraintModifier.appendChild(balanceSwitch);
+    		constraintHint.innerHTML = "Information about gender balance!"
+    	}
+    	if(constrainttitle.innerHTML == "leadership"){
+    		var balanceSwitch = document.createElement('label');
+    		balanceSwitch.setAttribute('class', 'switch');
+    		var balanceInput = document.createElement('input');
+    		balanceInput.setAttribute('type', 'checkbox');
+    		balanceInput.setAttribute('id', 'balancevalue');
+    		var balanceDiv = document.createElement('div');
+    		balanceDiv.setAttribute('class', 'slider round');
+    		balanceInput.checked = Session.get('leadership');
+    		balanceSwitch.appendChild(balanceInput);
+    		balanceSwitch.appendChild(balanceDiv);
+    		constraintModifier.appendChild(balanceSwitch);
+    		constraintHint.innerHTML = "Information about leadership!"
+    	}
+    	$('.highlight').removeClass('highlight');
+    	$(e.target).addClass('highlight');
+
+    },
+
+    'click .clickable-row': function(e) {
+    	var row_id = e.target.id;
+
+    	var add_button = document.getElementById("add_button");
+    	add_button.innerHTML = "Add constraint";
+    	add_button.style.visibility = "visible" ;
+    	var remove_button = document.getElementById("removeButton");
+    	remove_button.style.visibility = "hidden";
+    	var constrainttitle = document.getElementById("constrainttitle");
+    	var constraintModifier = document.getElementById("constrainttochange");
+    	var constraintHint = document.getElementById("constrainttip");
+    	while (constraintModifier.hasChildNodes()) {
+    		constraintModifier.removeChild(constraintModifier.lastChild);
+    	}
+
     	constrainttitle.innerHTML = row_id;
-    	if(constrainttitle.innerHTML == "MinOverlapInAvailability"){
+    	if(constrainttitle.innerHTML == "availability"){
     		// <input type="number" value="" min="0" placeholder="0" id="constraintchange"
     		var inputBox = document.createElement('input');
     		inputBox.setAttribute("type", "number");
@@ -2688,11 +3023,11 @@ Template.constraintModalTemplate.events({
     		inputBox.setAttribute("min", "0");
     		inputBox.setAttribute("placeholder", "0");
     		inputBox.setAttribute("id", "constraintchange");
-
+    		constraintHint.innerHTML = "information about Availability!"
     		constraintModifier.appendChild(inputBox);
 
     	}
-    	if(constrainttitle.innerHTML == "GenderBalance" || constrainttitle.innerHTML == "Leadership"){
+    	if(constrainttitle.innerHTML == "genderbalance"){
     		var balanceSwitch = document.createElement('label');
     		balanceSwitch.setAttribute('class', 'switch');
     		var balanceInput = document.createElement('input');
@@ -2703,26 +3038,45 @@ Template.constraintModalTemplate.events({
     		balanceSwitch.appendChild(balanceInput);
     		balanceSwitch.appendChild(balanceDiv);
     		constraintModifier.appendChild(balanceSwitch);
-    		_
+    		constraintHint.innerHTML = "Information about gender balance!"
+    	}
+    	if(constrainttitle.innerHTML == "leadership"){
+    		var balanceSwitch = document.createElement('label');
+    		balanceSwitch.setAttribute('class', 'switch');
+    		var balanceInput = document.createElement('input');
+    		balanceInput.setAttribute('type', 'checkbox');
+    		balanceInput.setAttribute('id', 'balancevalue');
+    		var balanceDiv = document.createElement('div');
+    		balanceDiv.setAttribute('class', 'slider round');
+    		balanceSwitch.appendChild(balanceInput);
+    		balanceSwitch.appendChild(balanceDiv);
+    		constraintModifier.appendChild(balanceSwitch);
+    		constraintHint.innerHTML = "Information about leadership!"
     	}
 
-      $('.highlight').removeClass('highlight');
-      $(e.target).addClass('highlight');
-      console.log(constrainttitle.innerHTML);
-  },
+    	$('.highlight').removeClass('highlight');
+    	$(e.target).addClass('highlight');
+    	console.log(constrainttitle.innerHTML);
+    },
 
-  'click #saveButton' : function() {
-    var table = $("#currentconstraints");
+
+    'click #saveButton' : function() {
+    	var table = $("#currentconstraints");
+    	$('#constraints-td').empty();
 
     // table is not empty
     if (table.children().length != 0) {
-        for (i = 0; i < table.children().length; i++) {
+    	for (i = 0; i < table.children().length; i++) {
+        console.log(table.children().children());
+        console.log(table.children().children()[i]);
           var rowId = table.children().children()[i].id; // id of constraint
           var outerSpan = document.createElement('span');
           outerSpan.setAttribute("class", "constraint-tag");
+          outerSpan.setAttribute("constraint", table.children().children()[i].id);
+          outerSpan.setAttribute("value", table.children().children()[i].value);
 
           var innerSpan = document.createElement('span');
-          innerSpan.appendChild(document.createTextNode(rowId)); // add the row id to span
+          innerSpan.appendChild(document.createTextNode(rowId + ": " + Session.get(rowId))); // add the row id to span
 
           // Creating the x for the box
           var aTag = document.createElement('a');
@@ -2734,11 +3088,11 @@ Template.constraintModalTemplate.events({
           outerSpan.appendChild(innerSpan);
           outerSpan.appendChild(aTag);
           $('#constraints-td').append(outerSpan); // add after constraint button
-        }
-    }
-
-    Modal.hide('constraintModalTemplate');
+      }
   }
+
+  Modal.hide('constraintModalTemplate');
+}
 
 });
 

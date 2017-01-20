@@ -124,6 +124,9 @@
     {{#unless creatingTeams}}
       <p><i class="fa fa-spin fa-refresh"></i> Creating Teams...</p>
     {{/unless}}
+    {{#if missingFields}}
+    <p> missing fields </p>
+    {{/if}}
     <div id="pythonCode">
     </div>
     <br>
@@ -321,6 +324,9 @@
           <!-- {{this.[Leadership Role]}} -->
           {{#if isLeader this.leadership}} Leader {{else}} Follower {{/if}}
         </div>
+        <div class="student-schedule hidden">
+          {{scheduleArray this}}
+        </div>
     </div>
   </li>
   {{/if}}
@@ -486,7 +492,7 @@
       </td>
     </tr>
     <tr class="constraints-row">
-      <button id="optimizeTeamsButton">Update Teams</button>
+        <button id="optimizeTeamsButton">Create Teams</button>
       <td></td>
     </tr>
   </table>
@@ -523,78 +529,85 @@
 														Student per team:
 													</td>
 												</tr> -->
-												<tr class="clickable-row" width="100%">
-													<td class="individual" id="MinOverlapInAvailability">
-														Min.overlap in availability:
+                        <!-- <tr class="clickable-row" width="100%">
+													<td class="individual" id="availability">
+														availability:
 													</td>
 												</tr>
 												<tr class="clickable-row" width="100%">
-													<td class="individual"  id="GenderBalance">
-														Gender Balance:
+													<td class="individual"  id="genderbalance">
+														genderbalance:
 													</td>
 												</tr>
                         <tr class="clickable-row" width="100%">
-                          <td class="individual"  id="Leadership">
-                            Leadership:
+                          <td class="individual"  id="leadership">
+                            leadership:
                           </td>
-                        </tr>
-											</table>
-										</div>
-									</td>
-								</tr>
+                        </tr> -->
+                      </table>
+                    </div>
+                  </td>
+                </tr>
 
-							</tbody>
-						</table>
-					</div>
-					<div class="col-md-4">
-						<div class="row">
-						<h4 size="3" style="font-family: Helvetica, Arial, sans-serif; float: left; padding-left: 50px;padding-top: 10px; padding-bottom: 30px; color: #2B3F54"> </h4>
-						</div>
-						<div class="scrollit" id="specifics" style="background: #ffffff;height:70px;border: 1px solid black;">
-							<center><p id="constrainttitle">Constraint to be modified</p></center>
-              <div id="constrainttochange" style="padding-left: 75px; padding-right: 75px;">
-				         <!-- <input type="number" value="" min="0" placeholder="0" id="constraintchange"> -->
-              </div>
-						</div>
-            <div style="padding-top: 5px;">
-              <div class="addMinus plusSign" id="add_button">
-                &#43;
-              </div>
-              <div class="addMinus minusSign" id="removeButton">
-                &#8211;
-              </div>
+              </tbody>
+            </table>
+          </div>
+          <div class="col-md-4">
+            <div class="row">
+              <h4 style="font-family: Helvetica, Arial, sans-serif; float: left; padding-left: 10px;padding-top: 10px; padding-bottom: 10px; color: #2B3F54">Constraint settings</h4>
+            </div>
+            <div class="scrollit" id="specifics" style="background: #ffffff;height:70px;border: 1px solid black;">
+             <div class="row">
+             <center><p id="constrainttitle"></p></center>
+
+             <div class="help-tip">
+              <p id="constrainttip">This is the help tip! Click on a constraint to see what it means!</p>
             </div>
 
-					</div>
-					<div class="col-md-4">
-						<div class="row">
-						<h4 style="font-family: Helvetica, Arial, sans-serif; float: left; padding-left: 10px;padding-top: 10px; padding-bottom: 10px; color: #2B3F54">Current constraints</h4>
-						</div>
-						<table>
-							<tbody>
-								<tr>
-									<td colspan="2">
-										<div class="scrollit" style="overflow:scroll;height:190px; width: 190px; border: 1px solid black;">
-											<table id="currentconstraints">
-											</table>
-										</div>
-									</td>
-								</tr>
+             </div>
+            <div id="constrainttochange" style="padding-left: 75px; padding-right: 75px;">
+             <!-- <input type="number" value="" min="0" placeholder="0" id="constraintchange"> -->
+           </div>
+         </div>
+         <div style="padding-top: 5px;">
+          <div class="addMinus plusSign" style="float: left; visibility: hidden;" id="add_button">
+            Add constraint
+          </div>
+          <div class="addMinus minusSign" style="float: right; visibility: hidden;" id="removeButton">
+            Delete constraint
+          </div>
+        </div>
 
-							</tbody>
-						</table>
-					</div>
+      </div>
+      <div class="col-md-4">
+        <div class="row">
+          <h4 style="font-family: Helvetica, Arial, sans-serif; float: left; padding-left: 10px;padding-top: 10px; padding-bottom: 10px; color: #2B3F54">Current constraints</h4>
+        </div>
+        <table>
+         <tbody>
+          <tr>
+           <td colspan="2">
+            <div class="scrollit" style="overflow:scroll;height:190px; width: 190px; border: 1px solid black;">
+             <table id="currentconstraints">
+             </table>
+           </div>
+         </td>
+       </tr>
 
-				</div>
+     </tbody>
+   </table>
+ </div>
 
-			</div>
-      <br>
-			<div class="modal-footer">
-				<button id="saveButton">Save changes</button>
-        <button id="cancelButton"> Cancel </button>
-			</div>
-		</div>
-	</div>
+</div>
+
+</div>
+<br>
+<div class="modal-footer">
+  <button id="saveButton">Save changes</button>
+  <button id="cancelButton">Cancel</button>
+</div>
+</div>
+</div>
 </template>
 
 <!-- <template name="calendar">
