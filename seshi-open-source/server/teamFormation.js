@@ -26,7 +26,6 @@ Meteor.methods({
   createTeams: function(minStudents, maxStudents, listOfStudents) {
     var sync = Meteor.wrapAsync(exec);
     var cmd = "python assets/app/teamFormationAlgorithm.py " + " " + minStudents + " " + maxStudents + " '" + listOfStudents + "'";
-    console.log(cmd);
     var result = sync(cmd);
 
     return result;
@@ -47,7 +46,15 @@ Meteor.methods({
     var result = sync(cmd);
 
     return result;
-  }
+  }//,
+
+  // checkConstraintViolation: function(currentTeam, constraintsList) {
+  //   var sync = Meteor.wrapAsync(exec);
+  //   var cmd = "python assets/app/checkConstraint.py " + " " + currentTeam + " " + constraintsList;
+  //   var result = sync(cmd);
+  //
+  //   return result;
+  // }
 
 
 });

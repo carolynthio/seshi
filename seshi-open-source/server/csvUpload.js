@@ -3,7 +3,7 @@ Meteor.methods({
     // console.log(data);
     // check( data, Array );
 
-    // Students.remove({}); // remove all objects
+    Students.remove({}); // remove all objects
     for ( let i = 0; i < data.length; i++ ) {
       let item   = data[ i ],
           exists = Students.findOne( { Name: item.name } );

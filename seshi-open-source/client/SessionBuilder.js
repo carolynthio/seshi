@@ -2429,6 +2429,14 @@ Template.constraints.events({
     if (($('#numStudentsLo').val() != "") && ($('#numStudentsHi').val() != "") &&
       (Students.find({"name": {$exists: true, $ne: ""}}).count() != 0) && Session.get("suggestedMode")) {
 
+      var constraintList = [];
+      $('#constraints-td .constraint-tag').each(function(i) {
+        var eachConstraint = [];
+        eachConstraint.push(this.getAttribute("constraint"));
+        eachConstraint.push(this.getAttribute("value"));
+        constraintList.push(eachConstraint);
+      });
+
       var listOfStudents = JSON.stringify(Students.find({"name": {$exists: true, $ne: ""}}).fetch());
       // Meteor.call('callPython', $('#numStudentsLo').val(), studentNames,
       Meteor.call('createTeams', $('#numStudentsLo').val(), $('#numStudentsHi').val(),listOfStudents,
@@ -2491,9 +2499,19 @@ Template.constraints.events({
               }
 
               // TODO: Add if statement about constraintList
-              // var constraintViolation = "<i style=\"color:#FFCC00\" class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>";
-              // var teamHeader = '#team' + i + ' .team-header';
-              // $(teamHeader).append(constraintViolation);
+              // console.log("THIS IS THE CURRENT TEAM ****************");
+              // var currentTeam = JSON.stringify(listOfTeams[i]);
+              // var constraints = JSON.stringify(constraintList);
+              // Meteor.call("checkConstraintViolation", currentTeam, constraints,
+              // function(error, result) {
+              //   if (error) {
+              //     console.log(error);
+              //   }
+              //   // var constraintViolation = "<i style=\"color:#FFCC00\" class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>";
+              //   // var teamHeader = '#team' + i + ' .team-header';
+              //   // $(teamHeader).append(constraintViolation);
+              // });
+
 
               // Append student to each team
               for (j=0; j < listOfTeams[i].member.length; j++) {
@@ -2837,6 +2855,7 @@ Template.constraintModalTemplate.events({
 			// console.log(childSnapshot.key);
 			var name_cell = document.createElement('td');
 			name_cell.setAttribute("id", currConstraint);
+      name_cell.setAttribute("value", constraintvalue);
 			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
 			new_row.appendChild(name_cell);
 			table.appendChild(new_row);
@@ -2862,6 +2881,7 @@ Template.constraintModalTemplate.events({
 			// console.log(childSnapshot.key);
 			var name_cell = document.createElement('td');
 			name_cell.setAttribute("id", currConstraint);
+      name_cell.setAttribute("value", constraintvalue);
 			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
 			Session.set('leadership', document.getElementById('balancevalue').checked);
 			new_row.appendChild(name_cell);
@@ -2882,6 +2902,7 @@ Template.constraintModalTemplate.events({
 			// console.log(childSnapshot.key);
 			var name_cell = document.createElement('td');
 			name_cell.setAttribute("id", currConstraint);
+      name_cell.setAttribute("value", constraintvalue);
 			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
 			Session.set('genderbalance', document.getElementById('balancevalue').checked);
 			new_row.appendChild(name_cell);
@@ -3067,13 +3088,11 @@ Template.constraintModalTemplate.events({
     // table is not empty
     if (table.children().length != 0) {
     	for (i = 0; i < table.children().length; i++) {
-        console.log(table.children().children());
-        console.log(table.children().children()[i]);
           var rowId = table.children().children()[i].id; // id of constraint
           var outerSpan = document.createElement('span');
           outerSpan.setAttribute("class", "constraint-tag");
           outerSpan.setAttribute("constraint", table.children().children()[i].id);
-          outerSpan.setAttribute("value", table.children().children()[i].value);
+          outerSpan.setAttribute("value", Session.get(rowId));
 
           var innerSpan = document.createElement('span');
           innerSpan.appendChild(document.createTextNode(rowId + ": " + Session.get(rowId))); // add the row id to span
