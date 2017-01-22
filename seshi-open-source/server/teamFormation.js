@@ -46,15 +46,15 @@ Meteor.methods({
     var result = sync(cmd);
 
     return result;
-  }//,
+  },
 
-  // checkConstraintViolation: function(currentTeam, constraintsList) {
-  //   var sync = Meteor.wrapAsync(exec);
-  //   var cmd = "python assets/app/checkConstraint.py " + " " + currentTeam + " " + constraintsList;
-  //   var result = sync(cmd);
-  //
-  //   return result;
-  // }
+  checkConstraintViolation: function(currentTeam, constraintsList, index) {
+    var sync = Meteor.wrapAsync(exec);
+    var cmd = "python assets/app/checkConstraint.py " + " '" + currentTeam + "' " + constraintsList + " " + index;
+    var result = sync(cmd);
+
+    return result;
+  }
 
 
 });

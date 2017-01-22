@@ -1866,6 +1866,14 @@ Template.SessionBuilder.events({
         }, 500);
     },
 
+    'mouseenter .constraint' : function(e) {
+      $(e.target).popover("show");
+    },
+
+    'mouseleave .constraint' : function(e) {
+      $(e.target).popover("hide");
+    },
+
     // collapse each team
     'click .team-header' : function(e) {
       $(e.target).next(".tabs").slideToggle();
@@ -2499,18 +2507,40 @@ Template.constraints.events({
               }
 
               // TODO: Add if statement about constraintList
-              // console.log("THIS IS THE CURRENT TEAM ****************");
-              // var currentTeam = JSON.stringify(listOfTeams[i]);
-              // var constraints = JSON.stringify(constraintList);
-              // Meteor.call("checkConstraintViolation", currentTeam, constraints,
-              // function(error, result) {
-              //   if (error) {
-              //     console.log(error);
-              //   }
-              //   // var constraintViolation = "<i style=\"color:#FFCC00\" class=\"fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>";
-              //   // var teamHeader = '#team' + i + ' .team-header';
-              //   // $(teamHeader).append(constraintViolation);
-              // });
+              console.log("THIS IS THE CURRENT TEAM ****************");
+              var currentTeam = JSON.stringify(listOfTeams[i]);
+              var constraints = JSON.stringify(constraintList);
+              Meteor.call("checkConstraintViolation", currentTeam, constraints, i,
+              function(error, result) {
+                if (error) {
+                  console.log(error);
+                }
+
+                console.log("THIS IS THE RESULT OF THE CONSTRAINT");
+                constraintsViolated = result.split(",");
+                // Result is not null
+                if (constraintsViolated[0] != "") {
+                  var index = constraintsViolated[constraintsViolated.length-1];
+                  console.log(constraintsViolated)
+                  var constraintViolation = "<i style=\"color:#FFCC00\" class=\"constraint constraint-" + index + " fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>";
+                  var teamHeader = '#team' + index + ' .team-header';
+                  $(teamHeader).append(constraintViolation);
+                  var constraintIcon = ".constraint-"+index;
+                  var modalPopover = "<div>";
+                  for(i = 0; i < constraintsViolated.length-1; i++) {
+                    modalPopover += "<div style=\"color:black\">" + constraintsViolated[i] + "</div>"
+                  }
+                  modalPopover += "</div>";
+                  var modalTitle = "<div style=\"color:black\">Constraints Violated</div>";
+                  $(constraintIcon).attr("data-placement", "top");
+                  $(constraintIcon).attr("data-trigger", "manual");
+                  $(constraintIcon).attr("data-html", "true");
+                  $(constraintIcon).attr("data-toggle", "popover");
+                  $(constraintIcon).attr("data-content", modalPopover);
+                  $(constraintIcon).attr("title", modalTitle);
+                }
+
+              });
 
 
               // Append student to each team
@@ -2823,14 +2853,17 @@ Template.constraints.events({
   },
 
   'click .remove' : function(e) {
-	$(e.target).parents("span:first").remove();
+    var row_id = e.target.id;
+  	Session.set(row_id, '');
+  	$(e.target).parents("span:first").remove();
 },
-'click .glyphicon-remove-sign' : function(e) {
-	var row_id = e.target.id;
-	Session.set(row_id, '');
-	$(e.target).parents("span:first").remove();
 
-}
+// 'click .glyphicon-remove-sign' : function(e) {
+// 	var row_id = e.target.id;
+// 	Session.set(row_id, '');
+// 	$(e.target).parents("span:first").remove();
+//
+// }
 });
 
 Template.constraintModalTemplate.events({
@@ -3088,11 +3121,13 @@ Template.constraintModalTemplate.events({
     // table is not empty
     if (table.children().length != 0) {
     	for (i = 0; i < table.children().length; i++) {
-          var rowId = table.children().children()[i].id; // id of constraint
+          var rowId = table.children()[i].cells[0].id; // id of constraint
           var outerSpan = document.createElement('span');
           outerSpan.setAttribute("class", "constraint-tag");
-          outerSpan.setAttribute("constraint", table.children().children()[i].id);
+          outerSpan.setAttribute("constraint", table.children()[i].cells[0].id);
+          // outerSpan.setAttribute("value", table.children()[i].cells[0].value);
           outerSpan.setAttribute("value", Session.get(rowId));
+
 
           var innerSpan = document.createElement('span');
           innerSpan.appendChild(document.createTextNode(rowId + ": " + Session.get(rowId))); // add the row id to span
@@ -3101,6 +3136,7 @@ Template.constraintModalTemplate.events({
           var aTag = document.createElement('a');
           var iTag = document.createElement('i');
           iTag.setAttribute("class", "remove glyphicon glyphicon-remove-sign glyphicon-white");
+          iTag.setAttribute("id", rowId);
           aTag.appendChild(iTag);
 
           // Adding the elements to the outer span
