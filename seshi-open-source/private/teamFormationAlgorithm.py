@@ -120,7 +120,7 @@ def selectTeams(all_possible_teams):
 '''
 
 ''' Set the parameters here '''
-mini_common_time_slots = 8;
+mini_common_time_slots = 0;
 number_student_per_team_lo = int(sys.argv[1]);
 number_student_per_team_hi = int(sys.argv[2]);
 
@@ -161,7 +161,17 @@ gender = [s.gender for s in students]
 class_avg_gender = sum(gender) / len(gender)
 leadership = [s.leadership for s in students]
 class_avg_leadership = sum(leadership) / len(leadership)
-constraintsList = ["schedule"];
+# constraintsList = ["schedule"];
+constraintsList = []
+if(sys.argv[4]):
+	constraintsListArg = ast.literal_eval(sys.argv[4])
+	for constraint in constraintsListArg:
+		if constraint[0] == "availability":
+			constraintsList.append("schedule");
+			mini_common_time_slots = int(constraint[1])
+		else:
+			if constraint[1] == "true":
+				constraintsList.append(constraint[0])
 
 if debug:
 	print "Here are all the students: "

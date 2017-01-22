@@ -3,6 +3,20 @@ from student import student
 import team as t
 import sys
 import json
+import ast
+
+mini_common_time_slots = 0
+constraintsList = []
+
+if(sys.argv[2]):
+    constraintsListArg = ast.literal_eval(sys.argv[2])
+    for constraint in constraintsListArg:
+    	if constraint[0] == "availability":
+    		constraintsList.append("schedule");
+    		mini_common_time_slots = int(constraint[1])
+    	else:
+    		if constraint[1] == "true":
+    			constraintsList.append(constraint[0])
 
 def checkbalance(team,featuretocheck):
 	students = team.getMembers();
@@ -50,18 +64,24 @@ tempTeam.overlappingSchedule = obj["overlappingSchedule"];
 
 result = []
 
-if (not checkbalance(tempTeam,"gender")):
-	# print str(tempTeam)+" violate: "+"gender";
-    result.append("gender");
+for constraint in constraintsList:
+    if (constraint == "schedule"):
+        if (not checkSchedule(tempTeam,mini_common_time_slots)):
+        	# print str(tempTeam)+" violate: "+"schedule";
+            result.append("schedule");
+    else:
+        if (not checkbalance(tempTeam,constraint)):
+        	# print str(tempTeam)+" violate: "+"gender";
+            result.append(constraint);
+    
+# if (not checkbalance(tempTeam,"gender")):
+# 	# print str(tempTeam)+" violate: "+"gender";
+#     result.append("gender");
+#
+# if (not checkbalance(tempTeam,"leadership")):
+# 	# print str(tempTeam)+" violate: "+"leadership";
+#     result.append("leadership");
 
-if (not checkbalance(tempTeam,"leadership")):
-	# print str(tempTeam)+" violate: "+"leadership";
-    result.append("leadership");
-
-
-if (not checkSchedule(tempTeam,4)):
-	# print str(tempTeam)+" violate: "+"schedule";
-    result.append("schedule");
 
 result = ','.join(result)
 result += "," + sys.argv[3];

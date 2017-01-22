@@ -23,11 +23,10 @@ Meteor.methods({
     // console.log("outside stdout: " + output);
     return result;
   },
-  createTeams: function(minStudents, maxStudents, listOfStudents) {
+  createTeams: function(minStudents, maxStudents, listOfStudents, constraints) {
     var sync = Meteor.wrapAsync(exec);
-    var cmd = "python assets/app/teamFormationAlgorithm.py " + " " + minStudents + " " + maxStudents + " '" + listOfStudents + "'";
+    var cmd = "python assets/app/teamFormationAlgorithm.py " + " " + minStudents + " " + maxStudents + " '" + listOfStudents + "' '" + constraints + "'";
     var result = sync(cmd);
-
     return result;
   },
 
@@ -50,7 +49,7 @@ Meteor.methods({
 
   checkConstraintViolation: function(currentTeam, constraintsList, index) {
     var sync = Meteor.wrapAsync(exec);
-    var cmd = "python assets/app/checkConstraint.py " + " '" + currentTeam + "' " + constraintsList + " " + index;
+    var cmd = "python assets/app/checkConstraint.py " + " '" + currentTeam + "' '" + constraintsList + "' " + index;
     var result = sync(cmd);
 
     return result;

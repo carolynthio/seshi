@@ -2446,8 +2446,10 @@ Template.constraints.events({
       });
 
       var listOfStudents = JSON.stringify(Students.find({"name": {$exists: true, $ne: ""}}).fetch());
+      var constraints = JSON.stringify(constraintList);
+      console.log(constraints);
       // Meteor.call('callPython', $('#numStudentsLo').val(), studentNames,
-      Meteor.call('createTeams', $('#numStudentsLo').val(), $('#numStudentsHi').val(),listOfStudents,
+      Meteor.call('createTeams', $('#numStudentsLo').val(), $('#numStudentsHi').val(),listOfStudents, constraints,
         function(error, result) {
           if (error) {
             console.log(error);
@@ -2509,19 +2511,17 @@ Template.constraints.events({
               // TODO: Add if statement about constraintList
               console.log("THIS IS THE CURRENT TEAM ****************");
               var currentTeam = JSON.stringify(listOfTeams[i]);
-              var constraints = JSON.stringify(constraintList);
+
               Meteor.call("checkConstraintViolation", currentTeam, constraints, i,
               function(error, result) {
                 if (error) {
                   console.log(error);
                 }
 
-                console.log("THIS IS THE RESULT OF THE CONSTRAINT");
                 constraintsViolated = result.split(",");
                 // Result is not null
                 if (constraintsViolated[0] != "") {
                   var index = constraintsViolated[constraintsViolated.length-1];
-                  console.log(constraintsViolated)
                   var constraintViolation = "<i style=\"color:#FFCC00\" class=\"constraint constraint-" + index + " fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>";
                   var teamHeader = '#team' + index + ' .team-header';
                   $(teamHeader).append(constraintViolation);
