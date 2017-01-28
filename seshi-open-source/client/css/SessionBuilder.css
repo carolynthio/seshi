@@ -64,7 +64,7 @@ body{
     font-size: 90%;
 }
 
-#sessionarea .ui-state-hover {
+.ui-state-hover {
     background: rgba(216,235,250, 0.9);
 }
 
@@ -354,7 +354,8 @@ i.swap:hover {
 }
 
 #paperlist-buttons{
-	margin-bottom: 5px
+  margin-top: 5px;
+	margin-bottom: 5px;
 }
 
 #sessionlist-buttons{
@@ -823,6 +824,10 @@ tr.constraints-row {
   height: 100%;
 }
 
+.weights {
+  height: 20px;
+}
+
 .individual {
   width: 190px;
 }
@@ -991,7 +996,7 @@ li.active a, li.active a:hover {
   font-size: 14px;
 }
 
-.student-gender, .student-leadership{
+.student-attribute{
   margin-left: 10px;
   color: #2b3F54;
   font-family: Helvetica, Arial, sans-serif;

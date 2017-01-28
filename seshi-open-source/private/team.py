@@ -40,11 +40,18 @@ class team:
 	# Calculate the score of each team
 	def calScore(self):
 		totalScore = 0;
+		outOf = 0.0;
 		if "schedule" in self.constraintsList:
 			totalScore += calScheduleScore(self.member)
+			outOf += 1;
 		if "leadership" in self.constraintsList:
 			totalScore += calLeadership(self.member, self.class_avg_leadership)
-		return totalScore;
+			outOf += 1;
+		if "gender" in self.constraintsList:
+			totalScore += calGender(self.member, self.class_avg_gender)
+			outOf += 1;
+
+		return totalScore / outOf;
 
 	# Returns the overlapping team schedule
 	def teamSchedule(self, students_in_this_team):
@@ -104,3 +111,11 @@ def calLeadership(students_in_this_team, class_avg_leadership):
 	team_avg_leadership = sum([s.leadership for s in students_in_this_team]) / len(students_in_this_team)
 
 	return math.exp(-abs(team_avg_leadership-class_avg_leadership))
+
+def calGender(students_in_this_team, class_avg_gender):
+	if (len(students_in_this_team) == 0):
+		return -1;
+
+	team_avg_gender = sum([s.gender for s in students_in_this_team]) / len(students_in_this_team)
+
+	return math.exp(-abs(team_avg_gender-class_avg_gender))

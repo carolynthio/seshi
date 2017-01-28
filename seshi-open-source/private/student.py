@@ -81,7 +81,8 @@ class student:
         Constructor
         '''
         self.teams = [];
-
+        self.likes = []
+        self.dislikes = []
         self.name = name;
         self.gender = gender;
         self.leadership = leadership;

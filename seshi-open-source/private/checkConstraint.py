@@ -16,7 +16,11 @@ if(sys.argv[2]):
     		mini_common_time_slots = int(constraint[1])
     	else:
     		if constraint[1] == "true":
-    			constraintsList.append(constraint[0])
+				if constraint[0] != "studentLikes" and constraint[0] != "studentDislikes":
+					if constraint[0] == "genderbalance":
+						constraintsList.append("gender")
+					else:
+						constraintsList.append(constraint[0])
 
 def checkbalance(team,featuretocheck):
 	students = team.getMembers();
@@ -69,11 +73,14 @@ for constraint in constraintsList:
         if (not checkSchedule(tempTeam,mini_common_time_slots)):
         	# print str(tempTeam)+" violate: "+"schedule";
             result.append("schedule");
+    elif (constraint =="genderbalance"):
+        if (not checkbalance(tempTeam,"gender")):
+            result.append("gender");
     else:
         if (not checkbalance(tempTeam,constraint)):
         	# print str(tempTeam)+" violate: "+"gender";
             result.append(constraint);
-    
+
 # if (not checkbalance(tempTeam,"gender")):
 # 	# print str(tempTeam)+" violate: "+"gender";
 #     result.append("gender");

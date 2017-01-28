@@ -43,6 +43,8 @@ Session.set('anonymousName', "Anonymous");
 
 Session.set("showAllGenders", true);
 Session.set("showAllLeadership", true);
+Session.set("showAllStudentLikes", true);
+Session.set("showAllStudentDislikes", true);
 Session.set("studentRosterFile", {});
 Session.set("manualMode", false);
 Session.set("suggestedMode", true);
@@ -53,6 +55,8 @@ Session.set("missingFields", false);
 Session.set('availability', '');
 Session.set('leadership', '');
 Session.set('genderbalance', '');
+Session.set('studentLikes', '');
+Session.set('studentDislikes', '');
 
 Meteor.startup(function (){
     Session.set("searchResults", []); //Papers.find({active:true}).fetch());
@@ -1214,6 +1218,12 @@ Template.studentRoster.helpers({
   leadershipCollapsed : function(){
     return !Session.get('showAllLeadership');
   },
+  studentLikesCollapsed : function(){
+    return !Session.get('showAllStudentLikes');
+  },
+  studentDislikesCollapsed : function(){
+    return !Session.get('showAllStudentDislikes');
+  },
   isLeader: function(leader) {
     return leader === "1";
   },
@@ -1334,11 +1344,15 @@ Template.studentRoster.rendered = function(){
    //
   //  });
   var studentList = $(".draggable-student").draggable({
-    connectToSortable: '.each-team',
+    connectToSortable: '.student-names',
     helper: 'clone',
     revert: 'invalid',
+    zIndex: 2000,
     start: function (e,u){
-  	    $(u.helper).addClass("dragged-wide-student")
+  	    $(u.helper).addClass("dragged-wide-student");
+        // $(u.helper).children(".student-attribute").hide();
+        // $(u.helper).children(".student-details").hide();
+        // console.log(u.helper);
   	},
   });
   if (Session.get("suggestedMode")) {
@@ -1351,6 +1365,8 @@ Template.studentRoster.events({
   'click .student-details' : function(e) {
     toggleDetails($(e.target).parents('.student').find('.student-gender'), '.toggle-gender');
     toggleDetails($(e.target).parents('.student').find('.student-leadership'), '.toggle-leadership');
+    toggleDetails($(e.target).parents('.student').find('.student-studentLikes'), '.toggle-studentLikes');
+    toggleDetails($(e.target).parents('.student').find('.student-studentDislikes'), '.toggle-studentDislikes');
   }
 
 });
@@ -1496,6 +1512,16 @@ Template.SessionBuilder.events({
     'click .toggle-leadership' : function(){
     toggleButton('showAllLeadership', '#paper-deck .student .student-leadership',
          '.toggle-leadership', 'btn-info', 'btn-success');
+    },
+
+    'click .toggle-studentLikes' : function(){
+    toggleButton('showAllStudentLikes', '#paper-deck .student .student-studentLikes',
+         '.toggle-studentLikes', 'btn-info', 'btn-success');
+    },
+
+    'click .toggle-studentDislikes' : function(){
+    toggleButton('showAllStudentDislikes', '#paper-deck .student .student-studentDislikes',
+         '.toggle-studentDislikes', 'btn-info', 'btn-success');
     },
 
     'click .toggle-paper-sessions' : function(){
@@ -2326,6 +2352,8 @@ Template.constraints.onCreated(function() {
 Template.constraints.events({
   'click #constraintsButton': function() {
 		Modal.show('constraintModalTemplate');
+
+    // Availability constraint
 		if(Session.get('availability') == ''){
 			var new_row = document.createElement('tr');
 			new_row.setAttribute("class", "clickable-row");
@@ -2360,11 +2388,11 @@ Template.constraints.events({
 
 		}
 
+    // leadership constraint
 		if(Session.get('leadership') == ''){
 			var new_row = document.createElement('tr');
 			new_row.setAttribute("class", "clickable-row");
 
-			// console.log(childSnapshot.key);
 			var table = document.getElementById("remainingConstraints");
 			var name_cell = document.createElement('td');
 			name_cell.setAttribute("id", 'leadership');
@@ -2394,6 +2422,7 @@ Template.constraints.events({
 
 		}
 
+    // gender balance constraint
 		if(Session.get('genderbalance') == ''){
 			var new_row = document.createElement('tr');
 			new_row.setAttribute("class", "clickable-row");
@@ -2426,6 +2455,74 @@ Template.constraints.events({
 			new_row.appendChild(name_cell);
 			table.appendChild(new_row);
 		}
+
+    // Student likes constraintvalue
+    if(Session.get('studentLikes') == ''){
+			var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-row");
+
+			// console.log(childSnapshot.key);
+			var table = document.getElementById("remainingConstraints");
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", 'studentLikes');
+			name_cell.appendChild(document.createTextNode('studentLikes' + ": "));
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+			var constraintModifier = document.getElementById("constrainttochange");
+			constrainttitle.innerHTML = "";
+			var add_button = document.getElementById("add_button");
+			add_button.style.visibility = "hidden" ;
+			var remove_button = document.getElementById("removeButton");
+			remove_button.style.visibility = "hidden";
+
+		}
+		else{
+			var constraintvalue = Session.get('studentLikes');
+			var table = document.getElementById("currentconstraints");
+			var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-cons");
+
+			// console.log(childSnapshot.key);
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", 'studentLikes');
+			name_cell.appendChild(document.createTextNode('studentLikes' + ": " + constraintvalue));
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+		}
+
+    // Student dislikes constraintvalue
+    if(Session.get('studentDislikes') == ''){
+      var new_row = document.createElement('tr');
+      new_row.setAttribute("class", "clickable-row");
+
+      // console.log(childSnapshot.key);
+      var table = document.getElementById("remainingConstraints");
+      var name_cell = document.createElement('td');
+      name_cell.setAttribute("id", 'studentDislikes');
+      name_cell.appendChild(document.createTextNode('studentDislikes' + ": "));
+      new_row.appendChild(name_cell);
+      table.appendChild(new_row);
+      var constraintModifier = document.getElementById("constrainttochange");
+      constrainttitle.innerHTML = "";
+      var add_button = document.getElementById("add_button");
+      add_button.style.visibility = "hidden" ;
+      var remove_button = document.getElementById("removeButton");
+      remove_button.style.visibility = "hidden";
+
+    }
+    else{
+      var constraintvalue = Session.get('studentDislikes');
+      var table = document.getElementById("currentconstraints");
+      var new_row = document.createElement('tr');
+      new_row.setAttribute("class", "clickable-cons");
+
+      // console.log(childSnapshot.key);
+      var name_cell = document.createElement('td');
+      name_cell.setAttribute("id", 'studentDislikes');
+      name_cell.appendChild(document.createTextNode('studentDislikes' + ": " + constraintvalue));
+      new_row.appendChild(name_cell);
+      table.appendChild(new_row);
+    }
 
 
 	},
@@ -2473,7 +2570,7 @@ Template.constraints.events({
               "<div class=\"team\" id=\"team" + i + "\">" +
                 "<div class=\"team-header\">" +
                   "<div class=\"team-title\" contentEditable=\"true\" style=\"float: left\">Team "+ i + "</div>" +
-                  "<div class=\"compatibility\">" + listOfTeams[i].score.toFixed(3) + "</div>" +
+                  "<div class=\"compatibility\">" + (parseFloat(listOfTeams[i].score) * 100).toFixed(3) + "%</div>" +
                   "<i href=\"#tab3_" + i +"\" style=\"margin-left: 2px\" class=\"fa fa-calendar showSchedule\" aria-hidden=\"true\"></i>" +
                   // "</div>" +
                 "</div>" +
@@ -2522,7 +2619,7 @@ Template.constraints.events({
                 // Result is not null
                 if (constraintsViolated[0] != "") {
                   var index = constraintsViolated[constraintsViolated.length-1];
-                  var constraintViolation = "<i style=\"color:#FFCC00\" class=\"constraint constraint-" + index + " fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>";
+                  var constraintViolation = "<i style=\"color:#FFCC00; margin-left:5px;\" class=\"constraint constraint-" + index + " fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>";
                   var teamHeader = '#team' + index + ' .team-header';
                   $(teamHeader).append(constraintViolation);
                   var constraintIcon = ".constraint-"+index;
@@ -2672,7 +2769,7 @@ Template.constraints.events({
         });
         // console.log("outside meteor.call: " + Session.get('teams'));
 
-    } // End if
+    } // End if -- Manual Mode
     else if(($('#numStudentsLo').val() != "")  &&
       (Students.find({"name": {$exists: true, $ne: ""}}).count() != 0) && Session.get("manualMode")){
         template.creatingTeams.set( true );
@@ -2684,15 +2781,8 @@ Template.constraints.events({
             "<div class=\"team-header\">" +
               "<div class=\"team-title\" contentEditable=\"true\" style=\"float: left\">Team "+ i + "</div>" +
               "<div class=\"compatibility\"></div>" +
-              "<i href=\"#tab3_" + i +"\" style=\"margin-left: 2px\" class=\"fa fa-calendar showSchedule\" aria-hidden=\"true\"></i>" +
-              // "</div>" +
             "</div>" +
             "<div class=\"tabs\">" +
-              // "<ul class=\"tab-links\">" +
-              //     "<li class=\"active\"><a href=\"#tab1_" + i +"\">Names</a></li>" +
-              //     // "<li><a href=\"#tab2_" + i +"\">General</a></li>" +
-              //     "<li><a href=\"#tab3_" + i +"\">Availability</a></li>" +
-              // "</ul>" +
 
               "<div class=\"tab-content\">" +
                   "<div id=\"tab1_" + i +"\" class=\"tab active\">" +
@@ -2701,12 +2791,6 @@ Template.constraints.events({
                       "</ul>" +
                   "</div>" +
 
-                  // "<div id=\"tab2_" + i +"\" class=\"tab\">" +
-                  //     "Overall Score: " + listOfTeams[i].score.toFixed(3) +
-                  // "</div>" +
-
-                  "<div id=\"tab3_" + i +"\" class=\"tab tab3\">" +
-                  "</div>" +
               "</div>" +
             "</div>" +
           "</div>";
@@ -2718,117 +2802,55 @@ Template.constraints.events({
             $('#teamColumn2').append(team);
           }
 
-          // Create calendar for each tab
-          $( '#tab3_'+i ).fullCalendar({
-                defaultView: 'agendaWeek',
-                aspectRatio: 2,
-                header : false,
-                allDaySlot: false,
-                columnFormat: 'ddd',
-                slotDuration: "00:60:00",
-                displayEventTime: false,
-                minTime: "08:00:00", //8am
-                maxTime: "21:00:00" //9pm
-          });
 
       }
 
-      // each student in the team
-      var sortlists = $(".student-names").sortable({
-       connectWith : ".student-names",
-       items       : ".student",
-       tolerance   : 'pointer',
-       revert      : 'invalid',
-       forceHelperSize: true,
-       stack: ".student-names",
-       placeholder: "placeholder" //,
-       // Updating information of each team on drop
-      //  update: function () {
-      //    console.log(this); // prints out each ul
-      //    var students = [];
-      //    $('#' + this.id + ' li').each(function(i) {
-      //      console.log(this);
-      //      var eachStudent = {};
-      //      eachStudent.name = this.getAttribute("name");
-      //      eachStudent.schedule = this.getAttribute("schedule");
-      //      eachStudent.gender = this.getAttribute("gender");
-      //      eachStudent.leadership = this.getAttribute("leadership");
-      //      students.push(eachStudent);
-      //     //  console.log(this); // prints out each li
-      //    });
-      //    // TODO: May need to also pass in constraintsList once UI is set up
-      //    var scoreAndSched = []
-      //    var ulElement = this.id;
-      //    Meteor.call('updateTeams', JSON.stringify(students), Session.get("classAvgGender"),
-      //                 Session.get("classAvgLeadership"), Session.get("constraintsList"),
-      //      function(error, result) {
-      //        if (error) {
-      //          console.log(error);
-      //        }
-       //
-      //        scoreAndSched = result.split(" & ");
-      //        console.log(scoreAndSched);
-       //
-      //        // Updates score
-      //        $('#' + ulElement).parents('.team').children('.team-header').children('.compatibility').text(parseFloat(scoreAndSched[0]).toFixed(3));
-       //
-      //        // Update calendar
-      //        var schedule = JSON.parse(scoreAndSched[1]);
-      //        var eventList = []
-      //        for (k=0; k < schedule.length; k++) {
-      //          var startTime = 8;
-      //          for (m=0; m < schedule[k].length; m++) {
-      //            var eachDayArray = schedule[k];
-      //            if (eachDayArray[m]) {
-      //              var newEvent = {
-      //                title: " ",
-      //                start: startTime.toString() + ":00",
-      //                end: (startTime+1).toString() + ":00",
-      //                dow: [k]
-      //              };
-      //              eventList.push(newEvent);
-      //            }
-      //            startTime++;
-      //          }
-      //        }
-      //        var tabId = $('#' + ulElement).parents('.tabs').children().children('.tab3')[0].id;
-      //        $( '#' + tabId ).fullCalendar('removeEvents');
-      //        $( '#' + tabId ).fullCalendar('addEventSource', eventList);
-      //    });
-      //  }
-
-     });
-
      // On drop change from div to list item
      var dropped = $(".student-names").droppable({
-        drop : function(event,ui) {
-          // Only change if it is not already a list element
-          if(ui.draggable[0].nodeName != "LI") {
-            var leadership;
-            var gender;
-            if (ui.helper.children(".student-gender").text().trim() == "Female") {
-              gender = 1;
-            } else {
-              gender = 0;
-            }
-            if (ui.helper.children(".student-leadership").text().trim() == "Leader") {
-              leadership = 1
-            } else {
-              leadership = 0;
-            }
-            var listStudent = "<li class=\"each-student student\"" +
-            "name=\""+ ui.helper.children(".student-name").text().trim() +"\"" +
-            "gender=\""+ gender +"\"" +
-            "leadership=\""+ leadership +"\"" +
-            "schedule=\""+ ui.helper.children(".student-schedule").text().trim() +"\">" +
-              // finalArray[i][j] +
-              ui.helper.children(".student-name").text().trim() +
-              // "<i class=\"swap fa fa-exchange\" aria-hidden=\"true\" style=\"float:right;margin-right: 10px;margin-top: 3px;\"></i>" +
-            "</li>";
-            $(ui.draggable).replaceWith(listStudent);
-          }
-        }
+       hoverClass: 'ui-state-hover',
+        greedy: true,
+        // drop : function(event,ui) {
+        //   console.log("student is being dropped");
+        //   // Only change if it is not already a list element
+        //   if(ui.draggable[0].nodeName != "LI") {
+        //     var leadership;
+        //     var gender;
+        //     if (ui.helper.children(".student-gender").text().trim() == "Female") {
+        //       gender = 1;
+        //     } else {
+        //       gender = 0;
+        //     }
+        //     if (ui.helper.children(".student-leadership").text().trim() == "Leader") {
+        //       leadership = 1
+        //     } else {
+        //       leadership = 0;
+        //     }
+        //     var listStudent = "<li class=\"each-student student\"" +
+        //     "name=\""+ ui.helper.children(".student-name").text().trim() +"\"" +
+        //     "gender=\""+ gender +"\"" +
+        //     "leadership=\""+ leadership +"\"" +
+        //     "schedule=\""+ ui.helper.children(".student-schedule").text().trim() +"\">" +
+        //       // finalArray[i][j] +
+        //       ui.helper.children(".student-name").text().trim() +
+        //       // "<i class=\"swap fa fa-exchange\" aria-hidden=\"true\" style=\"float:right;margin-right: 10px;margin-top: 3px;\"></i>" +
+        //     "</li>";
+        //     $(ui.draggable).replaceWith(listStudent);
+        //   }
+        // }
      });
+
+     // each student in the team
+     var sortlists = $(".student-names").sortable({
+      connectWith : ".student-names",
+      items       : ".student",
+      tolerance   : 'pointer',
+      revert      : 'invalid',
+      forceHelperSize: true,
+      stack: ".student-names",
+      // placeholder: "placeholder"
+
+
+    });
 
 
     }
@@ -2877,6 +2899,8 @@ Template.constraintModalTemplate.events({
 
 	'click #add_button' : function() {
 		var constrainttitle = document.getElementById("constrainttitle");
+
+    // availability for adding to current constraints
 		if(constrainttitle.innerHTML == "availability"){
 			var constraintvalue = document.getElementById("constraintchange").value;
 			if(constraintvalue.length != 0){
@@ -2892,6 +2916,18 @@ Template.constraintModalTemplate.events({
 			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
 			new_row.appendChild(name_cell);
 			table.appendChild(new_row);
+
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
+      var weightInput = document.createElement("input");
+      var new_row_weights = document.createElement('tr');
+      new_row_weights.setAttribute("class", "weights");
+
+      weightInput.type = "text";
+      weightInput.name = currConstraint;
+      weightInput.style.cssText = "height: 20px;"
+      new_row_weights.appendChild(weightInput);
+      weightsTable.appendChild(new_row_weights);
+
 			Session.set('availability', constraintvalue);
 
 			var changedConstraint = document.getElementById(constrainttitle.innerHTML);
@@ -2903,6 +2939,7 @@ Template.constraintModalTemplate.events({
 		}
 
 	}
+  // leadership
 	else if(constrainttitle.innerHTML == "leadership"){
 		console.log("balanceCheck");
 		var constraintvalue = document.getElementById('balancevalue').checked;
@@ -2920,10 +2957,22 @@ Template.constraintModalTemplate.events({
 			new_row.appendChild(name_cell);
 			table.appendChild(new_row);
 
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
+      var weightInput = document.createElement("input");
+      var new_row_weights = document.createElement('tr');
+      new_row_weights.setAttribute("class", "weights");
+
+      weightInput.type = "text";
+      weightInput.name = currConstraint;
+      weightInput.style.cssText = "height: 20px;"
+      new_row_weights.appendChild(weightInput);
+      weightsTable.appendChild(new_row_weights);
+
 			var changedConstraint = document.getElementById(constrainttitle.innerHTML);
 			changedConstraint.remove();
 
 		}
+    // gender
 		else if(constrainttitle.innerHTML == "genderbalance"){
 			console.log("balanceCheck");
 			var constraintvalue = document.getElementById('balancevalue').checked;
@@ -2940,6 +2989,84 @@ Template.constraintModalTemplate.events({
 			Session.set('genderbalance', document.getElementById('balancevalue').checked);
 			new_row.appendChild(name_cell);
 			table.appendChild(new_row);
+
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
+      var weightInput = document.createElement("input");
+      var new_row_weights = document.createElement('tr');
+      new_row_weights.setAttribute("class", "weights");
+
+      weightInput.type = "text";
+      weightInput.name = currConstraint;
+      weightInput.style.cssText = "height: 20px;"
+      new_row_weights.appendChild(weightInput);
+      weightsTable.appendChild(new_row_weights);
+
+			var changedConstraint = document.getElementById(constrainttitle.innerHTML);
+			changedConstraint.remove();
+
+		}
+    // student likes
+    else if(constrainttitle.innerHTML == "studentLikes"){
+			console.log("balanceCheck");
+			var constraintvalue = document.getElementById('balancevalue').checked;
+			var table = document.getElementById("currentconstraints");
+			var currConstraint = constrainttitle.innerHTML;
+			var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-cons");
+
+			// console.log(childSnapshot.key);
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", currConstraint);
+      name_cell.setAttribute("value", constraintvalue);
+			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
+			Session.set('studentLikes', document.getElementById('balancevalue').checked);
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
+      var weightInput = document.createElement("input");
+      var new_row_weights = document.createElement('tr');
+      new_row_weights.setAttribute("class", "weights");
+
+      weightInput.type = "text";
+      weightInput.name = currConstraint;
+      weightInput.style.cssText = "height: 20px;"
+      new_row_weights.appendChild(weightInput);
+      weightsTable.appendChild(new_row_weights);
+
+			var changedConstraint = document.getElementById(constrainttitle.innerHTML);
+			changedConstraint.remove();
+
+		}
+
+    // student dislikes
+    else if(constrainttitle.innerHTML == "studentDislikes"){
+			console.log("balanceCheck");
+			var constraintvalue = document.getElementById('balancevalue').checked;
+			var table = document.getElementById("currentconstraints");
+			var currConstraint = constrainttitle.innerHTML;
+			var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-cons");
+
+			// console.log(childSnapshot.key);
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", currConstraint);
+      name_cell.setAttribute("value", constraintvalue);
+			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
+			Session.set('studentDislikes', document.getElementById('balancevalue').checked);
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
+      var weightInput = document.createElement("input");
+      var new_row_weights = document.createElement('tr');
+      new_row_weights.setAttribute("class", "weights");
+
+      weightInput.type = "text";
+      weightInput.name = currConstraint;
+      weightInput.style.cssText = "height: 20px;"
+      new_row_weights.appendChild(weightInput);
+      weightsTable.appendChild(new_row_weights);
 
 			var changedConstraint = document.getElementById(constrainttitle.innerHTML);
 			changedConstraint.remove();
@@ -2984,6 +3111,12 @@ Template.constraintModalTemplate.events({
 				}
 
 			}
+      // Removes weight input of corresponding constraint
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
+      $('.weights').find('[name="' + removeid +'"]').remove();
+
+      // Removes constraint from list outside modal
+      $('#constraints-td').find('[constraint="'+ removeid +'"]').remove();
 			Session.set(removeid, '');
 			console.log(removeid + ": " + Session.get(removeid));
 			constrainttitle.innerHTML = "";
@@ -3008,6 +3141,7 @@ Template.constraintModalTemplate.events({
 			}
 
 			constrainttitle.innerHTML = row_id;
+      // Availability
 			if(constrainttitle.innerHTML == "availability"){
     		// <input type="number" value="" min="0" placeholder="0" id="constraintchange"
     		var inputBox = document.createElement('input');
@@ -3020,6 +3154,7 @@ Template.constraintModalTemplate.events({
     		constraintModifier.appendChild(inputBox);
 
     	}
+      // gender
     	if(constrainttitle.innerHTML == "genderbalance"){
     		var balanceSwitch = document.createElement('label');
     		balanceSwitch.setAttribute('class', 'switch');
@@ -3034,6 +3169,7 @@ Template.constraintModalTemplate.events({
     		constraintModifier.appendChild(balanceSwitch);
     		constraintHint.innerHTML = "Information about gender balance!"
     	}
+      // leadership
     	if(constrainttitle.innerHTML == "leadership"){
     		var balanceSwitch = document.createElement('label');
     		balanceSwitch.setAttribute('class', 'switch');
@@ -3047,6 +3183,37 @@ Template.constraintModalTemplate.events({
     		balanceSwitch.appendChild(balanceDiv);
     		constraintModifier.appendChild(balanceSwitch);
     		constraintHint.innerHTML = "Information about leadership!"
+    	}
+      // student likes
+      if(constrainttitle.innerHTML == "studentLikes"){
+    		var balanceSwitch = document.createElement('label');
+    		balanceSwitch.setAttribute('class', 'switch');
+    		var balanceInput = document.createElement('input');
+    		balanceInput.setAttribute('type', 'checkbox');
+    		balanceInput.setAttribute('id', 'balancevalue');
+    		var balanceDiv = document.createElement('div');
+    		balanceDiv.setAttribute('class', 'slider round');
+    		balanceInput.checked = Session.get('studentLikes');
+    		balanceSwitch.appendChild(balanceInput);
+    		balanceSwitch.appendChild(balanceDiv);
+    		constraintModifier.appendChild(balanceSwitch);
+    		constraintHint.innerHTML = "Information about student likes!"
+    	}
+
+      // student dislikes
+      if(constrainttitle.innerHTML == "studentDislikes"){
+    		var balanceSwitch = document.createElement('label');
+    		balanceSwitch.setAttribute('class', 'switch');
+    		var balanceInput = document.createElement('input');
+    		balanceInput.setAttribute('type', 'checkbox');
+    		balanceInput.setAttribute('id', 'balancevalue');
+    		var balanceDiv = document.createElement('div');
+    		balanceDiv.setAttribute('class', 'slider round');
+    		balanceInput.checked = Session.get('studentDislikes');
+    		balanceSwitch.appendChild(balanceInput);
+    		balanceSwitch.appendChild(balanceDiv);
+    		constraintModifier.appendChild(balanceSwitch);
+    		constraintHint.innerHTML = "Information about student studentDislikes!"
     	}
     	$('.highlight').removeClass('highlight');
     	$(e.target).addClass('highlight');
@@ -3107,6 +3274,32 @@ Template.constraintModalTemplate.events({
     		constraintModifier.appendChild(balanceSwitch);
     		constraintHint.innerHTML = "Information about leadership!"
     	}
+      if(constrainttitle.innerHTML == "studentLikes"){
+    		var balanceSwitch = document.createElement('label');
+    		balanceSwitch.setAttribute('class', 'switch');
+    		var balanceInput = document.createElement('input');
+    		balanceInput.setAttribute('type', 'checkbox');
+    		balanceInput.setAttribute('id', 'balancevalue');
+    		var balanceDiv = document.createElement('div');
+    		balanceDiv.setAttribute('class', 'slider round');
+    		balanceSwitch.appendChild(balanceInput);
+    		balanceSwitch.appendChild(balanceDiv);
+    		constraintModifier.appendChild(balanceSwitch);
+    		constraintHint.innerHTML = "Information about studentLikes!"
+    	}
+      if(constrainttitle.innerHTML == "studentDislikes"){
+    		var balanceSwitch = document.createElement('label');
+    		balanceSwitch.setAttribute('class', 'switch');
+    		var balanceInput = document.createElement('input');
+    		balanceInput.setAttribute('type', 'checkbox');
+    		balanceInput.setAttribute('id', 'balancevalue');
+    		var balanceDiv = document.createElement('div');
+    		balanceDiv.setAttribute('class', 'slider round');
+    		balanceSwitch.appendChild(balanceInput);
+    		balanceSwitch.appendChild(balanceDiv);
+    		constraintModifier.appendChild(balanceSwitch);
+    		constraintHint.innerHTML = "Information about studentDislikes!"
+    	}
 
     	$('.highlight').removeClass('highlight');
     	$(e.target).addClass('highlight');
@@ -3119,12 +3312,16 @@ Template.constraintModalTemplate.events({
     	$('#constraints-td').empty();
 
     // table is not empty
-    if (table.children().length != 0) {
+    if (table.children().length != 0 && $('.clickable-cons').children().length != 0) {
     	for (i = 0; i < table.children().length; i++) {
-          var rowId = table.children()[i].cells[0].id; // id of constraint
+          if (table.children()[i].cells.length != 0) {
+            var rowId = table.children()[i].cells[0].id; // id of constraint
+          }
           var outerSpan = document.createElement('span');
           outerSpan.setAttribute("class", "constraint-tag");
-          outerSpan.setAttribute("constraint", table.children()[i].cells[0].id);
+          if (table.children()[i].cells.length != 0) {
+            outerSpan.setAttribute("constraint", table.children()[i].cells[0].id);
+          }
           // outerSpan.setAttribute("value", table.children()[i].cells[0].value);
           outerSpan.setAttribute("value", Session.get(rowId));
 

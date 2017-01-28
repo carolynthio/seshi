@@ -21,7 +21,8 @@ start_time = time.time()
 unit_test = False;
 debug = False;
 
-
+studentLikesPreferences = False
+studentDislikesPreferences = False
 ########################################
 ##### import students from file ########
 ########################################
@@ -114,6 +115,50 @@ def selectTeams(all_possible_teams):
 
 	return res_teams;
 
+def del_comb_without_pref_like(allcombinationofteams,listofdict_do):
+    for key,value in listofdict_do.iteritems():
+        valuetodelete=[]
+        for element in value:
+            if (element in listofdict_do):
+                if not (key in listofdict_do[element]):
+                	valuetodelete.append(element)
+            else:
+    			valuetodelete.append(element)
+        for element in valuetodelete:
+            value.remove(element)
+
+    listofdict_do = {key: value for key, value in listofdict_do.items() if len(value) is not 0}
+
+    indexlist=[]
+    for team in allcombinationofteams:
+        namelist=[]
+        for student in team:
+            namelist.append(student.name)
+        for key, value in listofdict_do.iteritems():
+            temp_set=set(value)
+            temp_set=temp_set.union(set([key]))
+            if key in namelist:
+                if not ((temp_set & set(namelist))==temp_set):
+                    indexlist.append(allcombinationofteams.index(team))
+    indexlist=list(set(indexlist))
+    allcombinationofteams = [i for j, i in enumerate(allcombinationofteams) if j not in indexlist]
+    return allcombinationofteams
+
+def del_comb_without_pref_dislike(allcombinationofteams,listofdict_not):
+    indexlist=[]
+    for team in allcombinationofteams:
+        namelist=[]
+        for student in team:
+            namelist.append(student.name)
+        for key, value in listofdict_not.iteritems():
+            temp_set=set(value)
+            temp_set=temp_set.union(set([key]))
+            if key in namelist:
+                if ((temp_set & set(namelist))==temp_set):
+                    indexlist.append(allcombinationofteams.index(team))
+    indexlist=list(set(indexlist))
+    allcombinationofteams = [i for j, i in enumerate(allcombinationofteams) if j not in indexlist]
+    return allcombinationofteams
 
 '''
 	Main Function
@@ -155,6 +200,10 @@ for s in studentList:
 	temp_schedule = map(int,temp_schedule)
 	students.append(temp)
 	temp.student_schedule = temp_schedule
+	if ('studentLikes' in s):
+		temp.likes.append(s['studentLikes'])
+	if ('studentDislikes' in s):
+		temp.dislikes.append(s['studentDislikes'])
 studentRoster = students;
 studentToSwap = students[0]
 gender = [s.gender for s in students]
@@ -171,7 +220,15 @@ if(sys.argv[4]):
 			mini_common_time_slots = int(constraint[1])
 		else:
 			if constraint[1] == "true":
-				constraintsList.append(constraint[0])
+				if constraint[0] == "studentLikes":
+					studentLikesPreferences = True
+				elif constraint[0] == "studentDislikes":
+					studentDislikesPreferences = True
+				else:
+					if constraint[0] == "genderbalance":
+						constraintsList.append("gender")
+					else:
+						constraintsList.append(constraint[0])
 
 if debug:
 	print "Here are all the students: "
@@ -187,8 +244,32 @@ for i in range(number_student_per_team_lo,number_student_per_team_hi+1):
 	genAllCombination(students,combinations,[],i,0,0);
 # print("--- %s seconds --- for generating all combinations" % (time.time() - start_time))
 
-''' Change the combinations to be teams(team object) '''
+if studentLikesPreferences == True:
+	studentLikesDict = {}
+	for student in students:
+		# if list is not empty
+		if (student.likes):
+			for like in student.likes:
+				if student.name in studentLikesDict:
+					student[student.name].append(like)
+				else:
+					studentLikesDict[student.name] = [like]
+	combinations = del_comb_without_pref_like(combinations,studentLikesDict)
 
+if studentDislikesPreferences == True:
+	studentDislikesDict = {}
+	for student in students:
+		# if list is not empty
+		if (student.dislikes):
+			for dislike in student.dislikes:
+				if student.name in studentDislikesDict:
+					student[student.name].append(dislike)
+				else:
+					studentDislikesDict[student.name] = [dislike]
+	combinations = del_comb_without_pref_dislike(combinations,studentDislikesDict)
+''' Change the combinations to be teams(team object) '''
+# TODO: This is where we would filter out student preferences for partners
+# Check something like if (pref.length != 0) or if prefNot.length != 0)
 all_possible_sorted_teams = changeToSortedTeams(combinations,[], constraintsList, class_avg_leadership, class_avg_gender);
 # for team in all_possible_sorted_teams:
 # 	print str(team);

@@ -80,6 +80,8 @@
     <button class="btn btn-xs btn-success toggle-paper-sessions">sessions</button> -->
     <button class="filter btn btn-xs btn-success toggle-gender">gender</button>
     <button class="filter btn btn-xs btn-success toggle-leadership">leadership</button>
+    <button class="filter btn btn-xs btn-success toggle-studentLikes">prefers to work with</button>
+    <button class="filter btn btn-xs btn-success toggle-studentDislikes">prefers not to work with</button>
   </div>
 
 	<!-- <ul id="paper-deck" class="deck ui-sortable"> -->
@@ -324,6 +326,16 @@
           <!-- {{this.[Leadership Role]}} -->
           {{#if isLeader this.leadership}} Leader {{else}} Follower {{/if}}
         </div>
+        {{#if this.studentLikes}}
+          <div class="student-attribute student-likes {{#if studentLikesCollapsed}} hidden {{else}} show {{/if}}">
+            Student Prefers to Work With: {{this.studentLikes}}
+          </div>
+        {{/if}}
+        {{#if this.studentDislikes}}
+          <div class="student-attribute student-dislikes {{#if studentDislikesCollapsed}} hidden {{else}} show {{/if}}">
+            Student Prefers not to Work With: {{this.studentDislikes}}
+          </div>
+        {{/if}}
         <div class="student-schedule hidden">
           {{scheduleArray this}}
         </div>
@@ -519,31 +531,6 @@
 									<td colspan="2">
 										<div class="scrollit" style="overflow:scroll; height:190px; width: 190px;border: 1px solid #2B3F54;">
 											<table id="remainingConstraints">
-												<!-- <tr class="clickable-row" width="100%">
-													<td class="individual" id="NumberOfTeams">
-														Number of teams:
-													</td>
-												</tr>
-												<tr class="clickable-row" width="100%">
-													<td class="individual" id="StudentPerTeam">
-														Student per team:
-													</td>
-												</tr> -->
-                        <!-- <tr class="clickable-row" width="100%">
-													<td class="individual" id="availability">
-														availability:
-													</td>
-												</tr>
-												<tr class="clickable-row" width="100%">
-													<td class="individual"  id="genderbalance">
-														genderbalance:
-													</td>
-												</tr>
-                        <tr class="clickable-row" width="100%">
-                          <td class="individual"  id="leadership">
-                            leadership:
-                          </td>
-                        </tr> -->
                       </table>
                     </div>
                   </td>
@@ -579,7 +566,7 @@
         </div>
 
       </div>
-      <div class="col-md-4">
+      <div class="col-md-3">
         <div class="row">
           <h4 style="font-family: Helvetica, Arial, sans-serif; float: left; padding-left: 10px;padding-top: 10px; padding-bottom: 10px; color: #2B3F54">Current constraints</h4>
         </div>
@@ -587,11 +574,17 @@
          <tbody>
           <tr>
            <td colspan="2">
-            <div class="scrollit" style="overflow:scroll;height:190px; width: 190px; border: 1px solid black;">
+            <div class="scrollit" style="overflow:scroll;height:190px; width: 150px; border: 1px solid black; border-right: 0;">
              <table id="currentconstraints">
              </table>
-           </div>
-         </td>
+            </div>
+          </td>
+          <td colspan="2">
+            <div class="scrollit" style="overflow:scroll;height:190px; width: 40px; border: 1px solid black; border-left: 0;">
+              <table id="weightsOfCurrentConstraints">
+              </table>
+            </div>
+          </td>
        </tr>
 
      </tbody>
