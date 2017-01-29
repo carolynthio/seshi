@@ -50,7 +50,6 @@ Meteor.methods({
   checkConstraintViolation: function(currentTeam, constraintsList, index) {
     var sync = Meteor.wrapAsync(exec);
     var cmd = "python assets/app/checkConstraint.py " + " '" + currentTeam + "' '" + constraintsList + "' " + index;
-    console.log(cmd);
     var result = sync(cmd);
     return result;
   }

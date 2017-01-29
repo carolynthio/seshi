@@ -5,7 +5,8 @@ import sys
 import json
 import ast
 
-mini_common_time_slots = 0
+# mini_common_time_slots = 0
+# team.min_common_time = mini_common_time_slots;
 constraintsList = []
 
 if(sys.argv[2]):
@@ -13,7 +14,7 @@ if(sys.argv[2]):
     for constraint in constraintsListArg:
     	if constraint[0] == "availability":
     		constraintsList.append("schedule");
-    		mini_common_time_slots = int(constraint[1])
+    		team.min_common_time = int(constraint[1])
     	else:
     		if constraint[1] == "true":
 				if constraint[0] != "studentLikes" and constraint[0] != "studentDislikes":
@@ -21,7 +22,6 @@ if(sys.argv[2]):
 						constraintsList.append("gender")
 					else:
 						constraintsList.append(constraint[0])
-
 def checkbalance(team,featuretocheck):
 	students = team.getMembers();
 	numfemale = 0
@@ -40,14 +40,59 @@ def checkbalance(team,featuretocheck):
 		return True
 	else:
 		return False
-
-def checkSchedule(team, value):
+# check Gender constraint
+# if has 1 female, return false;
+# Otherwise, return true;
+def checkGender(team):
 	students = team.getMembers();
-	num_slots = t.calSchedule(students);
-	if (num_slots >= value):
+	val = t.calGender(students);
+	if (val == 1):
 		return True;
 	return False;
 
+def genderDetail(team):
+	students = team.getMembers();
+	for stu in students:
+		if stu.gender == 1:
+			return stu.name + " is the only female in the team";
+	return None;
+
+# check leadership balance constraint
+# if has 1 leadership, return true;
+# Otherwise, return false;
+def checkLeadership(team):
+	students = team.getMembers();
+	val = t.calLeadership(students);
+	if (val == 1):
+		return True;
+	return False;
+
+def leadershipDetail(team):
+	students = team.getMembers();
+	val = t.calLeadership(students);
+	if (val > 1):
+		mess_1 = str(val) + " leaders: ";
+	else:
+		return "No leader in this team";
+
+	for stu in students:
+		if (stu.leadership == 1):
+			mess_1 + stu.name + " ";
+
+	return mess_1;
+
+# if it violates the schedule constraint, return false;
+def checkSchedule(team):
+	students = team.getMembers();
+	num_slots = t.calSchedule(students);
+	if (num_slots >= team.min_common_time):
+		return True;
+	return False;
+
+def scheduleDetail(team):
+	students = team.getMembers();
+	num_slots = t.calSchedule(students);
+	return str(team.min_common_time - num_slots) + " less than the minimum time requirement";
 
 ''' get the specific team from the result team '''
 final_teams_args = sys.argv[1];
@@ -69,17 +114,23 @@ tempTeam.overlappingSchedule = obj["overlappingSchedule"];
 result = []
 
 for constraint in constraintsList:
-    if (constraint == "schedule"):
-        if (not checkSchedule(tempTeam,mini_common_time_slots)):
-        	# print str(tempTeam)+" violate: "+"schedule";
-            result.append("schedule");
-    elif (constraint =="genderbalance"):
-        if (not checkbalance(tempTeam,"gender")):
-            result.append("gender");
-    else:
-        if (not checkbalance(tempTeam,constraint)):
-        	# print str(tempTeam)+" violate: "+"gender";
-            result.append(constraint);
+	if (constraint == "schedule"):
+		if not checkSchedule(tempTeam):
+	    	# print str(tempTeam)+" violate: "+"schedule";
+			result.append(scheduleDetail(tempTeam));
+			# print scheduleDetail(tempTeam);
+
+	if (constraint == "leadership"):
+		if (not checkLeadership(tempTeam)):
+			# print str(tempTeam)+" violate: "+"gender";
+			result.append(leadershipDetail(tempTeam));
+			# print leadershipDetail(tempTeam);
+
+	if (constraint == "gender"):
+		if (not checkGender(tempTeam)):
+			result.append(genderDetail(tempTeam));
+			# print genderDetail(tempTeam);
+
 
 # if (not checkbalance(tempTeam,"gender")):
 # 	# print str(tempTeam)+" violate: "+"gender";

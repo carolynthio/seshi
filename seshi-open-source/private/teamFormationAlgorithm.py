@@ -29,8 +29,8 @@ studentDislikesPreferences = False
 
 # Generates all combinations of student teams
 def genAllCombination(all_students,combinations, curr_team_list, number_students_needed, team_num,index):
-	if calSchedule(curr_team_list) < mini_common_time_slots:
-		return team_num;
+	# if calSchedule(curr_team_list) < mini_common_time_slots:
+	# 	return team_num;
 
 	if number_students_needed == 0:
 		if debug:
@@ -217,7 +217,7 @@ if(sys.argv[4]):
 	for constraint in constraintsListArg:
 		if constraint[0] == "availability":
 			constraintsList.append("schedule");
-			mini_common_time_slots = int(constraint[1])
+			team.min_common_time = int(constraint[1])
 		else:
 			if constraint[1] == "true":
 				if constraint[0] == "studentLikes":
@@ -302,13 +302,13 @@ def arrange_remaing_students(final_teams_bi,students):
 			inditeam.member.pop()
 
 		score_insertion_students.append(score_insertion_student)
-
 	while not (len(score_insertion_students) is 0):
 		maxindex=np.argmax(np.max(score_insertion_students, axis=1))
 		score_insertion_index=np.argmax(score_insertion_students,axis=1)
 		final_teams_bi[score_insertion_index[maxindex]].member.append(students.pop(maxindex))
 		# print score_insertion_index
 		# print score_insertion_students
+		final_teams_bi[score_insertion_index[maxindex]].score = final_teams_bi[score_insertion_index[maxindex]].calScore()
 		score_insertion_students.pop(maxindex)
 		for element in score_insertion_students:
 			element[score_insertion_index[maxindex]]=0

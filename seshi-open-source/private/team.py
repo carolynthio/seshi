@@ -8,7 +8,7 @@ from student import student
 import math
 import json
 
-total_time_slots = 91.0; # Overall number of possible time slots
+# total_time_slots = 91.0; # Overall number of possible time slots
 
 class team:
 	'''
@@ -18,6 +18,8 @@ class team:
 	'''
 	member = [];
 	score = 0;
+	min_common_time = 0;
+
 
 	def __init__(self, combination, weights, constraintsList, class_avg_leadership, class_avg_gender):
 		self.member = combination;
@@ -42,13 +44,13 @@ class team:
 		totalScore = 0;
 		outOf = 0.0;
 		if "schedule" in self.constraintsList:
-			totalScore += calScheduleScore(self.member)
+			totalScore += calScheduleScore(self.member,self.min_common_time)
 			outOf += 1;
 		if "leadership" in self.constraintsList:
-			totalScore += calLeadership(self.member, self.class_avg_leadership)
+			totalScore += calLeadership(self.member)
 			outOf += 1;
 		if "gender" in self.constraintsList:
-			totalScore += calGender(self.member, self.class_avg_gender)
+			totalScore += calGender(self.member)
 			outOf += 1;
 
 		return totalScore / outOf;
@@ -100,22 +102,48 @@ def calSchedule(students_in_this_team):
 	return sum(temp_schedule);
 
 # Calculate the schedule score
-def calScheduleScore(students_in_this_team):
-	return calSchedule(students_in_this_team) / total_time_slots;
+def calScheduleScore(students_in_this_team,min_common_time):
+	common_time = calSchedule(students_in_this_team);
+	if (common_time >= min_common_time):
+		return 1;
+	else:
+		return float(common_time) / min_common_time;
 
 # Calculate the leadership score of a team -- balanced leaders
-def calLeadership(students_in_this_team, class_avg_leadership):
+# score 1 for num of leadership is 1;
+# Otherwise return 0
+
+def calLeadership(students_in_this_team):
 	if (len(students_in_this_team) == 0):
 		return -1;
 
-	team_avg_leadership = sum([s.leadership for s in students_in_this_team]) / len(students_in_this_team)
+	num_leader = 0;
 
-	return math.exp(-abs(team_avg_leadership-class_avg_leadership))
+	for stu in students_in_this_team:
+		if stu.leadership == 1:
+			num_leader += 1;
 
-def calGender(students_in_this_team, class_avg_gender):
+	if (num_leader == 1):
+		return 1;
+	else:
+		return 0;
+# caluclate the gender score of a team --
+# score 1 if num of females are >= 2 || < 1
+# Otherwise 0;
+def calGender(students_in_this_team):
 	if (len(students_in_this_team) == 0):
 		return -1;
 
-	team_avg_gender = sum([s.gender for s in students_in_this_team]) / len(students_in_this_team)
+	num_female = 0;
 
-	return math.exp(-abs(team_avg_gender-class_avg_gender))
+	for stu in students_in_this_team:
+		if stu.gender == 1:
+			num_female += 1;
+
+	if num_female == 1:
+		return 0;
+	else:
+		return 1;
+
+	# team_avg_leadership = sum([s.leadership for s in students_in_this_team]) / len(students_in_this_team)
+	# return math.exp(-abs(team_avg_leadership-class_avg_leadership))
