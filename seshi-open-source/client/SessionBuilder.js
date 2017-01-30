@@ -2376,6 +2376,7 @@ Template.constraints.events({
 		else{
 			var constraintvalue = Session.get('availability');
 			var table = document.getElementById("currentconstraints");
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
 			var new_row = document.createElement('tr');
 			new_row.setAttribute("class", "clickable-cons");
 
@@ -2385,6 +2386,18 @@ Template.constraints.events({
 			name_cell.appendChild(document.createTextNode('availability' + ": " + constraintvalue));
 			new_row.appendChild(name_cell);
 			table.appendChild(new_row);
+
+      // Adding the weights to the current constraint
+      var weight_row = document.createElement('tr');
+      var weightValue = $('#constraints-td').children('[constraint="availability"]')[0].getAttribute("weight");
+      weight_row.setAttribute("class", "weights");
+      var input_cell = document.createElement('input');
+      input_cell.setAttribute("type", "text");
+      input_cell.setAttribute("name", "availability");
+      input_cell.setAttribute("style", "height: 20px;");
+      input_cell.setAttribute("value", weightValue);
+      weight_row.appendChild(input_cell);
+      weightsTable.appendChild(weight_row);
 
 		}
 
@@ -2410,6 +2423,7 @@ Template.constraints.events({
 		else{
 			var constraintvalue = Session.get('leadership');
 			var table = document.getElementById("currentconstraints");
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
 			var new_row = document.createElement('tr');
 			new_row.setAttribute("class", "clickable-cons");
 
@@ -2419,6 +2433,18 @@ Template.constraints.events({
 			name_cell.appendChild(document.createTextNode('leadership' + ": " + constraintvalue));
 			new_row.appendChild(name_cell);
 			table.appendChild(new_row);
+
+      // Adding the weights to the current constraint
+      var weight_row = document.createElement('tr');
+      var weightValue = $('#constraints-td').children('[constraint="leadership"]')[0].getAttribute("weight");
+      weight_row.setAttribute("class", "weights");
+      var input_cell = document.createElement('input');
+      input_cell.setAttribute("type", "text");
+      input_cell.setAttribute("name", "availability");
+      input_cell.setAttribute("style", "height: 20px;");
+      input_cell.setAttribute("value", weightValue);
+      weight_row.appendChild(input_cell);
+      weightsTable.appendChild(weight_row);
 
 		}
 
@@ -2445,6 +2471,7 @@ Template.constraints.events({
 		else{
 			var constraintvalue = Session.get('genderbalance');
 			var table = document.getElementById("currentconstraints");
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
 			var new_row = document.createElement('tr');
 			new_row.setAttribute("class", "clickable-cons");
 
@@ -2454,6 +2481,18 @@ Template.constraints.events({
 			name_cell.appendChild(document.createTextNode('genderbalance' + ": " + constraintvalue));
 			new_row.appendChild(name_cell);
 			table.appendChild(new_row);
+
+      // Adding the weights to the current constraint
+      var weight_row = document.createElement('tr');
+      var weightValue = $('#constraints-td').children('[constraint="genderbalance"]')[0].getAttribute("weight");
+      weight_row.setAttribute("class", "weights");
+      var input_cell = document.createElement('input');
+      input_cell.setAttribute("type", "text");
+      input_cell.setAttribute("name", "availability");
+      input_cell.setAttribute("style", "height: 20px;");
+      input_cell.setAttribute("value", weightValue);
+      weight_row.appendChild(input_cell);
+      weightsTable.appendChild(weight_row);
 		}
 
     // Student likes constraintvalue
@@ -2479,6 +2518,7 @@ Template.constraints.events({
 		else{
 			var constraintvalue = Session.get('studentLikes');
 			var table = document.getElementById("currentconstraints");
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
 			var new_row = document.createElement('tr');
 			new_row.setAttribute("class", "clickable-cons");
 
@@ -2488,6 +2528,18 @@ Template.constraints.events({
 			name_cell.appendChild(document.createTextNode('studentLikes' + ": " + constraintvalue));
 			new_row.appendChild(name_cell);
 			table.appendChild(new_row);
+
+      // Adding the weights to the current constraint
+      var weight_row = document.createElement('tr');
+      var weightValue = $('#constraints-td').children('[constraint="studentLikes"]')[0].getAttribute("weight");
+      weight_row.setAttribute("class", "weights");
+      var input_cell = document.createElement('input');
+      input_cell.setAttribute("type", "text");
+      input_cell.setAttribute("name", "availability");
+      input_cell.setAttribute("style", "height: 20px;");
+      input_cell.setAttribute("value", weightValue);
+      weight_row.appendChild(input_cell);
+      weightsTable.appendChild(weight_row);
 		}
 
     // Student dislikes constraintvalue
@@ -2513,6 +2565,7 @@ Template.constraints.events({
     else{
       var constraintvalue = Session.get('studentDislikes');
       var table = document.getElementById("currentconstraints");
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
       var new_row = document.createElement('tr');
       new_row.setAttribute("class", "clickable-cons");
 
@@ -2522,8 +2575,30 @@ Template.constraints.events({
       name_cell.appendChild(document.createTextNode('studentDislikes' + ": " + constraintvalue));
       new_row.appendChild(name_cell);
       table.appendChild(new_row);
+
+      // Adding the weights to the current constraint
+      var weight_row = document.createElement('tr');
+      var weightValue = $('#constraints-td').children('[constraint="studentDislikes"]')[0].getAttribute("weight");
+      weight_row.setAttribute("class", "weights");
+      var input_cell = document.createElement('input');
+      input_cell.setAttribute("type", "text");
+      input_cell.setAttribute("name", "availability");
+      input_cell.setAttribute("style", "height: 20px;");
+      input_cell.setAttribute("value", weightValue);
+      weight_row.appendChild(input_cell);
+      weightsTable.appendChild(weight_row);
     }
 
+    // Set total weight
+    var weightsTable = document.getElementById("weightsOfCurrentConstraints");
+    // console.log(weightsTable);
+    document.getElementById("totalWeight").value = 0;
+    for (var i = 0, row; row = weightsTable.rows[i]; i++) {
+      if (row.children[0].value.length != 0) {
+        document.getElementById("totalWeight").value = parseFloat(document.getElementById("totalWeight").value)
+                                                            + parseFloat(row.children[0].value);
+      }
+    }
 
 	},
 
@@ -3309,6 +3384,7 @@ Template.constraintModalTemplate.events({
 
     'click #saveButton' : function() {
     	var table = $("#currentconstraints");
+      var weightsTable = $("#weightsOfCurrentConstraints");
     	$('#constraints-td').empty();
 
     // table is not empty
@@ -3322,6 +3398,13 @@ Template.constraintModalTemplate.events({
           if (table.children()[i].cells.length != 0) {
             outerSpan.setAttribute("constraint", table.children()[i].cells[0].id);
           }
+
+          // Saving the weight value for each constraint
+          var weightValue = weightsTable.children().children()[i].value;
+          if(weightValue != "") {
+            outerSpan.setAttribute("weight", weightValue);
+          }
+          //if(weightsTable.children()[i])
           // outerSpan.setAttribute("value", table.children()[i].cells[0].value);
           outerSpan.setAttribute("value", Session.get(rowId));
 
@@ -3342,8 +3425,23 @@ Template.constraintModalTemplate.events({
           $('#constraints-td').append(outerSpan); // add after constraint button
       }
   }
-
-  Modal.hide('constraintModalTemplate');
+  if ($('#totalWeight')[0].value != '100') {
+    $('#totalWeightError').removeClass("hidden");
+  } else {
+    $('#totalWeightError').addClass("hidden");
+    Modal.hide('constraintModalTemplate');
+  }
+},
+// total weight
+'change .weights' : function() {
+  var weightsTable = document.getElementById("weightsOfCurrentConstraints");
+  document.getElementById("totalWeight").value = 0;
+  for (var i = 0, row; row = weightsTable.rows[i]; i++) {
+    if (row.children[0].value.length != 0) {
+      document.getElementById("totalWeight").value = parseFloat(document.getElementById("totalWeight").value)
+                                                          + parseFloat(row.children[0].value);
+    }
+  }
 }
 
 });

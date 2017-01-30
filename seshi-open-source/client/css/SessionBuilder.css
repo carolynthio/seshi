@@ -828,6 +828,16 @@ tr.constraints-row {
   height: 20px;
 }
 
+#totalWeight {
+  float: right;
+  width: 50%;
+}
+
+#totalWeightError {
+  font-size: 12px;
+  color: red;
+}
+
 .individual {
   width: 190px;
 }
