@@ -212,11 +212,13 @@ leadership = [s.leadership for s in students]
 class_avg_leadership = sum(leadership) / len(leadership)
 # constraintsList = ["schedule"];
 constraintsList = []
+weightList = []
 if(sys.argv[4]):
 	constraintsListArg = ast.literal_eval(sys.argv[4])
 	for constraint in constraintsListArg:
 		if constraint[0] == "availability":
 			constraintsList.append("schedule");
+			weightList.append(float(constraint[2])/100)
 			team.min_common_time = int(constraint[1])
 		else:
 			if constraint[1] == "true":
@@ -227,8 +229,10 @@ if(sys.argv[4]):
 				else:
 					if constraint[0] == "genderbalance":
 						constraintsList.append("gender")
+						weightList.append(float(constraint[2])/100)
 					else:
 						constraintsList.append(constraint[0])
+						weightList.append(float(constraint[2])/100)
 
 if debug:
 	print "Here are all the students: "
@@ -270,7 +274,7 @@ if studentDislikesPreferences == True:
 ''' Change the combinations to be teams(team object) '''
 # TODO: This is where we would filter out student preferences for partners
 # Check something like if (pref.length != 0) or if prefNot.length != 0)
-all_possible_sorted_teams = changeToSortedTeams(combinations,[], constraintsList, class_avg_leadership, class_avg_gender);
+all_possible_sorted_teams = changeToSortedTeams(combinations,weightList, constraintsList, class_avg_leadership, class_avg_gender);
 # for team in all_possible_sorted_teams:
 # 	print str(team);
 # print("--- %s seconds --- for change all combinations to teams" % (time.time() - start_time))

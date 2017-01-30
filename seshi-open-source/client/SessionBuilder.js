@@ -2614,6 +2614,7 @@ Template.constraints.events({
         var eachConstraint = [];
         eachConstraint.push(this.getAttribute("constraint"));
         eachConstraint.push(this.getAttribute("value"));
+        eachConstraint.push(this.getAttribute("weight"));
         constraintList.push(eachConstraint);
       });
 

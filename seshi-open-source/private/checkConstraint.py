@@ -8,20 +8,24 @@ import ast
 # mini_common_time_slots = 0
 # team.min_common_time = mini_common_time_slots;
 constraintsList = []
+weightList = []
 
 if(sys.argv[2]):
     constraintsListArg = ast.literal_eval(sys.argv[2])
     for constraint in constraintsListArg:
     	if constraint[0] == "availability":
     		constraintsList.append("schedule");
+    		weightList.append(float(constraint[2])/100)
     		team.min_common_time = int(constraint[1])
     	else:
     		if constraint[1] == "true":
 				if constraint[0] != "studentLikes" and constraint[0] != "studentDislikes":
 					if constraint[0] == "genderbalance":
 						constraintsList.append("gender")
+						weightList.append(float(constraint[2])/100)
 					else:
 						constraintsList.append(constraint[0])
+						weightList.append(float(constraint[2])/100)
 def checkbalance(team,featuretocheck):
 	students = team.getMembers();
 	numfemale = 0
@@ -107,7 +111,7 @@ for m in obj["member"]:
 	tempStudent.student_schedule = m["student_schedule"]
 	members.append(tempStudent)
 
-tempTeam = team(members, 0, obj["constraintsList"], obj["class_avg_leadership"], obj["class_avg_gender"] );
+tempTeam = team(members, weightList, obj["constraintsList"], obj["class_avg_leadership"], obj["class_avg_gender"] );
 tempTeam.score = obj["score"];
 tempTeam.overlappingSchedule = obj["overlappingSchedule"];
 
