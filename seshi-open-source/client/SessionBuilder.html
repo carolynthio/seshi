@@ -314,7 +314,7 @@
 <template name="studentRoster">
   {{#if this.name}}
   <li>
-    <div class="student draggable-student">
+    <div class="student draggable-student" id={{this._id}}>
       <i class="fa fa-chevron-down student-details" aria-hidden="true" style="float:right; margin-right: 10px;"></i>
         <div class="student-name">
           {{this.name}}

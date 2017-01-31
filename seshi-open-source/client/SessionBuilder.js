@@ -160,7 +160,7 @@ Template.sessionInList.rendered = function(){
 	appendTo: '#sessionarea',
 	helper: 'clone',
 	start: function (e,u){
-	    $(u.helper).addClass("dragged-session")
+	    $(u.helper).addClass("dragged-session");
 	},
 	stop: function (){
 	}});
@@ -1349,11 +1349,11 @@ Template.studentRoster.rendered = function(){
     revert: 'invalid',
     zIndex: 2000,
     start: function (e,u){
-  	    $(u.helper).addClass("dragged-wide-student");
-        // $(u.helper).children(".student-attribute").hide();
-        // $(u.helper).children(".student-details").hide();
-        // console.log(u.helper);
+        $(u.helper).addClass("dragged-wide-student");
+        $(u.helper).attr("id", "student-" +u.helper.context.id);
   	},
+    stop: function (e, ui){
+  	}
   });
   if (Session.get("suggestedMode")) {
     $(".draggable-student").draggable('disable');
@@ -2858,17 +2858,14 @@ Template.constraints.events({
               "<div class=\"team-title\" contentEditable=\"true\" style=\"float: left\">Team "+ i + "</div>" +
               "<div class=\"compatibility\"></div>" +
             "</div>" +
-            "<div class=\"tabs\">" +
 
-              "<div class=\"tab-content\">" +
-                  "<div id=\"tab1_" + i +"\" class=\"tab active\">" +
-                      "<ul class=\"student-names each-team\" id=\"studentNames" + i + "\">" +
+            "<div>" +
+            // "<div style=\"min-height:40px;\" class=\"student-names each-team\" id=\"studentNames" + i + "\">" +
+              "<ul style=\"min-height:40px; margin-bottom:0;\" class=\"student-names each-team\" id=\"studentNames" + i + "\">" +
 
-                      "</ul>" +
-                  "</div>" +
-
-              "</div>" +
+              "</ul>" +
             "</div>" +
+
           "</div>";
 
           // alternate between columns
@@ -2883,45 +2880,51 @@ Template.constraints.events({
 
      // On drop change from div to list item
      var dropped = $(".student-names").droppable({
-       hoverClass: 'ui-state-hover',
+        accept: '.draggable-student',
+        hoverClass: 'ui-state-hover',
         greedy: true,
-        // drop : function(event,ui) {
-        //   console.log("student is being dropped");
-        //   // Only change if it is not already a list element
-        //   if(ui.draggable[0].nodeName != "LI") {
-        //     var leadership;
-        //     var gender;
-        //     if (ui.helper.children(".student-gender").text().trim() == "Female") {
-        //       gender = 1;
-        //     } else {
-        //       gender = 0;
-        //     }
-        //     if (ui.helper.children(".student-leadership").text().trim() == "Leader") {
-        //       leadership = 1
-        //     } else {
-        //       leadership = 0;
-        //     }
-        //     var listStudent = "<li class=\"each-student student\"" +
-        //     "name=\""+ ui.helper.children(".student-name").text().trim() +"\"" +
-        //     "gender=\""+ gender +"\"" +
-        //     "leadership=\""+ leadership +"\"" +
-        //     "schedule=\""+ ui.helper.children(".student-schedule").text().trim() +"\">" +
-        //       // finalArray[i][j] +
-        //       ui.helper.children(".student-name").text().trim() +
-        //       // "<i class=\"swap fa fa-exchange\" aria-hidden=\"true\" style=\"float:right;margin-right: 10px;margin-top: 3px;\"></i>" +
-        //     "</li>";
-        //     $(ui.draggable).replaceWith(listStudent);
-        //   }
-        // }
+        tolerance: 'pointer',
+        drop : function(event,ui) {
+          if(ui.draggable[0].nodeName != "LI") {
+            if($('.' + ui.draggable[0].id).length > 0) {
+              console.log("This element already exists in a team");
+              ui.draggable.remove();
+            } else {
+              var leadership;
+              var gender;
+              if (ui.helper.children(".student-gender").text().trim() == "Female") {
+                gender = 1;
+              } else {
+                gender = 0;
+              }
+              if (ui.helper.children(".student-leadership").text().trim() == "Leader") {
+                leadership = 1
+              } else {
+                leadership = 0;
+              }
+              var listStudent = "<li class=\"each-student student "+ ui.helper.context.id +"\"" +
+              "name=\""+ ui.helper.children(".student-name").text().trim() +"\"" +
+              "gender=\""+ gender +"\"" +
+              "leadership=\""+ leadership +"\"" +
+              "schedule=\""+ ui.helper.children(".student-schedule").text().trim() +"\">" +
+                ui.helper.children(".student-name").text().trim() +
+              "</li>";
+              $(ui.helper).replaceWith(listStudent);
+            }
+          }
+        },
+        accept: function (event, ui) {
+          return true;
+        }
      });
 
      // each student in the team
      var sortlists = $(".student-names").sortable({
-      connectWith : ".student-names",
+      connectWith : ".each-team",
       items       : ".student",
       tolerance   : 'pointer',
       revert      : 'invalid',
-      forceHelperSize: true,
+      // forceHelperSize: true,
       stack: ".student-names",
       // placeholder: "placeholder"
 
