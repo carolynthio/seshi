@@ -1353,6 +1353,11 @@ Template.studentRoster.rendered = function(){
         $(u.helper).attr("id", "student-" +u.helper.context.id);
   	},
     stop: function (e, ui){
+      // console.log($('.student-' + ui.helper.context.id).length);
+      if ($('.student-' + ui.helper.context.id).length > 0) {
+        $(ui.helper.context).addClass("already-dropped-student");
+        $(ui.helper.context).draggable('disable');
+      }
   	}
   });
   if (Session.get("suggestedMode")) {
@@ -1619,6 +1624,7 @@ Template.SessionBuilder.events({
           Session.set("manualMode", true);
           Session.set("suggestedMode", false);
           $(".draggable-student").draggable('enable');
+          $('#listOfConstraintRow').css("display", "none");
           $('.teamColumn').empty();
 
 
@@ -1630,6 +1636,7 @@ Template.SessionBuilder.events({
           Session.set("manualMode", false);
           console.log("IT IS Suggested");
           $(".draggable-student").draggable('disable');
+          $('#listOfConstraintRow').css("display", "block");
           $('.teamColumn').empty();
 
         }
@@ -2949,7 +2956,13 @@ Template.constraints.events({
     });
 
     // Update text on button
-    $('#optimizeTeamsButton').html('Update Teams');
+    if (Session.get("manualMode")) {
+      $('#optimizeTeamsButton').html('Reset Teams');
+      $(".draggable-student").draggable('enable');
+      $(".already-dropped-student").removeClass("already-dropped-student");
+    } else {
+      $('#optimizeTeamsButton').html('Update Teams');
+    }
 
   },
 

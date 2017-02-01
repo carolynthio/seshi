@@ -84,6 +84,10 @@ body{
     width: 298px;
 }
 
+.already-dropped-student {
+  background-color: #E6E6E6 !important;
+}
+
 .dragged-session {
     width: 300px;
 }
