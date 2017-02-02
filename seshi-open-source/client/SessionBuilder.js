@@ -3227,7 +3227,7 @@ Template.constraintModalTemplate.events({
 			remove_button.style.visibility = "visible";
 			var constrainttitle = document.getElementById("constrainttitle");
 			var constraintModifier = document.getElementById("constrainttochange");
-			var constraintHint = document.getElementById("constrainttip");
+			// var constraintHint = document.getElementById("constrainttip");
 			while (constraintModifier.hasChildNodes()) {
 				constraintModifier.removeChild(constraintModifier.lastChild);
 			}
@@ -3236,18 +3236,40 @@ Template.constraintModalTemplate.events({
       // Availability
 			if(constrainttitle.innerHTML == "availability"){
     		// <input type="number" value="" min="0" placeholder="0" id="constraintchange"
+        var availabilityText = document.createElement('center');
+        availabilityText.setAttribute("class", "constraintInformation");
+        availabilityText.innerHTML = "Number of overlapping time slots a student is able to meet on a weekly basis.";
+        constraintModifier.appendChild(availabilityText);
+
+        constraintModifier.style.padding = "0";
+        var specificsBox = document.getElementById("specifics");
+        specificsBox.style.height = "120px";
+
     		var inputBox = document.createElement('input');
+        var inputDiv = document.createElement('div');
+        inputDiv.setAttribute("id", "availabilityDiv");
+
     		inputBox.setAttribute("type", "number");
     		inputBox.setAttribute("value", Session.get('availability'));
     		inputBox.setAttribute("min", "0");
     		inputBox.setAttribute("placeholder", "0");
     		inputBox.setAttribute("id", "constraintchange");
-    		constraintHint.innerHTML = "information about Availability!"
-    		constraintModifier.appendChild(inputBox);
+    		// constraintHint.innerHTML = "information about Availability!"
+        inputDiv.appendChild(inputBox);
+        constraintModifier.appendChild(inputDiv);
 
     	}
       // gender
     	if(constrainttitle.innerHTML == "genderbalance"){
+        var genderText = document.createElement('center');
+        genderText.setAttribute("class", "constraintInformation");
+        genderText.innerHTML = "Ensuring that at least two females exist on a team or none at all.";
+        constraintModifier.appendChild(genderText);
+
+        constraintModifier.style.padding = "0";
+        var specificsBox = document.getElementById("specifics");
+        specificsBox.style.height = "120px";
+
     		var balanceSwitch = document.createElement('label');
     		balanceSwitch.setAttribute('class', 'switch');
     		var balanceInput = document.createElement('input');
@@ -3258,11 +3280,23 @@ Template.constraintModalTemplate.events({
     		balanceDiv.setAttribute('class', 'slider round');
     		balanceSwitch.appendChild(balanceInput);
     		balanceSwitch.appendChild(balanceDiv);
-    		constraintModifier.appendChild(balanceSwitch);
-    		constraintHint.innerHTML = "Information about gender balance!"
+        var switchDiv = document.createElement('div');
+        switchDiv.setAttribute('class', 'switchDiv');
+        switchDiv.appendChild(balanceSwitch);
+        constraintModifier.appendChild(switchDiv);
+    		// constraintHint.innerHTML = "Information about gender balance!"
     	}
       // leadership
     	if(constrainttitle.innerHTML == "leadership"){
+        var leadershipText = document.createElement('center');
+        leadershipText.setAttribute("class", "constraintInformation");
+        leadershipText.innerHTML = "Ensuring that one leader exists on a team.";
+        constraintModifier.appendChild(leadershipText);
+
+        constraintModifier.style.padding = "0";
+        var specificsBox = document.getElementById("specifics");
+        specificsBox.style.height = "120px";
+
     		var balanceSwitch = document.createElement('label');
     		balanceSwitch.setAttribute('class', 'switch');
     		var balanceInput = document.createElement('input');
@@ -3273,11 +3307,23 @@ Template.constraintModalTemplate.events({
     		balanceInput.checked = Session.get('leadership');
     		balanceSwitch.appendChild(balanceInput);
     		balanceSwitch.appendChild(balanceDiv);
-    		constraintModifier.appendChild(balanceSwitch);
-    		constraintHint.innerHTML = "Information about leadership!"
+        var switchDiv = document.createElement('div');
+        switchDiv.setAttribute('class', 'switchDiv');
+        switchDiv.appendChild(balanceSwitch);
+        constraintModifier.appendChild(switchDiv);
+        // constraintHint.innerHTML = "Information about leadership!"
     	}
       // student likes
       if(constrainttitle.innerHTML == "studentLikes"){
+        var studentLikesText = document.createElement('center');
+        studentLikesText.setAttribute("class", "constraintInformation");
+        studentLikesText.innerHTML = "Taking into consideration who students want to be placed on a team with.";
+        constraintModifier.appendChild(studentLikesText);
+
+        constraintModifier.style.padding = "0";
+        var specificsBox = document.getElementById("specifics");
+        specificsBox.style.height = "120px";
+
     		var balanceSwitch = document.createElement('label');
     		balanceSwitch.setAttribute('class', 'switch');
     		var balanceInput = document.createElement('input');
@@ -3288,12 +3334,24 @@ Template.constraintModalTemplate.events({
     		balanceInput.checked = Session.get('studentLikes');
     		balanceSwitch.appendChild(balanceInput);
     		balanceSwitch.appendChild(balanceDiv);
-    		constraintModifier.appendChild(balanceSwitch);
-    		constraintHint.innerHTML = "Information about student likes!"
+        var switchDiv = document.createElement('div');
+        switchDiv.setAttribute('class', 'switchDiv');
+        switchDiv.appendChild(balanceSwitch);
+    		constraintModifier.appendChild(switchDiv);
+    		// constraintHint.innerHTML = "Information about student likes!"
     	}
 
       // student dislikes
       if(constrainttitle.innerHTML == "studentDislikes"){
+        var studentDisikesText = document.createElement('center');
+        studentDisikesText.setAttribute("class", "constraintInformation");
+        studentDisikesText.innerHTML = "Taking into consideration who students do not want to be placed on a team with.";
+        constraintModifier.appendChild(studentDisikesText);
+
+        constraintModifier.style.padding = "0";
+        var specificsBox = document.getElementById("specifics");
+        specificsBox.style.height = "120px";
+
     		var balanceSwitch = document.createElement('label');
     		balanceSwitch.setAttribute('class', 'switch');
     		var balanceInput = document.createElement('input');
@@ -3304,8 +3362,11 @@ Template.constraintModalTemplate.events({
     		balanceInput.checked = Session.get('studentDislikes');
     		balanceSwitch.appendChild(balanceInput);
     		balanceSwitch.appendChild(balanceDiv);
-    		constraintModifier.appendChild(balanceSwitch);
-    		constraintHint.innerHTML = "Information about student studentDislikes!"
+        var switchDiv = document.createElement('div');
+        switchDiv.setAttribute('class', 'switchDiv');
+        switchDiv.appendChild(balanceSwitch);
+    		constraintModifier.appendChild(switchDiv);
+    		// constraintHint.innerHTML = "Information about student studentDislikes!"
     	}
     	$('.highlight').removeClass('highlight');
     	$(e.target).addClass('highlight');
@@ -3322,7 +3383,7 @@ Template.constraintModalTemplate.events({
     	remove_button.style.visibility = "hidden";
     	var constrainttitle = document.getElementById("constrainttitle");
     	var constraintModifier = document.getElementById("constrainttochange");
-    	var constraintHint = document.getElementById("constrainttip");
+    	// var constraintHint = document.getElementById("constrainttip");
     	while (constraintModifier.hasChildNodes()) {
     		constraintModifier.removeChild(constraintModifier.lastChild);
     	}
@@ -3330,17 +3391,38 @@ Template.constraintModalTemplate.events({
     	constrainttitle.innerHTML = row_id;
     	if(constrainttitle.innerHTML == "availability"){
     		// <input type="number" value="" min="0" placeholder="0" id="constraintchange"
+        var availabilityText = document.createElement('center');
+        availabilityText.setAttribute("class", "constraintInformation");
+        availabilityText.innerHTML = "Number of overlapping time slots a student is able to meet on a weekly basis.";
+        constraintModifier.appendChild(availabilityText);
+
+        constraintModifier.style.padding = "0";
+        var specificsBox = document.getElementById("specifics");
+        specificsBox.style.height = "120px";
+
     		var inputBox = document.createElement('input');
+        var inputDiv = document.createElement('div');
+        inputDiv.setAttribute("id", "availabilityDiv");
     		inputBox.setAttribute("type", "number");
     		inputBox.setAttribute("value", "");
     		inputBox.setAttribute("min", "0");
     		inputBox.setAttribute("placeholder", "0");
     		inputBox.setAttribute("id", "constraintchange");
-    		constraintHint.innerHTML = "information about Availability!"
-    		constraintModifier.appendChild(inputBox);
+    		// constraintHint.innerHTML = "information about Availability!"
+        inputDiv.appendChild(inputBox);
+    		constraintModifier.appendChild(inputDiv);
 
     	}
     	if(constrainttitle.innerHTML == "genderbalance"){
+        var genderText = document.createElement('center');
+        genderText.setAttribute("class", "constraintInformation");
+        genderText.innerHTML = "Ensuring that at least two females exist on a team or none at all.";
+        constraintModifier.appendChild(genderText);
+
+        constraintModifier.style.padding = "0";
+        var specificsBox = document.getElementById("specifics");
+        specificsBox.style.height = "120px";
+
     		var balanceSwitch = document.createElement('label');
     		balanceSwitch.setAttribute('class', 'switch');
     		var balanceInput = document.createElement('input');
@@ -3350,10 +3432,22 @@ Template.constraintModalTemplate.events({
     		balanceDiv.setAttribute('class', 'slider round');
     		balanceSwitch.appendChild(balanceInput);
     		balanceSwitch.appendChild(balanceDiv);
-    		constraintModifier.appendChild(balanceSwitch);
-    		constraintHint.innerHTML = "Information about gender balance!"
+        var switchDiv = document.createElement('div');
+        switchDiv.setAttribute('class', 'switchDiv');
+        switchDiv.appendChild(balanceSwitch);
+        constraintModifier.appendChild(switchDiv);
+        // constraintHint.innerHTML = "Information about gender balance!"
     	}
     	if(constrainttitle.innerHTML == "leadership"){
+        var leadershipText = document.createElement('center');
+        leadershipText.setAttribute("class", "constraintInformation");
+        leadershipText.innerHTML = "Ensuring that one leader exists on a team.";
+        constraintModifier.appendChild(leadershipText);
+
+        constraintModifier.style.padding = "0";
+        var specificsBox = document.getElementById("specifics");
+        specificsBox.style.height = "120px";
+
     		var balanceSwitch = document.createElement('label');
     		balanceSwitch.setAttribute('class', 'switch');
     		var balanceInput = document.createElement('input');
@@ -3363,10 +3457,23 @@ Template.constraintModalTemplate.events({
     		balanceDiv.setAttribute('class', 'slider round');
     		balanceSwitch.appendChild(balanceInput);
     		balanceSwitch.appendChild(balanceDiv);
-    		constraintModifier.appendChild(balanceSwitch);
-    		constraintHint.innerHTML = "Information about leadership!"
+
+        var switchDiv = document.createElement('div');
+        switchDiv.setAttribute('class', 'switchDiv');
+        switchDiv.appendChild(balanceSwitch);
+    		constraintModifier.appendChild(switchDiv);
+    		// constraintHint.innerHTML = "Information about leadership!"
     	}
       if(constrainttitle.innerHTML == "studentLikes"){
+        var studentLikesText = document.createElement('center');
+        studentLikesText.setAttribute("class", "constraintInformation");
+        studentLikesText.innerHTML = "Taking into consideration who students want to be placed on a team with.";
+        constraintModifier.appendChild(studentLikesText);
+
+        constraintModifier.style.padding = "0";
+        var specificsBox = document.getElementById("specifics");
+        specificsBox.style.height = "120px";
+
     		var balanceSwitch = document.createElement('label');
     		balanceSwitch.setAttribute('class', 'switch');
     		var balanceInput = document.createElement('input');
@@ -3376,10 +3483,22 @@ Template.constraintModalTemplate.events({
     		balanceDiv.setAttribute('class', 'slider round');
     		balanceSwitch.appendChild(balanceInput);
     		balanceSwitch.appendChild(balanceDiv);
-    		constraintModifier.appendChild(balanceSwitch);
-    		constraintHint.innerHTML = "Information about studentLikes!"
+        var switchDiv = document.createElement('div');
+        switchDiv.setAttribute('class', 'switchDiv');
+        switchDiv.appendChild(balanceSwitch);
+    		constraintModifier.appendChild(switchDiv);
+    		// constraintHint.innerHTML = "Information about studentLikes!"
     	}
       if(constrainttitle.innerHTML == "studentDislikes"){
+        var studentDisikesText = document.createElement('center');
+        studentDisikesText.setAttribute("class", "constraintInformation");
+        studentDisikesText.innerHTML = "Taking into consideration who students do not want to be placed on a team with.";
+        constraintModifier.appendChild(studentDisikesText);
+
+        constraintModifier.style.padding = "0";
+        var specificsBox = document.getElementById("specifics");
+        specificsBox.style.height = "120px";
+
     		var balanceSwitch = document.createElement('label');
     		balanceSwitch.setAttribute('class', 'switch');
     		var balanceInput = document.createElement('input');
@@ -3389,8 +3508,11 @@ Template.constraintModalTemplate.events({
     		balanceDiv.setAttribute('class', 'slider round');
     		balanceSwitch.appendChild(balanceInput);
     		balanceSwitch.appendChild(balanceDiv);
-    		constraintModifier.appendChild(balanceSwitch);
-    		constraintHint.innerHTML = "Information about studentDislikes!"
+        var switchDiv = document.createElement('div');
+        switchDiv.setAttribute('class', 'switchDiv');
+        switchDiv.appendChild(balanceSwitch);
+        constraintModifier.appendChild(switchDiv);
+        // constraintHint.innerHTML = "Information about studentDislikes!"
     	}
 
     	$('.highlight').removeClass('highlight');

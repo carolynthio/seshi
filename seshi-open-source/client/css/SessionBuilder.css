@@ -872,6 +872,20 @@ tr.constraints-row {
   padding-left: 15px;
 }
 
+#availabilityDiv {
+  padding-left: 75px;
+  padding-right: 75px;
+}
+
+.constraintInformation {
+  font-size: 12px;
+}
+
+.switchDiv {
+  padding-left: 75px;
+  padding-right: 75px;
+}
+
 /* add and minus button*/
 .addMinus {
   width: 60px;
