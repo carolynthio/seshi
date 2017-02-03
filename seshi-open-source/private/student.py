@@ -13,6 +13,7 @@ class student:
     gender = 0;
     leadership = 0;
     number=0;
+    role = "";
     #teamsWithMaxScore = None;
 
     def getTeams(self):

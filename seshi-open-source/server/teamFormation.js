@@ -41,7 +41,7 @@ Meteor.methods({
 
   updateTeams: function(students, classAvgGender, classAvgLeadership, constraintsList) {
     var sync = Meteor.wrapAsync(exec);
-    var cmd = "python assets/app/updatingTeamInfo.py " + " '" + students + "' " + classAvgGender + " " + classAvgLeadership + " " + constraintsList.toString();
+    var cmd = "python assets/app/updatingTeamInfo.py " + " '" + students + "' " + classAvgGender + " " + classAvgLeadership + " '" + constraintsList + "'";
     var result = sync(cmd);
 
     return result;

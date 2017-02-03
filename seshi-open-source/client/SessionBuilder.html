@@ -327,12 +327,12 @@
           {{#if isLeader this.leadership}} Leader {{else}} Follower {{/if}}
         </div>
         {{#if this.studentLikes}}
-          <div class="student-attribute student-likes {{#if studentLikesCollapsed}} hidden {{else}} show {{/if}}">
+          <div class="student-attribute student-studentLikes {{#if studentLikesCollapsed}} hidden {{else}} show {{/if}}">
             Student Prefers to Work With: {{this.studentLikes}}
           </div>
         {{/if}}
         {{#if this.studentDislikes}}
-          <div class="student-attribute student-dislikes {{#if studentDislikesCollapsed}} hidden {{else}} show {{/if}}">
+          <div class="student-attribute student-studentDislikes {{#if studentDislikesCollapsed}} hidden {{else}} show {{/if}}">
             Student Prefers not to Work With: {{this.studentDislikes}}
           </div>
         {{/if}}

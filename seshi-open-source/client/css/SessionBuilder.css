@@ -82,6 +82,7 @@ body{
 
 .dragged-wide-student {
     width: 298px;
+    height: 22px;
 }
 
 .already-dropped-student {
@@ -238,10 +239,12 @@ body {
 /* Making teams into two columns and draggable */
 .each-team {
   min-height: 20px;
+  padding: 0;
 }
 
 .placeholder {
   background-color: #E6E6E6;
+  list-style: none;
 }
 
 .each-student i.swap {
@@ -324,14 +327,12 @@ i.swap:hover {
 }
 
 #paper-deck {
-	background-color: #eee;
 	height: 600px;
 	overflow: auto;
 	list-style: none;
 	list-style-type: none;
 	padding-left: 0px;
-	border-top: 1px solid black;
-	border-bottom: 1px solid black;
+	border: 1px solid black;
 }
 
 
@@ -830,6 +831,7 @@ tr.constraints-row {
 
 .weights {
   height: 20px;
+  width: 40px;
 }
 
 #totalWeight {
@@ -992,6 +994,10 @@ li.active a, li.active a:hover {
     display:block;
 }
 
+.studentTableAttribute {
+  padding-left: 15px;
+}
+
 .team-header {
   color: white;
   background-color: #2b3F54;
@@ -1011,9 +1017,8 @@ li.active a, li.active a:hover {
 
 /* Student Roster */
 .student {
-  border: 1px solid black;
+  border-bottom: 1px solid black;
   background-color: white;
-  margin: 5px;
   list-style: none;
 }
 

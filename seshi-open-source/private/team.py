@@ -56,7 +56,10 @@ class team:
 			index = self.constraintsList.index("gender")
 			totalScore += calGender(self.member) * self.weights[index]
 			# outOf += 1;
-
+		if "roleDistribution" in self.constraintsList:
+			index = self.constraintsList.index("roleDistribution")
+			totalScore += calRoledistribution(self.member) * self.weights[index]
+			# outOf += 1;
 		return totalScore;
 
 	# Returns the overlapping team schedule
@@ -151,3 +154,15 @@ def calGender(students_in_this_team):
 
 	# team_avg_leadership = sum([s.leadership for s in students_in_this_team]) / len(students_in_this_team)
 	# return math.exp(-abs(team_avg_leadership-class_avg_leadership))
+
+def calRoledistribution(students_in_this_team):
+	if (len(students_in_this_team) == 0):
+		return -1;
+
+	num_roles = 3;
+	role_set=set([])
+
+	for stu in students_in_this_team:
+		role_set=role_set.union(set([stu.role]))
+
+	return float(len(role_set))/num_roles;

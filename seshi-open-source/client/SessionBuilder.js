@@ -57,6 +57,7 @@ Session.set('leadership', '');
 Session.set('genderbalance', '');
 Session.set('studentLikes', '');
 Session.set('studentDislikes', '');
+Session.set('roleDistribution', '');
 
 Meteor.startup(function (){
     Session.set("searchResults", []); //Papers.find({active:true}).fetch());
@@ -1349,7 +1350,9 @@ Template.studentRoster.rendered = function(){
     revert: 'invalid',
     zIndex: 2000,
     start: function (e,u){
+      console.log($(u.helper));
         $(u.helper).addClass("dragged-wide-student");
+        u.helper.children(".student-attribute").removeClass("show").addClass("hidden");
         $(u.helper).attr("id", "student-" +u.helper.context.id);
   	},
     stop: function (e, ui){
@@ -1625,6 +1628,7 @@ Template.SessionBuilder.events({
           Session.set("suggestedMode", false);
           $(".draggable-student").draggable('enable');
           $('#listOfConstraintRow').css("display", "none");
+          $('#optimizeTeamsButton').html('Create Teams');
           $('.teamColumn').empty();
 
 
@@ -1637,6 +1641,8 @@ Template.SessionBuilder.events({
           console.log("IT IS Suggested");
           $(".draggable-student").draggable('disable');
           $('#listOfConstraintRow').css("display", "block");
+          $('#optimizeTeamsButton').html('Create Teams');
+          $(".already-dropped-student").removeClass("already-dropped-student");
           $('.teamColumn').empty();
 
         }
@@ -1691,6 +1697,22 @@ Template.SessionBuilder.events({
 
       e.preventDefault();
     },
+    'click .showTeamDetail' : function(e) {
+      var currentAttrValue = e.target.getAttribute('href');
+      $('.tabs ' + currentAttrValue).toggle();
+      
+      if ($('.tabs ' + currentAttrValue).hasClass("active")) {
+        $('.tabs ' + currentAttrValue).parent().children().closest(".tab1").addClass("active");
+        $('.tabs ' + currentAttrValue).removeClass("active");
+
+      } else {
+        $('.tabs ' + currentAttrValue).parent().children().closest(".active").removeClass("active");
+        $('.tabs ' + currentAttrValue).addClass("active");
+      }
+
+      e.preventDefault();
+    },
+
     'click .each-student' : function(e) {
       var className = $(e.target)[0].classList[0];
       $('.suggestedSwaps').removeClass('suggestedSwaps');
@@ -2596,6 +2618,53 @@ Template.constraints.events({
       weightsTable.appendChild(weight_row);
     }
 
+    // Student dislikes constraintvalue
+    if(Session.get('roleDistribution') == ''){
+      var new_row = document.createElement('tr');
+      new_row.setAttribute("class", "clickable-row");
+
+      // console.log(childSnapshot.key);
+      var table = document.getElementById("remainingConstraints");
+      var name_cell = document.createElement('td');
+      name_cell.setAttribute("id", 'roleDistribution');
+      name_cell.appendChild(document.createTextNode('roleDistribution' + ": "));
+      new_row.appendChild(name_cell);
+      table.appendChild(new_row);
+      var constraintModifier = document.getElementById("constrainttochange");
+      constrainttitle.innerHTML = "";
+      var add_button = document.getElementById("add_button");
+      add_button.style.visibility = "hidden" ;
+      var remove_button = document.getElementById("removeButton");
+      remove_button.style.visibility = "hidden";
+
+    }
+    else{
+      var constraintvalue = Session.get('roleDistribution');
+      var table = document.getElementById("currentconstraints");
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
+      var new_row = document.createElement('tr');
+      new_row.setAttribute("class", "clickable-cons");
+
+      // console.log(childSnapshot.key);
+      var name_cell = document.createElement('td');
+      name_cell.setAttribute("id", 'roleDistribution');
+      name_cell.appendChild(document.createTextNode('roleDistribution' + ": " + constraintvalue));
+      new_row.appendChild(name_cell);
+      table.appendChild(new_row);
+
+      // Adding the weights to the current constraint
+      var weight_row = document.createElement('tr');
+      var weightValue = $('#constraints-td').children('[constraint="roleDistribution"]')[0].getAttribute("weight");
+      weight_row.setAttribute("class", "weights");
+      var input_cell = document.createElement('input');
+      input_cell.setAttribute("type", "text");
+      input_cell.setAttribute("name", "availability");
+      input_cell.setAttribute("style", "height: 20px;");
+      input_cell.setAttribute("value", weightValue);
+      weight_row.appendChild(input_cell);
+      weightsTable.appendChild(weight_row);
+    }
+
     // Set total weight
     var weightsTable = document.getElementById("weightsOfCurrentConstraints");
     // console.log(weightsTable);
@@ -2646,15 +2715,16 @@ Template.constraints.events({
           }
           Session.set("classAvgGender", listOfTeams[0].class_avg_gender);
           Session.set("classAvgLeadership", listOfTeams[0].class_avg_leadership);
-          Session.set("constraintsList", listOfTeams[0].constraintsList);
+          Session.set("constraintsList", constraints);
 
           for (i=0; i < listOfTeams.length; i++) {
             var team =
               "<div class=\"team\" id=\"team" + i + "\">" +
                 "<div class=\"team-header\">" +
                   "<div class=\"team-title\" contentEditable=\"true\" style=\"float: left\">Team "+ i + "</div>" +
-                  "<div class=\"compatibility\">" + (parseFloat(listOfTeams[i].score) * 100).toFixed(3) + "%</div>" +
-                  "<i href=\"#tab3_" + i +"\" style=\"margin-left: 2px\" class=\"fa fa-calendar showSchedule\" aria-hidden=\"true\"></i>" +
+                  "<div class=\"compatibility\">" + (parseFloat(listOfTeams[i].score) * 100).toFixed(1) + "%</div>" +
+                  "<i href=\"#tab3_" + i +"\" style=\"margin-left: 5px\" class=\"fa fa-calendar showSchedule\" aria-hidden=\"true\"></i>" +
+                  "<i href=\"#tab2_" + i + "\" style=\"margin-left: 5px\" class=\"fa fa-info-circle showTeamDetail\" aria-hidden=\"true\"></i>" +
                   // "</div>" +
                 "</div>" +
                 "<div class=\"tabs\">" +
@@ -2665,15 +2735,15 @@ Template.constraints.events({
                   // "</ul>" +
 
                   "<div class=\"tab-content\">" +
-                      "<div id=\"tab1_" + i +"\" class=\"tab active\">" +
+                      "<div id=\"tab1_" + i +"\" class=\"tab active tab1\">" +
                           "<ul class=\"student-names each-team\" id=\"studentNames" + i + "\">" +
 
                           "</ul>" +
                       "</div>" +
 
-                      // "<div id=\"tab2_" + i +"\" class=\"tab\">" +
-                      //     "Overall Score: " + listOfTeams[i].score.toFixed(3) +
-                      // "</div>" +
+                      "<div id=\"tab2_" + i +"\" class=\"tab tab2\">" +
+
+                      "</div>" +
 
                       "<div id=\"tab3_" + i +"\" class=\"tab tab3\">" +
                       "</div>" +
@@ -2681,12 +2751,48 @@ Template.constraints.events({
                 "</div>" +
               "</div>";
 
+
               // alternate between columns
               if (i%2 == 0) {
                 $('#teamColumn1').append(team);
               } else {
                 $('#teamColumn2').append(team);
               }
+
+              // Team information
+              var studentTable = document.createElement('table');
+              for (j = 0; j < listOfTeams[i].member.length; j++) {
+                var student = listOfTeams[i].member[j];
+                var studentRow = document.createElement('tr');
+                var studentName = document.createElement('td');
+                studentName.innerHTML = student.name;
+                studentName.setAttribute("class", "studentTableAttribute tableName");
+                studentRow.appendChild(studentName);
+
+                var studentGender = document.createElement('td');
+                studentGender.setAttribute("class", "studentTableAttribute tableGender");
+
+                if (student.gender == 1) {
+                  studentGender.innerHTML = "Female";
+                } else {
+                  studentGender.innerHTML = "Male";
+                }
+                studentRow.appendChild(studentGender);
+
+                var studentLeadership = document.createElement('td');
+                studentLeadership.setAttribute("class", "studentTableAttribute tableLeadership");
+
+                if (student.leadership == 1) {
+                  studentLeadership.innerHTML = "Leader";
+                } else {
+                  studentLeadership.innerHTML = "Follower";
+                }
+                studentRow.appendChild(studentLeadership);
+
+                studentTable.appendChild(studentRow);
+              }
+              $('#tab2_' + i).append(studentTable);
+
 
               // TODO: Add if statement about constraintList
               console.log("THIS IS THE CURRENT TEAM ****************");
@@ -2784,16 +2890,50 @@ Template.constraints.events({
            revert      : 'invalid',
            forceHelperSize: true,
            placeholder: "placeholder",
+           forcePlaceholderSize: true,
            // Updating information of each team on drop
            update: function () {
+             var ul = this;
              console.log(this); // prints out each ul
              var students = [];
+             $(this).parents().children().closest('.tab2').find('table').empty();
              $('#' + this.id + ' li').each(function(i) {
                var eachStudent = {};
                eachStudent.name = this.getAttribute("name");
                eachStudent.schedule = this.getAttribute("schedule");
                eachStudent.gender = this.getAttribute("gender");
                eachStudent.leadership = this.getAttribute("leadership");
+
+               var infoTable = $(ul).parents().children().closest('.tab2').find('table');
+
+               // Updating information tab2
+               var studentRow = document.createElement('tr');
+               var studentName = document.createElement('td');
+               studentName.innerHTML = this.getAttribute("name");
+               studentName.setAttribute("class", "studentTableAttribute tableName");
+               studentRow.appendChild(studentName);
+
+               var studentGender = document.createElement('td');
+               studentGender.setAttribute("class", "studentTableAttribute tableGender");
+
+               if (this.getAttribute("gender") == 1) {
+                 studentGender.innerHTML = "Female";
+               } else {
+                 studentGender.innerHTML = "Male";
+               }
+               studentRow.appendChild(studentGender);
+
+               var studentLeadership = document.createElement('td');
+               studentLeadership.setAttribute("class", "studentTableAttribute tableLeadership");
+
+               if (this.getAttribute("leadership") == 1) {
+                 studentLeadership.innerHTML = "Leader";
+               } else {
+                 studentLeadership.innerHTML = "Follower";
+               }
+               studentRow.appendChild(studentLeadership);
+               infoTable.append(studentRow);
+
                students.push(eachStudent);
               //  console.log(this); // prints out each li
              });
@@ -3016,7 +3156,7 @@ Template.constraintModalTemplate.events({
 
       weightInput.type = "text";
       weightInput.name = currConstraint;
-      weightInput.style.cssText = "height: 20px;"
+      weightInput.style.cssText = "height: 20px; width: 39px;"
       new_row_weights.appendChild(weightInput);
       weightsTable.appendChild(new_row_weights);
 
@@ -3056,7 +3196,7 @@ Template.constraintModalTemplate.events({
 
       weightInput.type = "text";
       weightInput.name = currConstraint;
-      weightInput.style.cssText = "height: 20px;"
+      weightInput.style.cssText = "height: 20px; width: 39px;"
       new_row_weights.appendChild(weightInput);
       weightsTable.appendChild(new_row_weights);
 
@@ -3089,7 +3229,7 @@ Template.constraintModalTemplate.events({
 
       weightInput.type = "text";
       weightInput.name = currConstraint;
-      weightInput.style.cssText = "height: 20px;"
+      weightInput.style.cssText = "height: 20px; width: 39px;"
       new_row_weights.appendChild(weightInput);
       weightsTable.appendChild(new_row_weights);
 
@@ -3122,7 +3262,7 @@ Template.constraintModalTemplate.events({
 
       weightInput.type = "text";
       weightInput.name = currConstraint;
-      weightInput.style.cssText = "height: 20px;"
+      weightInput.style.cssText = "height: 20px; width: 39px;"
       new_row_weights.appendChild(weightInput);
       weightsTable.appendChild(new_row_weights);
 
@@ -3156,7 +3296,41 @@ Template.constraintModalTemplate.events({
 
       weightInput.type = "text";
       weightInput.name = currConstraint;
-      weightInput.style.cssText = "height: 20px;"
+      weightInput.style.cssText = "height: 20px; width: 39px;"
+      new_row_weights.appendChild(weightInput);
+      weightsTable.appendChild(new_row_weights);
+
+			var changedConstraint = document.getElementById(constrainttitle.innerHTML);
+			changedConstraint.remove();
+
+		}
+
+    // role distribution
+    else if(constrainttitle.innerHTML == "roleDistribution"){
+			console.log("balanceCheck");
+			var constraintvalue = document.getElementById('balancevalue').checked;
+			var table = document.getElementById("currentconstraints");
+			var currConstraint = constrainttitle.innerHTML;
+			var new_row = document.createElement('tr');
+			new_row.setAttribute("class", "clickable-cons");
+
+			// console.log(childSnapshot.key);
+			var name_cell = document.createElement('td');
+			name_cell.setAttribute("id", currConstraint);
+      name_cell.setAttribute("value", constraintvalue);
+			name_cell.appendChild(document.createTextNode(currConstraint + ": " + constraintvalue));
+			Session.set('roleDistribution', document.getElementById('balancevalue').checked);
+			new_row.appendChild(name_cell);
+			table.appendChild(new_row);
+
+      var weightsTable = document.getElementById("weightsOfCurrentConstraints");
+      var weightInput = document.createElement("input");
+      var new_row_weights = document.createElement('tr');
+      new_row_weights.setAttribute("class", "weights");
+
+      weightInput.type = "text";
+      weightInput.name = currConstraint;
+      weightInput.style.cssText = "height: 20px; width: 39px;"
       new_row_weights.appendChild(weightInput);
       weightsTable.appendChild(new_row_weights);
 
@@ -3368,6 +3542,33 @@ Template.constraintModalTemplate.events({
     		constraintModifier.appendChild(switchDiv);
     		// constraintHint.innerHTML = "Information about student studentDislikes!"
     	}
+
+      // role distribution
+      if(constrainttitle.innerHTML == "roleDistribution"){
+        var roleDistributionText = document.createElement('center');
+        roleDistributionText.setAttribute("class", "constraintInformation");
+        roleDistributionText.innerHTML = "Creating teams with distributed roles.";
+        constraintModifier.appendChild(roleDistributionText);
+
+        constraintModifier.style.padding = "0";
+        var specificsBox = document.getElementById("specifics");
+        specificsBox.style.height = "120px";
+
+    		var balanceSwitch = document.createElement('label');
+    		balanceSwitch.setAttribute('class', 'switch');
+    		var balanceInput = document.createElement('input');
+    		balanceInput.setAttribute('type', 'checkbox');
+    		balanceInput.setAttribute('id', 'balancevalue');
+    		var balanceDiv = document.createElement('div');
+    		balanceDiv.setAttribute('class', 'slider round');
+    		balanceInput.checked = Session.get('roleDistribution');
+    		balanceSwitch.appendChild(balanceInput);
+    		balanceSwitch.appendChild(balanceDiv);
+        var switchDiv = document.createElement('div');
+        switchDiv.setAttribute('class', 'switchDiv');
+        switchDiv.appendChild(balanceSwitch);
+    		constraintModifier.appendChild(switchDiv);
+    	}
     	$('.highlight').removeClass('highlight');
     	$(e.target).addClass('highlight');
 
@@ -3513,6 +3714,31 @@ Template.constraintModalTemplate.events({
         switchDiv.appendChild(balanceSwitch);
         constraintModifier.appendChild(switchDiv);
         // constraintHint.innerHTML = "Information about studentDislikes!"
+    	}
+
+      if(constrainttitle.innerHTML == "roleDistribution"){
+        var roleDistributionText = document.createElement('center');
+        roleDistributionText.setAttribute("class", "constraintInformation");
+        roleDistributionText.innerHTML = "Creating teams with distributed roles.";
+        constraintModifier.appendChild(roleDistributionText);
+
+        constraintModifier.style.padding = "0";
+        var specificsBox = document.getElementById("specifics");
+        specificsBox.style.height = "120px";
+
+    		var balanceSwitch = document.createElement('label');
+    		balanceSwitch.setAttribute('class', 'switch');
+    		var balanceInput = document.createElement('input');
+    		balanceInput.setAttribute('type', 'checkbox');
+    		balanceInput.setAttribute('id', 'balancevalue');
+    		var balanceDiv = document.createElement('div');
+    		balanceDiv.setAttribute('class', 'slider round');
+    		balanceSwitch.appendChild(balanceInput);
+    		balanceSwitch.appendChild(balanceDiv);
+        var switchDiv = document.createElement('div');
+        switchDiv.setAttribute('class', 'switchDiv');
+        switchDiv.appendChild(balanceSwitch);
+        constraintModifier.appendChild(switchDiv);
     	}
 
     	$('.highlight').removeClass('highlight');
