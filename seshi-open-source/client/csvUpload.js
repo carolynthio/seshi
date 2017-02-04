@@ -11,10 +11,10 @@ Template.upload.helpers({
 Template.upload.events({
   'change [name="uploadCSV"]' () {
     Session.set("studentRosterFile", EJSON.toJSONValue(Files.findOne()));
-    console.log("CHANGING FILE INPUT");
-    console.log(Files.findOne().data);
-    console.log($('input[name="uploadCSV"]')[0].files[0]);
-    console.log(Session.get("studentRosterFile"));
+    // console.log("CHANGING FILE INPUT");
+    // console.log(Files.findOne().data);
+    // console.log($('input[name="uploadCSV"]')[0].files[0]);
+    // console.log(Session.get("studentRosterFile"));
     $('#submitFile').removeAttr('disabled');
   },
 
