@@ -200,6 +200,7 @@ for s in studentList:
 	temp_schedule = map(int,temp_schedule)
 	students.append(temp)
 	temp.student_schedule = temp_schedule
+	temp.role = s['roleDistribution'].split(", ")
 	if ('studentLikes' in s):
 		temp.likes.append(s['studentLikes'])
 	if ('studentDislikes' in s):

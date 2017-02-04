@@ -166,9 +166,10 @@ def calRoledistribution(students_in_this_team):
 		return -1;
 
 	num_roles = 3;
-	role_set=set([])
+	# role_set=set([])
+	role_set = []
 
 	for stu in students_in_this_team:
-		role_set=role_set.union(set([stu.role]))
-
+		# role_set=role_set.union(set(stu.role))
+		role_set = list(set().union(role_set, stu.role))
 	return float(len(role_set))/num_roles;

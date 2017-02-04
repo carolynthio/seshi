@@ -133,10 +133,10 @@ def preferenceDetail(team):
 # check the skill distributed for constraint violation
 def checkSkill(team):
 	skills = [];
-	students = team.getMembers();
+	students = team.member;
 	for stu in students:
 		for skill in stu.role:
-			if not skill in skills:
+			if skill not in skills:
 				skills.append(skill);
 	return len(skills) == 3;
 
@@ -166,6 +166,7 @@ for m in obj["member"]:
     #name,gender,leadership
 	tempStudent = student(m["name"], m["gender"],m["leadership"], m["debug"])
 	tempStudent.student_schedule = m["student_schedule"]
+	tempStudent.role = m["role"]
 	members.append(tempStudent)
 
 tempTeam = team(members, weightList, obj["constraintsList"], obj["class_avg_leadership"], obj["class_avg_gender"] );

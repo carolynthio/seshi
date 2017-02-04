@@ -13,7 +13,7 @@ class student:
     gender = 0;
     leadership = 0;
     number=0;
-    role = "";
+    role = [];
     #teamsWithMaxScore = None;
 
     def getTeams(self):
@@ -84,7 +84,7 @@ class student:
         self.teams = [];
         self.likes = []
         self.dislikes = []
-        # self.role = []
+        self.role = []
         self.name = name;
         self.gender = gender;
         self.leadership = leadership;
