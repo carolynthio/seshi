@@ -84,6 +84,7 @@ class student:
         self.teams = [];
         self.likes = []
         self.dislikes = []
+        # self.role = []
         self.name = name;
         self.gender = gender;
         self.leadership = leadership;

@@ -124,16 +124,22 @@ def calLeadership(students_in_this_team):
 	if (len(students_in_this_team) == 0):
 		return -1;
 
-	num_leader = 0;
+	num_leader_1 = 0;
+	num_leader_2 = 0;
 
 	for stu in students_in_this_team:
 		if stu.leadership == 1:
-			num_leader += 1;
+			num_leader_1 += 1;
+			num_leader_2 += 1;
+		if stu.leadership == -1:
+			num_leader_2 += 1;
 
-	if (num_leader == 1):
+	if (num_leader_1 == 1):
 		return 1;
-	else:
-		return 0;
+	elif(num_leader_1 < 1 and num_leader_2 >= 1):
+		return 1;
+
+	return 0;
 # caluclate the gender score of a team --
 # score 1 if num of females are >= 2 || < 1
 # Otherwise 0;

@@ -45,6 +45,7 @@ Session.set("showAllGenders", true);
 Session.set("showAllLeadership", true);
 Session.set("showAllStudentLikes", true);
 Session.set("showAllStudentDislikes", true);
+Session.set("showAllRoleDistribution", true);
 Session.set("studentRosterFile", {});
 Session.set("manualMode", false);
 Session.set("suggestedMode", true);
@@ -1225,6 +1226,9 @@ Template.studentRoster.helpers({
   studentDislikesCollapsed : function(){
     return !Session.get('showAllStudentDislikes');
   },
+  roleDistributionCollapsed : function(){
+    return !Session.get('showAllRoleDistribution');
+  },
   isLeader: function(leader) {
     return leader === "1";
   },
@@ -1375,6 +1379,7 @@ Template.studentRoster.events({
     toggleDetails($(e.target).parents('.student').find('.student-leadership'), '.toggle-leadership');
     toggleDetails($(e.target).parents('.student').find('.student-studentLikes'), '.toggle-studentLikes');
     toggleDetails($(e.target).parents('.student').find('.student-studentDislikes'), '.toggle-studentDislikes');
+    toggleDetails($(e.target).parents('.student').find('.student-roleDistribution'), '.toggle-roleDistribution');
   }
 
 });
@@ -1530,6 +1535,10 @@ Template.SessionBuilder.events({
     'click .toggle-studentDislikes' : function(){
     toggleButton('showAllStudentDislikes', '#paper-deck .student .student-studentDislikes',
          '.toggle-studentDislikes', 'btn-info', 'btn-success');
+    },
+    'click .toggle-roleDistribution' : function(){
+    toggleButton('showAllRoleDistribution', '#paper-deck .student .student-roleDistribution',
+         '.toggle-roleDistribution', 'btn-info', 'btn-success');
     },
 
     'click .toggle-paper-sessions' : function(){
@@ -1700,7 +1709,7 @@ Template.SessionBuilder.events({
     'click .showTeamDetail' : function(e) {
       var currentAttrValue = e.target.getAttribute('href');
       $('.tabs ' + currentAttrValue).toggle();
-      
+
       if ($('.tabs ' + currentAttrValue).hasClass("active")) {
         $('.tabs ' + currentAttrValue).parent().children().closest(".tab1").addClass("active");
         $('.tabs ' + currentAttrValue).removeClass("active");
@@ -1828,7 +1837,7 @@ Template.SessionBuilder.events({
           scoreAndSched = result.split(" & ");
 
           // Updates score
-          $('#' + ulElement).parents('.team').children('.team-header').children('.compatibility').text(parseFloat(scoreAndSched[0]).toFixed(3));
+          $('#' + ulElement).parents('.team').children('.team-header').children('.compatibility').text((parseFloat(scoreAndSched[0])*100).toFixed(1));
 
           // Update calendar
           var schedule = JSON.parse(scoreAndSched[1]);
@@ -1877,7 +1886,7 @@ Template.SessionBuilder.events({
           scoreAndSched = result.split(" & ");
 
           // Updates score
-          $('#' + ulElement).parents('.team').children('.team-header').children('.compatibility').text(parseFloat(scoreAndSched[0]).toFixed(3));
+          $('#' + ulElement).parents('.team').children('.team-header').children('.compatibility').text((parseFloat(scoreAndSched[0])*100).toFixed(1));
 
           // Update calendar
           var schedule = JSON.parse(scoreAndSched[1]);
@@ -2789,6 +2798,11 @@ Template.constraints.events({
                 }
                 studentRow.appendChild(studentLeadership);
 
+                var studentRoles = document.createElement('td');
+                studentRoles.setAttribute("class", "studentTableAttribute tableRoles");
+                studentRoles.innerHTML = student.role;
+                studentRow.appendChild(studentRoles);
+
                 studentTable.appendChild(studentRow);
               }
               $('#tab2_' + i).append(studentTable);
@@ -2901,6 +2915,9 @@ Template.constraints.events({
                var eachStudent = {};
                eachStudent.name = this.getAttribute("name");
                eachStudent.schedule = this.getAttribute("schedule");
+               eachStudent.student_schedule = this.getAttribute("schedule").split(",").map(function(item) {
+                                                                                              return parseInt(item, 10);
+                                                                                            }); // for checkConstraintViolation
                eachStudent.gender = this.getAttribute("gender");
                eachStudent.leadership = this.getAttribute("leadership");
 
@@ -2932,12 +2949,23 @@ Template.constraints.events({
                  studentLeadership.innerHTML = "Follower";
                }
                studentRow.appendChild(studentLeadership);
+
+               var studentRoles = document.createElement('td');
+               studentRoles.setAttribute("class", "studentTableAttribute tableRoles");
+               studentRoles.innerHTML = student.role;
+               studentRow.appendChild(studentRoles);
+
                infoTable.append(studentRow);
 
                students.push(eachStudent);
               //  console.log(this); // prints out each li
              });
-             // TODO: May need to also pass in constraintsList once UI is set up
+             var team = {}
+             team.member = students;
+             team.class_avg_gender = Session.get("classAvgGender");
+             team.class_avg_leadership = Session.get("classAvgLeadership");
+            //  team.constraintsList = []; //TODO: may need to fix
+            //  team.overlappingSchedule = []; //TODO: may need to fix
              var scoreAndSched = []
              var ulElement = this.id;
              Meteor.call('updateTeams', JSON.stringify(students), Session.get("classAvgGender"),
@@ -2951,7 +2979,7 @@ Template.constraints.events({
                  console.log(scoreAndSched);
 
                  // Updates score
-                 $('#' + ulElement).parents('.team').children('.team-header').children('.compatibility').text(parseFloat(scoreAndSched[0]).toFixed(3));
+                 $('#' + ulElement).parents('.team').children('.team-header').children('.compatibility').text((parseFloat(scoreAndSched[0])*100).toFixed(1) + "%");
 
                  // Update calendar
                  var schedule = JSON.parse(scoreAndSched[1]);
@@ -2976,6 +3004,36 @@ Template.constraints.events({
                  $( '#' + tabId ).fullCalendar('removeEvents');
                  $( '#' + tabId ).fullCalendar('addEventSource', eventList);
              });
+              // Meteor.call("checkConstraintViolation", JSON.stringify(team), Session.get("constraintsList"), ulElement.slice(-1), function(error, result) {
+              //   if (error) {
+              //     console.log(error);
+              //   }
+              //   $('#' + ulElement).parents().children('.team-header').children().closest(".constraint").remove();
+              //   constraintsViolated = result.split(",");
+              //   console.log(constraintsViolated);
+              //   // Result is not null
+              //   if (constraintsViolated[0] != "") {
+              //     var index = constraintsViolated[constraintsViolated.length-1];
+              //     var constraintViolation = "<i style=\"color:#FFCC00; margin-left:5px;\" class=\"constraint constraint-" + index + " fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>";
+              //     var teamHeader = '#team' + index + ' .team-header';
+              //     $(teamHeader).append(constraintViolation);
+              //     var constraintIcon = ".constraint-"+index;
+              //     var modalPopover = "<div>";
+              //     for(i = 0; i < constraintsViolated.length-1; i++) {
+              //       modalPopover += "<div style=\"color:black\">" + constraintsViolated[i] + "</div>"
+              //     }
+              //     modalPopover += "</div>";
+              //     var modalTitle = "<div style=\"color:black\">Constraints Violated</div>";
+              //     $(constraintIcon).attr("data-placement", "top");
+              //     $(constraintIcon).attr("data-trigger", "manual");
+              //     $(constraintIcon).attr("data-html", "true");
+              //     $(constraintIcon).attr("data-toggle", "popover");
+              //     $(constraintIcon).attr("data-content", modalPopover);
+              //     $(constraintIcon).attr("title", modalTitle);
+              //   }
+              //
+              // });
+
            }
 
          });

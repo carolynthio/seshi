@@ -82,6 +82,7 @@
     <button class="filter btn btn-xs btn-success toggle-leadership">leadership</button>
     <button class="filter btn btn-xs btn-success toggle-studentLikes">prefers to work with</button>
     <button class="filter btn btn-xs btn-success toggle-studentDislikes">prefers not to work with</button>
+    <button class="filter btn btn-xs btn-success toggle-roleDistribution">role distribution</button>
   </div>
 
 	<!-- <ul id="paper-deck" class="deck ui-sortable"> -->
@@ -336,6 +337,9 @@
             Student Prefers not to Work With: {{this.studentDislikes}}
           </div>
         {{/if}}
+        <div class="student-attribute student-roleDistribution {{#if roleDistributionCollapsed}} hidden {{else}} show {{/if}}">
+          Roles: {{this.roleDistribution}}
+        </div>
         <div class="student-schedule hidden">
           {{scheduleArray this}}
         </div>
