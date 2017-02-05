@@ -363,6 +363,14 @@ i.swap:hover {
 	margin-bottom: 5px;
 }
 
+#filter-buttons{
+  display: inline-block;
+  white-space: nowrap;
+  width: 400px;
+  overflow: auto;
+  margin-left: 50px;
+}
+
 #sessionlist-buttons{
 	margin-bottom: 5px
 }
@@ -997,6 +1005,10 @@ li.active a, li.active a:hover {
 .studentTableAttribute {
   padding-left: 15px;
   font-size: 13px;
+}
+
+.attributeRow {
+  border-bottom: 1px solid black;
 }
 
 .team-header {

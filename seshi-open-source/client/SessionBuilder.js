@@ -2773,6 +2773,7 @@ Template.constraints.events({
               for (j = 0; j < listOfTeams[i].member.length; j++) {
                 var student = listOfTeams[i].member[j];
                 var studentRow = document.createElement('tr');
+                studentRow.setAttribute("class", "attributeRow");
                 var studentName = document.createElement('td');
                 studentName.innerHTML = student.name;
                 studentName.setAttribute("class", "studentTableAttribute tableName");
@@ -2925,6 +2926,7 @@ Template.constraints.events({
 
                // Updating information tab2
                var studentRow = document.createElement('tr');
+               studentRow.setAttribute("class", "attributeRow");
                var studentName = document.createElement('td');
                studentName.innerHTML = this.getAttribute("name");
                studentName.setAttribute("class", "studentTableAttribute tableName");
@@ -3320,7 +3322,8 @@ Template.constraintModalTemplate.events({
 
       weightInput.type = "text";
       weightInput.name = currConstraint;
-      weightInput.style.cssText = "height: 20px; width: 39px;"
+      weightInput.readOnly = true;
+      weightInput.style.cssText = "height: 20px; width: 39px;background-color: #E6E6E6;"
       new_row_weights.appendChild(weightInput);
       weightsTable.appendChild(new_row_weights);
 
@@ -3354,7 +3357,8 @@ Template.constraintModalTemplate.events({
 
       weightInput.type = "text";
       weightInput.name = currConstraint;
-      weightInput.style.cssText = "height: 20px; width: 39px;"
+      weightInput.readOnly = true;
+      weightInput.style.cssText = "height: 20px; width: 39px;background-color: #E6E6E6;"
       new_row_weights.appendChild(weightInput);
       weightsTable.appendChild(new_row_weights);
 

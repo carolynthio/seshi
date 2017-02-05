@@ -73,16 +73,18 @@
   {{> upload}}
 
   <div id="paperlist-buttons">
-    Filters:
+    <div style="display: inline; position: fixed;">Filters: </div>
     <!-- <button class="btn btn-xs btn-success toggle-authors">authors</button>
     <button class="btn btn-xs btn-success toggle-abstracts">abstracts</button>
     <button class="btn btn-xs btn-success toggle-keywords">keywords</button>
     <button class="btn btn-xs btn-success toggle-paper-sessions">sessions</button> -->
-    <button class="filter btn btn-xs btn-success toggle-gender">gender</button>
-    <button class="filter btn btn-xs btn-success toggle-leadership">leadership</button>
-    <button class="filter btn btn-xs btn-success toggle-studentLikes">prefers to work with</button>
-    <button class="filter btn btn-xs btn-success toggle-studentDislikes">prefers not to work with</button>
-    <button class="filter btn btn-xs btn-success toggle-roleDistribution">role distribution</button>
+    <div id="filter-buttons">
+      <button class="filter btn btn-xs btn-success toggle-gender">gender</button>
+      <button class="filter btn btn-xs btn-success toggle-leadership">leadership</button>
+      <button class="filter btn btn-xs btn-success toggle-studentLikes">prefers to work with</button>
+      <button class="filter btn btn-xs btn-success toggle-studentDislikes">prefers not to work with</button>
+      <button class="filter btn btn-xs btn-success toggle-roleDistribution">role distribution</button>
+    </div>
   </div>
 
 	<!-- <ul id="paper-deck" class="deck ui-sortable"> -->

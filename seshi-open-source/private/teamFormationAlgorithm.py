@@ -116,6 +116,7 @@ def selectTeams(all_possible_teams):
 	return res_teams;
 
 def del_comb_without_pref_like(allcombinationofteams,listofdict_do):
+    listofdict_do={k.lower(): [i.lower() for i in v] for k, v in listofdict_do.items()}
     for key,value in listofdict_do.iteritems():
         valuetodelete=[]
         for element in value:
@@ -133,7 +134,7 @@ def del_comb_without_pref_like(allcombinationofteams,listofdict_do):
     for team in allcombinationofteams:
         namelist=[]
         for student in team:
-            namelist.append(student.name)
+            namelist.append(student.name.lower())
         for key, value in listofdict_do.iteritems():
             temp_set=set(value)
             temp_set=temp_set.union(set([key]))
@@ -145,11 +146,12 @@ def del_comb_without_pref_like(allcombinationofteams,listofdict_do):
     return allcombinationofteams
 
 def del_comb_without_pref_dislike(allcombinationofteams,listofdict_not):
+    listofdict_not={k.lower(): [i.lower() for i in v] for k, v in listofdict_not.items()}
     indexlist=[]
     for team in allcombinationofteams:
         namelist=[]
         for student in team:
-            namelist.append(student.name)
+            namelist.append(student.name.lower())
         for key, value in listofdict_not.iteritems():
             temp_set=set(value)
             temp_set=temp_set.union(set([key]))
@@ -295,10 +297,13 @@ final_teams = selectTeams(all_possible_sorted_teams);
 # 		print str(stu);
 
 # print "testing````````````````````"
+
 def arrange_remaing_students(final_teams_bi,students):
 	score_insertion_students=[]
 	score_insertion_index=[]
 
+	# print "HEYyyyyyyyyyyyyyyyyyyyyyy"
+	# print "In arranging remainging students: ", students
 	for stud in students:
 		score_insertion_student=[]
 		for inditeam in final_teams_bi:
@@ -309,14 +314,21 @@ def arrange_remaing_students(final_teams_bi,students):
 		score_insertion_students.append(score_insertion_student)
 	while not (len(score_insertion_students) is 0):
 		maxindex=np.argmax(np.max(score_insertion_students, axis=1))
+		# maxindex refers to the position in list score_insertion_students where got the highest score
 		score_insertion_index=np.argmax(score_insertion_students,axis=1)
-		final_teams_bi[score_insertion_index[maxindex]].member.append(students.pop(maxindex))
+		# score_insertion_index refers to the index of each student's maximized-score-inserting team
+		score_insertion_students[maxindex][score_insertion_index[maxindex]]=0
+		# whether or not current insertion is successful,I will set this value to 0 to make sure this option will not be considered anymore
+		if len(final_teams_bi[score_insertion_index[maxindex]].member)< number_student_per_team_hi: #i will check if the team this student is going into violates the maximum number
+			final_teams_bi[score_insertion_index[maxindex]].member.append(students.pop(maxindex)) #here we append with the highest possible score option
 		# print score_insertion_index
 		# print score_insertion_students
-		final_teams_bi[score_insertion_index[maxindex]].score = final_teams_bi[score_insertion_index[maxindex]].calScore()
-		score_insertion_students.pop(maxindex)
-		for element in score_insertion_students:
-			element[score_insertion_index[maxindex]]=0
+			final_teams_bi[score_insertion_index[maxindex]].score = final_teams_bi[score_insertion_index[maxindex]].calScore()
+			score_insertion_students.pop(maxindex)
+
+			for element in score_insertion_students:
+				#after the insertion is finished this inserted team should not be considered anymore
+				element[score_insertion_index[maxindex]]=0
 
 arrange_remaing_students(final_teams, students)
 
