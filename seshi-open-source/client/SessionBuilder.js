@@ -3323,6 +3323,7 @@ Template.constraintModalTemplate.events({
       weightInput.type = "text";
       weightInput.name = currConstraint;
       weightInput.readOnly = true;
+      weightInput.value = 0;
       weightInput.style.cssText = "height: 20px; width: 39px;background-color: #E6E6E6;"
       new_row_weights.appendChild(weightInput);
       weightsTable.appendChild(new_row_weights);
@@ -3358,6 +3359,7 @@ Template.constraintModalTemplate.events({
       weightInput.type = "text";
       weightInput.name = currConstraint;
       weightInput.readOnly = true;
+      weightInput.value = 0;
       weightInput.style.cssText = "height: 20px; width: 39px;background-color: #E6E6E6;"
       new_row_weights.appendChild(weightInput);
       weightsTable.appendChild(new_row_weights);
