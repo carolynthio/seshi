@@ -46,6 +46,7 @@ Session.set("showAllLeadership", true);
 Session.set("showAllStudentLikes", true);
 Session.set("showAllStudentDislikes", true);
 Session.set("showAllRoleDistribution", true);
+Session.set("showAllCommitment", true);
 Session.set("studentRosterFile", {});
 Session.set("manualMode", false);
 Session.set("suggestedMode", true);
@@ -59,6 +60,7 @@ Session.set('genderbalance', '');
 Session.set('studentLikes', '');
 Session.set('studentDislikes', '');
 Session.set('roleDistribution', '');
+Session.set('commitment', '');
 
 Meteor.startup(function (){
     Session.set("searchResults", []); //Papers.find({active:true}).fetch());
@@ -1229,8 +1231,14 @@ Template.studentRoster.helpers({
   roleDistributionCollapsed : function(){
     return !Session.get('showAllRoleDistribution');
   },
+  commitmentCollapsed : function(){
+    return !Session.get('showAllCommitment');
+  },
   isLeader: function(leader) {
     return leader === "1";
+  },
+  isEither: function(leader) {
+    return leader == "-1";
   },
   isFemale: function(gender) {
     return gender === "1";
@@ -1380,6 +1388,7 @@ Template.studentRoster.events({
     toggleDetails($(e.target).parents('.student').find('.student-studentLikes'), '.toggle-studentLikes');
     toggleDetails($(e.target).parents('.student').find('.student-studentDislikes'), '.toggle-studentDislikes');
     toggleDetails($(e.target).parents('.student').find('.student-roleDistribution'), '.toggle-roleDistribution');
+    toggleDetails($(e.target).parents('.student').find('.student-commitment'), '.toggle-commitment');
   }
 
 });
@@ -1539,6 +1548,10 @@ Template.SessionBuilder.events({
     'click .toggle-roleDistribution' : function(){
     toggleButton('showAllRoleDistribution', '#paper-deck .student .student-roleDistribution',
          '.toggle-roleDistribution', 'btn-info', 'btn-success');
+    },
+    'click .toggle-commitment' : function(){
+    toggleButton('showAllCommitment', '#paper-deck .student .student-commitment',
+         '.toggle-commitment', 'btn-info', 'btn-success');
     },
 
     'click .toggle-paper-sessions' : function(){
@@ -2794,8 +2807,10 @@ Template.constraints.events({
 
                 if (student.leadership == 1) {
                   studentLeadership.innerHTML = "Leader";
-                } else {
-                  studentLeadership.innerHTML = "Follower";
+                } else if (student.leadership == -1) {
+                  studentLeadership.innerHTML = "Either";
+                }else {
+                  studentLeadership.innerHTML = "Prefer not to lead";
                 }
                 studentRow.appendChild(studentLeadership);
 
@@ -2852,7 +2867,8 @@ Template.constraints.events({
                   "name=\""+ member.name +"\"" +
                   "gender=\""+ member.gender +"\"" +
                   "leadership=\""+ member.leadership +"\"" +
-                  "schedule=\""+ member.student_schedule.toString() +"\">" +
+                  "schedule=\""+ member.student_schedule.toString() +"\"" +
+                  "role=\"" + member.role + "\">" +
                     // finalArray[i][j] +
                     listOfTeams[i].member[j].name +
                     "<i class=\"swap fa fa-exchange\" aria-hidden=\"true\" style=\"float:right;margin-right: 10px;margin-top: 3px;\"></i>" +
@@ -2947,14 +2963,16 @@ Template.constraints.events({
 
                if (this.getAttribute("leadership") == 1) {
                  studentLeadership.innerHTML = "Leader";
-               } else {
-                 studentLeadership.innerHTML = "Follower";
+               } else if (this.getAttribute("leadership") == -1){
+                 studentLeadership.innerHTML = "Either";
+               }else {
+                 studentLeadership.innerHTML = "Prefer not to lead";
                }
                studentRow.appendChild(studentLeadership);
 
                var studentRoles = document.createElement('td');
                studentRoles.setAttribute("class", "studentTableAttribute tableRoles");
-               studentRoles.innerHTML = student.role;
+               studentRoles.innerHTML = this.getAttribute("role");
                studentRow.appendChild(studentRoles);
 
                infoTable.append(studentRow);

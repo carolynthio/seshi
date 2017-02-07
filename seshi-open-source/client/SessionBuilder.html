@@ -84,6 +84,7 @@
       <button class="filter btn btn-xs btn-success toggle-studentLikes">prefers to work with</button>
       <button class="filter btn btn-xs btn-success toggle-studentDislikes">prefers not to work with</button>
       <button class="filter btn btn-xs btn-success toggle-roleDistribution">role distribution</button>
+      <button class="filter btn btn-xs btn-success toggle-commitment">commitment</button>
     </div>
   </div>
 
@@ -327,7 +328,15 @@
         </div>
         <div class="student-attribute student-leadership {{#if leadershipCollapsed}} hidden {{else}} show {{/if}}">
           <!-- {{this.[Leadership Role]}} -->
-          {{#if isLeader this.leadership}} Leader {{else}} Follower {{/if}}
+          {{#if isLeader this.leadership}}
+            Leader
+            {{else}}
+              {{#if isEither this.leadership}}
+              Can play either role
+              {{else}}
+              Prefer not to lead 
+            {{/if}}
+          {{/if}}
         </div>
         {{#if this.studentLikes}}
           <div class="student-attribute student-studentLikes {{#if studentLikesCollapsed}} hidden {{else}} show {{/if}}">
@@ -341,6 +350,9 @@
         {{/if}}
         <div class="student-attribute student-roleDistribution {{#if roleDistributionCollapsed}} hidden {{else}} show {{/if}}">
           Roles: {{this.roleDistribution}}
+        </div>
+        <div class="student-attribute student-commitment {{#if commitmentCollapsed}} hidden {{else}} show {{/if}}">
+          Commitment: {{this.commitment}}
         </div>
         <div class="student-schedule hidden">
           {{scheduleArray this}}
