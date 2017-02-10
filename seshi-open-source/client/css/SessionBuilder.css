@@ -236,6 +236,9 @@ body {
      min-height: 720px;
  }
 
+#teams-header {
+  width: 825px;
+}
 /* Making teams into two columns and draggable */
 .each-team {
   min-height: 20px;
@@ -249,6 +252,10 @@ body {
 
 .each-student i.swap {
   display: none;
+}
+
+.dragged-student {
+    margin: 5px;
 }
 
 .clickedStudent {
@@ -286,7 +293,7 @@ i.swap:hover {
  .teamColumn {
      float: left;
      margin: 6px;
-     height: 590px;
+     height: 530px;
      overflow: auto;
  }
 
@@ -327,7 +334,7 @@ i.swap:hover {
 }
 
 #paper-deck {
-	height: 600px;
+	height: 580px;
 	overflow: auto;
 	list-style: none;
 	list-style-type: none;
@@ -673,12 +680,16 @@ tr.constraints-row {
   width: 100%;
 }
 
-#optimizeTeamsButton {
+#optimizeTeamsButton, #teamsFilter {
   width: 200px;
   background-color: #1FBA95;
   color: white;
   margin-top: 5px;
   font-family: Helvetica, Arial, sans-serif;
+}
+
+#teamsFilter {
+  margin-left: 20px;
 }
 
 #constraintsButton {
@@ -1043,10 +1054,10 @@ li.active a, li.active a:hover {
 }
 
 .student-attribute{
-  margin-left: 10px;
+  margin-left: 20px;
   color: #2b3F54;
   font-family: Helvetica, Arial, sans-serif;
-  font-size: 12px;
+  font-size: 10px;
 
 }
 /* end student roster */
@@ -1077,6 +1088,9 @@ li.active a, li.active a:hover {
     background-color: #1e90ff;
 }*/
 /* end filter */
+.filter {
+  margin-top: 3px;
+}
 
 .filter.btn-success {
   color: #fff;

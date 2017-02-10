@@ -4,6 +4,7 @@ from team import team
 import sys
 import json
 from collections import namedtuple
+import ast
 
 # returns the team the student is currently in
 def currentTeam(student, finalTeams):
@@ -98,6 +99,28 @@ studentToSwap.student_schedule = map(int, studentToSwap.student_schedule)
 
 final_teams_args = sys.argv[5].split(' $ ')
 
+constraintsList = []
+weightList = []
+if(sys.argv[6]):
+	constraintsListArg = ast.literal_eval(sys.argv[6])
+	for constraint in constraintsListArg:
+		if constraint[0] == "availability":
+			constraintsList.append("schedule");
+			weightList.append(float(constraint[2])/100)
+			team.min_common_time = int(constraint[1])
+		else:
+			if constraint[1] == "true":
+				if constraint[0] == "studentLikes":
+					studentLikesPreferences = True
+				elif constraint[0] == "studentDislikes":
+					studentDislikesPreferences = True
+				else:
+					if constraint[0] == "genderbalance":
+						constraintsList.append("gender")
+						weightList.append(float(constraint[2])/100)
+					else:
+						constraintsList.append(constraint[0])
+						weightList.append(float(constraint[2])/100)
 # print sys.argv[1]
 # print sys.argv[2]
 # print sys.argv[3]
@@ -114,7 +137,7 @@ for i in range(0,len(final_teams_args)-1):
         tempStudent = student(m["name"], m["gender"],m["leadership"], m["debug"])
         tempStudent.student_schedule = m["student_schedule"]
         members.append(tempStudent)
-    tempTeam = team(members, 0, obj["constraintsList"], obj["class_avg_leadership"], obj["class_avg_gender"] );
+    tempTeam = team(members, weightList, constraintsList, obj["class_avg_leadership"], obj["class_avg_gender"] );
     tempTeam.score = obj["score"]
     tempTeam.overlappingSchedule = obj["overlappingSchedule"]
     if members:

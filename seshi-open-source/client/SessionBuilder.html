@@ -73,19 +73,19 @@
   {{> upload}}
 
   <div id="paperlist-buttons">
-    <div style="display: inline; position: fixed;">Filters: </div>
+    Filters:
     <!-- <button class="btn btn-xs btn-success toggle-authors">authors</button>
     <button class="btn btn-xs btn-success toggle-abstracts">abstracts</button>
     <button class="btn btn-xs btn-success toggle-keywords">keywords</button>
     <button class="btn btn-xs btn-success toggle-paper-sessions">sessions</button> -->
-    <div id="filter-buttons">
-      <button class="filter btn btn-xs btn-success toggle-gender">gender</button>
-      <button class="filter btn btn-xs btn-success toggle-leadership">leadership</button>
-      <button class="filter btn btn-xs btn-success toggle-studentLikes">prefers to work with</button>
-      <button class="filter btn btn-xs btn-success toggle-studentDislikes">prefers not to work with</button>
-      <button class="filter btn btn-xs btn-success toggle-roleDistribution">role distribution</button>
-      <button class="filter btn btn-xs btn-success toggle-commitment">commitment</button>
-    </div>
+
+    <button class="filter btn btn-xs btn-success toggle-gender">gender</button>
+    <button class="filter btn btn-xs btn-success toggle-leadership">leadership</button>
+    <button class="filter btn btn-xs btn-success toggle-studentLikes">prefers to work with</button>
+    <button class="filter btn btn-xs btn-success toggle-studentDislikes">prefers not to work with</button>
+    <button class="filter btn btn-xs btn-success toggle-roleDistribution">role distribution</button>
+    <button class="filter btn btn-xs btn-success toggle-commitment">commitment</button>
+
   </div>
 
 	<!-- <ul id="paper-deck" class="deck ui-sortable"> -->
@@ -118,6 +118,9 @@
 
 
 <div id="middle" class="col-md-7 container-fluid">
+  <div>
+	  <h3 id="teams-header">Teams</h3>
+	</div>
   {{> constraints}}
 	<!-- <div class="row">
 	  <div class="col-md-12">
@@ -334,7 +337,7 @@
               {{#if isEither this.leadership}}
               Can play either role
               {{else}}
-              Prefer not to lead 
+              Prefer not to lead
             {{/if}}
           {{/if}}
         </div>
@@ -349,7 +352,7 @@
           </div>
         {{/if}}
         <div class="student-attribute student-roleDistribution {{#if roleDistributionCollapsed}} hidden {{else}} show {{/if}}">
-          Roles: {{this.roleDistribution}}
+          {{this.roleDistribution}}
         </div>
         <div class="student-attribute student-commitment {{#if commitmentCollapsed}} hidden {{else}} show {{/if}}">
           Commitment: {{this.commitment}}
@@ -522,7 +525,8 @@
       </td>
     </tr>
     <tr class="constraints-row">
-        <button id="optimizeTeamsButton">Create Teams</button>
+      <button id="optimizeTeamsButton">Create Teams</button>
+      <button id="teamsFilter" class="hidden">Hide Details</button>
       <td></td>
     </tr>
   </table>

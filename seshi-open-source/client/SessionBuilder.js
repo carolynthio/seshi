@@ -1652,9 +1652,8 @@ Template.SessionBuilder.events({
           $('#listOfConstraintRow').css("display", "none");
           $('#optimizeTeamsButton').html('Create Teams');
           $('.teamColumn').empty();
-
-
-
+          $('#teamsFilter').addClass("hidden");
+          $('#teamsFilter').html("Hide Details");
         }
         // It is suggested
         else {
@@ -1666,6 +1665,8 @@ Template.SessionBuilder.events({
           $('#optimizeTeamsButton').html('Create Teams');
           $(".already-dropped-student").removeClass("already-dropped-student");
           $('.teamColumn').empty();
+          $('#teamsFilter').addClass("hidden");
+          $('#teamsFilter').html("Hide Details");
 
         }
       }
@@ -1712,7 +1713,11 @@ Template.SessionBuilder.events({
     },
     'click .showSchedule' : function(e) {
       var currentAttrValue = e.target.getAttribute('href');
-      $('.tabs ' + currentAttrValue).toggle();
+      if (Session.get("suggestedMode")) {
+        $('.tabs ' + currentAttrValue).toggle();
+      } else {
+        $(currentAttrValue).toggle();
+      }
 
       // render calendar within tab
       $(currentAttrValue).fullCalendar('render');
@@ -1736,14 +1741,17 @@ Template.SessionBuilder.events({
     },
 
     'click .each-student' : function(e) {
-      var className = $(e.target)[0].classList[0];
-      $('.suggestedSwaps').removeClass('suggestedSwaps');
-      if (className != "swap") {
-        $('.clickedStudent').removeClass('clickedStudent');
-        $(e.target).addClass('clickedStudent');
+      // Only allow swaps on suggestedMode
+      if (Session.get("suggestedMode")) {
+        var className = $(e.target)[0].classList[0];
+        $('.suggestedSwaps').removeClass('suggestedSwaps');
+        if (className != "swap") {
+          $('.clickedStudent').removeClass('clickedStudent');
+          $(e.target).addClass('clickedStudent');
 
-        $('.swap').css("display", "none");
-        $(e.target).find('.swap').css({"display": "block", "color":"#1FBA95"});
+          $('.swap').css("display", "none");
+          $(e.target).find('.swap').css({"display": "block", "color":"#1FBA95"});
+        }
       }
     },
 
@@ -1754,7 +1762,7 @@ Template.SessionBuilder.events({
       var leadership = student.getAttribute("leadership");
       var schedule = student.getAttribute("schedule");
 
-      Meteor.call('swapStudents', name, gender, leadership, schedule, "'" + Session.get("teams") + "'",
+      Meteor.call('swapStudents', name, gender, leadership, schedule, "'" + Session.get("teams") + "'",Session.get("constraintsList"),
         function(error, result) {
           if (error) {
             console.log(error);
@@ -2699,7 +2707,14 @@ Template.constraints.events({
     }
 
 	},
-
+  'click #teamsFilter' : function(event, template) {
+    $('.li-attribute').toggle();
+    if (event.target.innerHTML == "Show Team Details") {
+      $('#teamsFilter').html("Hide Details");
+    } else {
+      $('#teamsFilter').html("Show Team Details");
+    }
+  },
   'click #optimizeTeamsButton': function(event, template) {
     $('.teamColumn').empty(); // Clear contents of teams
     template.creatingTeams.set( false );
@@ -2746,7 +2761,7 @@ Template.constraints.events({
                   "<div class=\"team-title\" contentEditable=\"true\" style=\"float: left\">Team "+ i + "</div>" +
                   "<div class=\"compatibility\">" + (parseFloat(listOfTeams[i].score) * 100).toFixed(1) + "%</div>" +
                   "<i href=\"#tab3_" + i +"\" style=\"margin-left: 5px\" class=\"fa fa-calendar showSchedule\" aria-hidden=\"true\"></i>" +
-                  "<i href=\"#tab2_" + i + "\" style=\"margin-left: 5px\" class=\"fa fa-info-circle showTeamDetail\" aria-hidden=\"true\"></i>" +
+                  // "<i href=\"#tab2_" + i + "\" style=\"margin-left: 5px\" class=\"fa fa-info-circle showTeamDetail\" aria-hidden=\"true\"></i>" +
                   // "</div>" +
                 "</div>" +
                 "<div class=\"tabs\">" +
@@ -2862,6 +2877,22 @@ Template.constraints.events({
               // Append student to each team
               for (j=0; j < listOfTeams[i].member.length; j++) {
                 var member = listOfTeams[i].member[j];
+                var gender;
+                var leadership;
+                if (member.gender == 1) {
+                  gender = "Female";
+                } else {
+                  gender = "Male";
+                }
+
+                if (member.leadership == 1) {
+                  leadership = "Leader";
+                } else if (member.leadership == -1) {
+                  leadership = "Either";
+                } else {
+                  leadership = "Prefer not to lead";
+                }
+
                 var student =
                   "<li class=\"each-student student\"" +
                   "name=\""+ member.name +"\"" +
@@ -2871,6 +2902,7 @@ Template.constraints.events({
                   "role=\"" + member.role + "\">" +
                     // finalArray[i][j] +
                     listOfTeams[i].member[j].name +
+                    "<div style=\"float: right; font-size:10px;\" class=\"li-attribute\">"+ gender + " -- " + leadership + " -- " + member.role +"</div>" +
                     "<i class=\"swap fa fa-exchange\" aria-hidden=\"true\" style=\"float:right;margin-right: 10px;margin-top: 3px;\"></i>" +
                   "</li>";
 
@@ -3069,6 +3101,7 @@ Template.constraints.events({
 
         });
         // console.log("outside meteor.call: " + Session.get('teams'));
+        $('#teamsFilter').removeClass("hidden");
 
     } // End if -- Manual Mode
     else if(($('#numStudentsLo').val() != "")  &&
@@ -3082,14 +3115,16 @@ Template.constraints.events({
             "<div class=\"team-header\">" +
               "<div class=\"team-title\" contentEditable=\"true\" style=\"float: left\">Team "+ i + "</div>" +
               "<div class=\"compatibility\"></div>" +
+              "<i href=\"#calendar_" + i +"\" style=\"margin-left: 5px\" class=\"fa fa-calendar showSchedule\" aria-hidden=\"true\"></i>" +
             "</div>" +
-
             "<div>" +
             // "<div style=\"min-height:40px;\" class=\"student-names each-team\" id=\"studentNames" + i + "\">" +
               "<ul style=\"min-height:40px; margin-bottom:0;\" class=\"student-names each-team\" id=\"studentNames" + i + "\">" +
 
               "</ul>" +
             "</div>" +
+            "<div id=\"calendar_" + i + "\" class=\"calendar\" hidden>" +
+            "</div>"  +
 
           "</div>";
 
@@ -3099,6 +3134,18 @@ Template.constraints.events({
           } else {
             $('#teamColumn2').append(team);
           }
+
+          $( '#calendar_'+i ).fullCalendar({
+                defaultView: 'agendaWeek',
+                aspectRatio: 2,
+                header : false,
+                allDaySlot: false,
+                columnFormat: 'ddd',
+                slotDuration: "00:60:00",
+                displayEventTime: false,
+                minTime: "08:00:00", //8am
+                maxTime: "21:00:00" //9pm
+          });
 
 
       }
@@ -3124,15 +3171,25 @@ Template.constraints.events({
               }
               if (ui.helper.children(".student-leadership").text().trim() == "Leader") {
                 leadership = 1
+              } else if (ui.helper.children(".student-leadership").text().trim() == "Can play either role") {
+                leadership = -1;
               } else {
                 leadership = 0;
               }
-              var listStudent = "<li class=\"each-student student "+ ui.helper.context.id +"\"" +
+              var leaderText;
+              if (ui.helper.children(".student-leadership").text().trim() == "Can play either role") {
+                leaderText = "Either";
+              } else {
+                leaderText = ui.helper.children(".student-leadership").text().trim();
+              }
+              var listStudent = "<li class=\"each-student student dragged-student "+ ui.helper.context.id +"\"" +
               "name=\""+ ui.helper.children(".student-name").text().trim() +"\"" +
               "gender=\""+ gender +"\"" +
               "leadership=\""+ leadership +"\"" +
+              "role=\"" + ui.helper.children(".student-roleDistribution").text().trim() +"\"" +
               "schedule=\""+ ui.helper.children(".student-schedule").text().trim() +"\">" +
                 ui.helper.children(".student-name").text().trim() +
+                "<div style=\"float: right; font-size:10px;\" class=\"li-attribute\">"+ ui.helper.children(".student-gender").text().trim() + " -- " + leaderText + " -- " + ui.helper.children(".student-roleDistribution").text().trim() +"</div>" +
               "</li>";
               $(ui.helper).replaceWith(listStudent);
             }
@@ -3152,10 +3209,58 @@ Template.constraints.events({
       // forceHelperSize: true,
       stack: ".student-names",
       // placeholder: "placeholder"
+      update: function () {
+        var ul = this;
+        console.log(this); // prints out each ul
+        var students = [];
+        $('#' + this.id + ' li').each(function(i) {
+          var eachStudent = {};
+          eachStudent.name = this.getAttribute("name");
+          eachStudent.schedule = this.getAttribute("schedule");
+          eachStudent.gender = this.getAttribute("gender");
+          eachStudent.leadership = this.getAttribute("leadership");
+          students.push(eachStudent);
+
+        });
+        var scoreAndSched = [];
+        var ul_id = this.id;
+        Meteor.call('updateTeams', JSON.stringify(students), 0, 0, "",
+          function(error, result) {
+            if (error) {
+              console.log(error);
+            }
+
+            scoreAndSched = result.split(" & ");
+
+            // Update calendar
+            var schedule = JSON.parse(scoreAndSched[1]);
+            var eventList = []
+            for (k=0; k < schedule.length; k++) {
+              var startTime = 8;
+              for (m=0; m < schedule[k].length; m++) {
+                var eachDayArray = schedule[k];
+                if (eachDayArray[m]) {
+                  var newEvent = {
+                    title: " ",
+                    start: startTime.toString() + ":00",
+                    end: (startTime+1).toString() + ":00",
+                    dow: [k]
+                  };
+                  eventList.push(newEvent);
+                }
+                startTime++;
+              }
+            }
+            var calId = $('#' + ul_id).parents().children('.calendar')[0].id;
+            $( '#' + calId ).fullCalendar('removeEvents');
+            $( '#' + calId ).fullCalendar('addEventSource', eventList);
+          });
+      }
 
 
     });
 
+    $('#teamsFilter').removeClass("hidden");
 
     }
     else {
@@ -3181,7 +3286,6 @@ Template.constraints.events({
     } else {
       $('#optimizeTeamsButton').html('Update Teams');
     }
-
   },
 
   'click .remove' : function(e) {
