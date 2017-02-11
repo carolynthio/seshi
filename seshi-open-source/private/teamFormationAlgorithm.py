@@ -12,6 +12,7 @@ import operator
 import sys
 import json
 import ast
+import copy
 
 start_time = time.time()
 
@@ -31,10 +32,6 @@ studentDislikesPreferences = False
 def genAllCombination(all_students,combinations, curr_team_list, number_students_needed, team_num,index, studentLikeDict):
     # if calSchedule(curr_team_list) < mini_common_time_slots:
     #     return team_num;
-    if studentLikesPreferences == True:
-        # if return true means we want to delete this team for list of all combinations
-        if (del_comb_without_pref_like(curr_team_list, studentLikeDict)):
-            return team_num;
 
     if studentDislikesPreferences == True:
         if (isviolatedislikes(curr_team_list)):
@@ -43,6 +40,10 @@ def genAllCombination(all_students,combinations, curr_team_list, number_students
     if number_students_needed == 0:
         if debug:
             print team_num;
+        if studentLikesPreferences == True:
+        # if return true means we want to delete this team for list of all combinations
+            if (del_comb_without_pref_like(curr_team_list, studentLikeDict)):
+                return team_num;
 
         team_num = team_num + 1;
         newlist = [item for item in curr_team_list];
@@ -57,7 +58,21 @@ def genAllCombination(all_students,combinations, curr_team_list, number_students
             curr_team_list.remove(s);
 
     return team_num;
+def genAllCombination_withouthard(all_students,combinations, curr_team_list, number_students_needed, team_num,index):
+    if number_students_needed == 0:
+        team_num = team_num + 1;
+        newlist = [item for item in curr_team_list];
+        combinations.append(newlist);
+        return team_num;
 
+    for i in range(index,len(students)):
+        s = students[i];
+        if s not in curr_team_list:
+            curr_team_list.append(s);
+            team_num = genAllCombination_withouthard(all_students,combinations,curr_team_list,number_students_needed-1,team_num,i+1);
+            curr_team_list.remove(s);
+
+    return team_num;
 '''
     make each combination a team;
 '''
@@ -130,35 +145,6 @@ def selectTeams(all_possible_teams):
 
     return res_teams;
 
-# def del_comb_without_pref_like(allcombinationofteams,listofdict_do):
-#     listofdict_do={k.lower(): [i.lower() for i in v] for k, v in listofdict_do.items()}
-#     for key,value in listofdict_do.iteritems():
-#         valuetodelete=[]
-#         for element in value:
-#             if (element in listofdict_do):
-#                 if not (key in listofdict_do[element]):
-#                     valuetodelete.append(element)
-#             else:
-#                 valuetodelete.append(element)
-#         for element in valuetodelete:
-#             value.remove(element)
-#
-#     listofdict_do = {key: value for key, value in listofdict_do.items() if len(value) is not 0}
-#
-#     indexlist=[]
-#     for team in allcombinationofteams:
-#         namelist=[]
-#         for student in team:
-#             namelist.append(student.name.lower())
-#         for key, value in listofdict_do.iteritems():
-#             temp_set=set(value)
-#             temp_set=temp_set.union(set([key]))
-#             if key in namelist:
-#                 if not ((temp_set & set(namelist))==temp_set):
-#                     indexlist.append(allcombinationofteams.index(team))
-#     indexlist=list(set(indexlist))
-#     allcombinationofteams = [i for j, i in enumerate(allcombinationofteams) if j not in indexlist]
-#     return allcombinationofteams
 def del_comb_without_pref_like(team,listofdict_likes):
     listofdict_do={k.lower(): [i.lower() for i in v] for k, v in listofdict_likes.items()}
     for key,value in listofdict_do.iteritems():
@@ -173,8 +159,7 @@ def del_comb_without_pref_like(team,listofdict_likes):
             value.remove(element)
 
     listofdict_do = {key: value for key, value in listofdict_do.items() if len(value) is not 0}
-    # indexlist=[]
-    # for team in allcombinationofteams:
+
     namelist=[]
     for student in team:
         namelist.append(student.name.lower())
@@ -185,36 +170,11 @@ def del_comb_without_pref_like(team,listofdict_likes):
             if not ((temp_set & set(namelist))==temp_set):
                 return True #bad team
     return False
-    #             indexlist.append(allcombinationofteams.index(team))
-    #
-    # indexlist=list(set(indexlist))
-    # allcombinationofteams = [i for j, i in enumerate(allcombinationofteams) if j not in indexlist]
-    # return allcombinationofteams
-
-# def del_comb_without_pref_dislike(allcombinationofteams,listofdict_not):
-#     listofdict_not={k.lower(): [i.lower() for i in v] for k, v in listofdict_not.items()}
-#     indexlist=[]
-#     for team in allcombinationofteams:
-#         namelist=[]
-#         for student in team:
-#             namelist.append(student.name.lower())
-#         for key, value in listofdict_not.iteritems():
-#             temp_set=set(value)
-#             temp_set=temp_set.union(set([key]))
-#             if key in namelist:
-#                 if ((temp_set & set(namelist))==temp_set):
-#                     indexlist.append(allcombinationofteams.index(team))
-#     indexlist=list(set(indexlist))
-#     allcombinationofteams = [i for j, i in enumerate(allcombinationofteams) if j not in indexlist]
-#     return allcombinationofteams
-
 
 def isviolatedislikes(curr_team_list):
     namelist=[]
     for student in curr_team_list:
-#             print student.name.lower()
         namelist.append(student.name.lower())
-#     print namelist
     for student in curr_team_list:
         hatepairs=[]
         for element in student.dislikes:
@@ -278,7 +238,6 @@ gender = [s.gender for s in students]
 class_avg_gender = sum(gender) / len(gender)
 leadership = [s.leadership for s in students]
 class_avg_leadership = sum(leadership) / len(leadership)
-# constraintsList = ["schedule"];
 constraintsList = []
 weightList = []
 if(sys.argv[4]):
@@ -323,21 +282,6 @@ if studentLikesPreferences == True:
                 else:
                     studentLikesDict[student.name] = [like]
 
-    # combinations = del_comb_without_pref_like(combinations,studentLikesDict)
-
-# studentDislikesDict = {}
-# if studentDislikesPreferences == True:
-#     studentDislikesDict = {}
-#     for student in students:
-#         # if list is not empty
-#         if (student.dislikes):
-#             for dislike in student.dislikes:
-#                 if student.name in studentDislikesDict:
-#                     studentDislikesDict[student.name].append(dislike)
-#                 else:
-#                     studentDislikesDict[student.name] = [dislike]
-
-    # combinations = del_comb_without_pref_dislike(combinations,studentDislikesDict)
 combinations = [];
 for i in range(number_student_per_team_lo,number_student_per_team_hi+1):
     genAllCombination(students,combinations,[],i,0,0, studentLikesDict);
@@ -370,12 +314,10 @@ final_teams = selectTeams(all_possible_sorted_teams);
 
 # print "testing````````````````````"
 
-def arrange_remaing_students(final_teams_bi,students):
+def arrange_remaing_students(final_teams_bi,students,weights, constraintsList, class_avg_leadership, class_avg_gender,number_student_per_team_hi,number_student_per_team_lo):
     score_insertion_students=[]
     score_insertion_index=[]
 
-    # print "HEYyyyyyyyyyyyyyyyyyyyyyy"
-    # print "In arranging remainging students: ", students
     for stud in students:
         score_insertion_student=[]
         for inditeam in final_teams_bi:
@@ -384,40 +326,33 @@ def arrange_remaing_students(final_teams_bi,students):
             inditeam.member.pop()
 
         score_insertion_students.append(score_insertion_student)
-    # TODO: Will need to change
-    if (len(students) >= number_student_per_team_lo):
-        # getting combination of remaining
-        combinations_remainder = [];
-        ##################################Create new method to generate all possible combinations with remaining students
-        for i in range(number_student_per_team_lo,number_student_per_team_hi+1):
-            genAllCombination(students,combinations_remainder,[],i,0,0, {});
-        #getting the sorted
-        all_possible_sorted_teams_remainder = changeToSortedTeams(combinations_remainder,weightList, constraintsList, class_avg_leadership, class_avg_gender);
 
-        # final teams with remaining students
-        final_teams_remainder = selectTeams(all_possible_sorted_teams_remainder)
-        for team in final_teams_remainder:
-            final_teams_bi.append(team)
-
-    else:
+    if (len(students) >= number_student_per_team_lo and len(students) <= number_student_per_team_hi):
+        final_teams_bi.append(team(students,weights, constraintsList, class_avg_leadership, class_avg_gender))
+    elif (len(students) < number_student_per_team_lo):
         while not (len(score_insertion_students) is 0):
             maxindex=np.argmax(np.max(score_insertion_students, axis=1))
-            # maxindex refers to the position in list score_insertion_students where got the highest score
             score_insertion_index=np.argmax(score_insertion_students,axis=1)
-            # score_insertion_index refers to the index of each student's maximized-score-inserting team
-            score_insertion_students[maxindex][score_insertion_index[maxindex]]=0
-            # whether or not current insertion is successful,I will set this value to 0 to make sure this option will not be considered anymore
-            if len(final_teams_bi[score_insertion_index[maxindex]].member)< number_student_per_team_hi: #i will check if the team this student is going into violates the maximum number
-                final_teams_bi[score_insertion_index[maxindex]].member.append(students.pop(maxindex)) #here we append with the highest possible score option
+            final_teams_bi[score_insertion_index[maxindex]].member.append(students.pop(maxindex))
+            score_insertion_students.pop(maxindex)
+            for element in score_insertion_students:
+                element[score_insertion_index[maxindex]]=0
+    else:
+        remaining=[]
+        genAllCombination_withouthard(students,remaining, [], number_student_per_team_hi, 0,0)
+        all_possible_sorted_teams_second = changeToSortedTeams(remaining,weights, constraintsList, class_avg_leadership, class_avg_gender);
+        final_teams_second = selectTeams(all_possible_sorted_teams_second);
+        newsettledstud=[]
+        for team_temp in final_teams_second:
+            for student in team_temp.getMembers():
+                newsettledstud.append(student.name)
+        students=[i for i in students if i.name not in newsettledstud]
+        for team_temp in final_teams_second:
+            final_teams_bi.append(team_temp)
+        arrange_remaing_students(final_teams_bi, students,weights, constraintsList, class_avg_leadership, class_avg_gender,number_student_per_team_hi,number_student_per_team_lo)
 
-                final_teams_bi[score_insertion_index[maxindex]].score = final_teams_bi[score_insertion_index[maxindex]].calScore()
-                score_insertion_students.pop(maxindex)
 
-                for element in score_insertion_students:
-                    #after the insertion is finished this inserted team should not be considered anymore
-                    element[score_insertion_index[maxindex]]=0
-
-arrange_remaing_students(final_teams, students)
+arrange_remaing_students(final_teams, students,weightList, constraintsList, class_avg_leadership, class_avg_gender,number_student_per_team_hi,number_student_per_team_lo)
 
 # for team in final_teams:
     # print str(team);
@@ -431,7 +366,6 @@ arrange_remaing_students(final_teams, students)
 #         temp.append(str(student))
 #     result.append(temp)
 
-# result = []
 result = ''
 for team in final_teams:
     # print json.dumps(team.__dict__)

@@ -2708,10 +2708,11 @@ Template.constraints.events({
 
 	},
   'click #teamsFilter' : function(event, template) {
-    $('.li-attribute').toggle();
     if (event.target.innerHTML == "Show Team Details") {
+      $('.li-attribute').removeClass("hidden");
       $('#teamsFilter').html("Hide Details");
     } else {
+      $('.li-attribute').addClass("hidden");
       $('#teamsFilter').html("Show Team Details");
     }
   },
