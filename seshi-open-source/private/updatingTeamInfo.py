@@ -11,6 +11,7 @@ members = []
 for eachStudent in teamsToUpdate:
     member = student(eachStudent["name"], eachStudent["gender"], eachStudent["leadership"], 0)
     member.student_schedule = map(int, eachStudent["schedule"].split(','))
+    member.role = eachStudent["role"]
     members.append(member);
 
 constraintsList = sys.argv[4].split(',')

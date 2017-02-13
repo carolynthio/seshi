@@ -63,7 +63,7 @@ def checkGender(team):
 def genderDetail(team):
 	students = team.getMembers();
 	for stu in students:
-		if stu.gender == 1:
+		if int(stu.gender) == 1:
 			return stu.name + " is the only female in the team";
 	return None;
 
@@ -81,7 +81,7 @@ def leadershipDetail(team):
 	students = team.getMembers();
 	num_follower = 0;
 	for stu in students:
-		if stu.leadership == 0:
+		if int(stu.leadership) == 0:
 			num_follower += 1;
 
 	if num_follower == len(students):
@@ -90,7 +90,7 @@ def leadershipDetail(team):
 	res = "Redundant leaders: ";
 
 	for stu in students:
-		if stu.leadership == 1:
+		if int(stu.leadership) == 1:
 			res += str(stu)+" ";
 
 	return res;

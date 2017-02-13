@@ -26,7 +26,7 @@ Meteor.methods({
   createTeams: function(minStudents, maxStudents, listOfStudents, constraints) {
     var sync = Meteor.wrapAsync(exec);
     var cmd = "python assets/app/teamFormationAlgorithm.py " + " " + minStudents + " " + maxStudents + " '" + listOfStudents + "' '" + constraints + "'";
-    console.log(cmd);
+    // console.log(cmd);
     var result = sync(cmd);
     return result;
   },
@@ -43,14 +43,15 @@ Meteor.methods({
   updateTeams: function(students, classAvgGender, classAvgLeadership, constraintsList) {
     var sync = Meteor.wrapAsync(exec);
     var cmd = "python assets/app/updatingTeamInfo.py " + " '" + students + "' " + classAvgGender + " " + classAvgLeadership + " '" + constraintsList + "'";
+    console.log(cmd);
     var result = sync(cmd);
-
     return result;
   },
 
   checkConstraintViolation: function(currentTeam, constraintsList, index) {
     var sync = Meteor.wrapAsync(exec);
     var cmd = "python assets/app/checkConstraint.py " + " '" + currentTeam + "' '" + constraintsList + "' " + index;
+    console.log(cmd);
     var result = sync(cmd);
     return result;
   }

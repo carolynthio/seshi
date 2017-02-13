@@ -65,7 +65,7 @@ class team:
 	# Returns the overlapping team schedule
 	def teamSchedule(self, students_in_this_team):
 		if (len(students_in_this_team) == 0):
-			return 100 ;
+			return 0 ;
 
 		temp_schedule = students_in_this_team[0].student_schedule;
 
@@ -128,10 +128,10 @@ def calLeadership(students_in_this_team):
 	num_leader_2 = 0;
 
 	for stu in students_in_this_team:
-		if stu.leadership == 1:
+		if int(stu.leadership) == 1:
 			num_leader_1 += 1;
 			num_leader_2 += 1;
-		if stu.leadership == -1:
+		if int(stu.leadership) == -1:
 			num_leader_2 += 1;
 
 	if (num_leader_1 == 1):
@@ -150,7 +150,7 @@ def calGender(students_in_this_team):
 	num_female = 0;
 
 	for stu in students_in_this_team:
-		if stu.gender == 1:
+		if int(stu.gender) == 1:
 			num_female += 1;
 
 	if num_female == 1:
@@ -165,7 +165,7 @@ def calRoledistribution(students_in_this_team):
 	if (len(students_in_this_team) == 0):
 		return -1;
 
-	num_roles = 3;
+	num_roles = 3; #TODO: will need to change
 	# role_set=set([])
 	role_set = []
 

@@ -25,7 +25,7 @@ Router.configure({
 });
 
 Router.map(function() {
-    this.route('SessionBuilder',
+    this.route('TeamTools',
 	       {
 		   waitOn: function () {
 		       return [Meteor.subscribe('papers-sub'),
@@ -42,7 +42,7 @@ Router.map(function() {
 		   }
 	       });
 
-    //this.route('SessionBuilder');
+    //this.route('TeamTools');
     this.route('accept',
 	       {
 		   waitOn: function () {
@@ -83,7 +83,7 @@ Router.map(function() {
             Session.set('anonymousName', this.params.workername);
             Session.set('stressInterval', this.params.interval);
             startStressTest();
-            Router.go('SessionBuilder');
+            Router.go('TeamTools');
         }
     });
 });

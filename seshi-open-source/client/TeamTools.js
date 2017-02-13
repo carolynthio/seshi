@@ -64,7 +64,7 @@ Session.set('commitment', '');
 
 Meteor.startup(function (){
     Session.set("searchResults", []); //Papers.find({active:true}).fetch());
-    Session.set("sessionSearchResults", []);//Template.SessionBuilder.sessions().fetch());
+    Session.set("sessionSearchResults", []);//Template.TeamTools.sessions().fetch());
     // Maintain workspace count;
     Deps.autorun(function(x){
 	Sessions.find().observeChanges({
@@ -125,7 +125,7 @@ function getSessions(){
 
 
 
-Template.SessionBuilder.rendered = function(){
+Template.TeamTools.rendered = function(){
     console.log("rendered");
     $('#directions').hide();
 
@@ -305,7 +305,7 @@ Template.paperSession.helpers({
 });
 
 
-Template.SessionBuilder.helpers({
+Template.TeamTools.helpers({
 
     watchedSession: function (){
 	var watchedSessions = Session.get("sessionsWatched");
@@ -1400,7 +1400,7 @@ Session template helpers
 /********************************************************************
 * Session Builder Event Mappings
 ********************************************************************/
-Template.SessionBuilder.events({
+Template.TeamTools.events({
     'click .morelink': function(e, u){
 	e.stopPropagation();
         if($(e.target).hasClass("less")) {
@@ -2399,7 +2399,7 @@ Template.navBar.events({
     });
   }
 });
-Template.SessionBuilder.onCreated( () => {
+Template.TeamTools.onCreated( () => {
   Template.instance().creatingTeams = new ReactiveVar( true );
 });
 
@@ -2969,7 +2969,9 @@ Template.constraints.events({
                                                                                               return parseInt(item, 10);
                                                                                             }); // for checkConstraintViolation
                eachStudent.gender = this.getAttribute("gender");
+               eachStudent.role = this.getAttribute("role").split(",");
                eachStudent.leadership = this.getAttribute("leadership");
+               eachStudent.debug = 0; // for checkConstriantViolation
 
                var infoTable = $(ul).parents().children().closest('.tab2').find('table');
 
@@ -3017,10 +3019,11 @@ Template.constraints.events({
              team.member = students;
              team.class_avg_gender = Session.get("classAvgGender");
              team.class_avg_leadership = Session.get("classAvgLeadership");
-            //  team.constraintsList = []; //TODO: may need to fix
-            //  team.overlappingSchedule = []; //TODO: may need to fix
+             team.constraintsList = []; //TODO: may need to fix
+             team.overlappingSchedule = []; //TODO: may need to fix
              var scoreAndSched = []
              var ulElement = this.id;
+             var teamScore = 0;
              Meteor.call('updateTeams', JSON.stringify(students), Session.get("classAvgGender"),
                           Session.get("classAvgLeadership"), Session.get("constraintsList"),
                function(error, result) {
@@ -3033,6 +3036,7 @@ Template.constraints.events({
 
                  // Updates score
                  $('#' + ulElement).parents('.team').children('.team-header').children('.compatibility').text((parseFloat(scoreAndSched[0])*100).toFixed(1) + "%");
+                 teamScore = parseFloat(scoreAndSched[0]);
 
                  // Update calendar
                  var schedule = JSON.parse(scoreAndSched[1]);
@@ -3057,35 +3061,37 @@ Template.constraints.events({
                  $( '#' + tabId ).fullCalendar('removeEvents');
                  $( '#' + tabId ).fullCalendar('addEventSource', eventList);
              });
-              // Meteor.call("checkConstraintViolation", JSON.stringify(team), Session.get("constraintsList"), ulElement.slice(-1), function(error, result) {
-              //   if (error) {
-              //     console.log(error);
-              //   }
-              //   $('#' + ulElement).parents().children('.team-header').children().closest(".constraint").remove();
-              //   constraintsViolated = result.split(",");
-              //   console.log(constraintsViolated);
-              //   // Result is not null
-              //   if (constraintsViolated[0] != "") {
-              //     var index = constraintsViolated[constraintsViolated.length-1];
-              //     var constraintViolation = "<i style=\"color:#FFCC00; margin-left:5px;\" class=\"constraint constraint-" + index + " fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>";
-              //     var teamHeader = '#team' + index + ' .team-header';
-              //     $(teamHeader).append(constraintViolation);
-              //     var constraintIcon = ".constraint-"+index;
-              //     var modalPopover = "<div>";
-              //     for(i = 0; i < constraintsViolated.length-1; i++) {
-              //       modalPopover += "<div style=\"color:black\">" + constraintsViolated[i] + "</div>"
-              //     }
-              //     modalPopover += "</div>";
-              //     var modalTitle = "<div style=\"color:black\">Constraints Violated</div>";
-              //     $(constraintIcon).attr("data-placement", "top");
-              //     $(constraintIcon).attr("data-trigger", "manual");
-              //     $(constraintIcon).attr("data-html", "true");
-              //     $(constraintIcon).attr("data-toggle", "popover");
-              //     $(constraintIcon).attr("data-content", modalPopover);
-              //     $(constraintIcon).attr("title", modalTitle);
-              //   }
-              //
-              // });
+             team.score = teamScore;
+              Meteor.call("checkConstraintViolation", JSON.stringify(team), Session.get("constraintsList"), ulElement.slice(-1),
+              function(error, result) {
+                if (error) {
+                  console.log(error);
+                }
+                $('#' + ulElement).parents().children('.team-header').children().closest(".constraint").remove();
+                constraintsViolated = result.split(",");
+                console.log(constraintsViolated);
+                // Result is not null
+                if (constraintsViolated[0] != "") {
+                  var index = constraintsViolated[constraintsViolated.length-1];
+                  var constraintViolation = "<i style=\"color:#FFCC00; margin-left:5px;\" class=\"constraint constraint-" + index + " fa fa-exclamation-triangle\" aria-hidden=\"true\"></i>";
+                  var teamHeader = '#team' + index + ' .team-header';
+                  $(teamHeader).append(constraintViolation);
+                  var constraintIcon = ".constraint-"+index;
+                  var modalPopover = "<div>";
+                  for(i = 0; i < constraintsViolated.length-1; i++) {
+                    modalPopover += "<div style=\"color:black\">" + constraintsViolated[i] + "</div>"
+                  }
+                  modalPopover += "</div>";
+                  var modalTitle = "<div style=\"color:black\">Constraints Violated</div>";
+                  $(constraintIcon).attr("data-placement", "top");
+                  $(constraintIcon).attr("data-trigger", "manual");
+                  $(constraintIcon).attr("data-html", "true");
+                  $(constraintIcon).attr("data-toggle", "popover");
+                  $(constraintIcon).attr("data-content", modalPopover);
+                  $(constraintIcon).attr("title", modalTitle);
+                }
+
+              });
 
            }
 
