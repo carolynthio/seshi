@@ -1569,6 +1569,29 @@ Template.TeamTools.events({
 		     '.toggle-contributors', 'btn-info', 'btn-success');
     },
 
+    'click #sortA-Z' : function() {
+      var list = $('#paper-deck');
+      var listitems = list.children('li').get();
+      listitems.sort(function(e1, e2) {
+        return $(e1).children().children('.student-name').text().trim().toUpperCase().localeCompare($(e2).children().children('.student-name').text().trim().toUpperCase());
+      })
+
+      $.each(listitems, function(idx, itm) {
+        list.append(itm);
+      });
+    },
+
+    'click #sortZ-A' : function() {
+      var list = $('#paper-deck');
+      var listitems = list.children('li').get();
+      listitems.sort(function(e1, e2) {
+        return $(e1).children().children('.student-name').text().trim().toUpperCase().localeCompare($(e2).children().children('.student-name').text().trim().toUpperCase());
+      })
+
+      $.each(listitems, function(idx, itm) {
+        list.prepend(itm);
+      });
+    },
 
     'click .finish-session-button' : function(e){
 	var nullNames = ["Session not yet named", "Not named yet", "", " ", "  ", "   ", undefined];
@@ -3105,10 +3128,9 @@ Template.constraints.events({
                  ui.helper.css("height", "22px");
             }
          });
-
+         $('#teamsFilter').removeClass("hidden");
         });
         // console.log("outside meteor.call: " + Session.get('teams'));
-        $('#teamsFilter').removeClass("hidden");
 
     } // End if -- Manual Mode
     else if(($('#numStudentsLo').val() != "")  &&
@@ -3121,7 +3143,7 @@ Template.constraints.events({
           "<div class=\"team\" id=\"team" + i + "\">" +
             "<div class=\"team-header\">" +
               "<div class=\"team-title\" contentEditable=\"true\" style=\"float: left\">Team "+ i + "</div>" +
-              "<div class=\"compatibility\"></div>" +
+              "<div class=\"compatibility hidden\"></div>" +
               "<i href=\"#calendar_" + i +"\" style=\"margin-left: 5px\" class=\"fa fa-calendar showSchedule\" aria-hidden=\"true\"></i>" +
             "</div>" +
             "<div>" +
@@ -3159,12 +3181,12 @@ Template.constraints.events({
 
      // On drop change from div to list item
      var dropped = $(".student-names").droppable({
-        accept: '.draggable-student',
+        accept: '.draggable-student:not(.team)',
         hoverClass: 'ui-state-hover',
         greedy: true,
         tolerance: 'pointer',
         drop : function(event,ui) {
-          if(ui.draggable[0].nodeName != "LI") {
+          if(ui.draggable[0].nodeName != "LI" && !($('#' + ui.draggable[0].id).hasClass('team'))) {
             if($('.' + ui.draggable[0].id).length > 0) {
               console.log("This element already exists in a team");
               ui.draggable.remove();
@@ -3226,18 +3248,21 @@ Template.constraints.events({
           eachStudent.schedule = this.getAttribute("schedule");
           eachStudent.gender = this.getAttribute("gender");
           eachStudent.leadership = this.getAttribute("leadership");
+          eachStudent.role = this.getAttribute("role").split(",");
           students.push(eachStudent);
 
         });
         var scoreAndSched = [];
         var ul_id = this.id;
-        Meteor.call('updateTeams', JSON.stringify(students), 0, 0, "",
+        Meteor.call('updateTeams', JSON.stringify(students), 0, 0, '[["availability","6","25"],["leadership","true","25"],["genderbalance","true","25"],["studentLikes","true","0"],["studentDislikes","true","0"],["roleDistribution","true","25"]]',
           function(error, result) {
             if (error) {
               console.log(error);
             }
 
             scoreAndSched = result.split(" & ");
+
+            $('#' + ul_id).parents('.team').children('.team-header').children('.compatibility').text((parseFloat(scoreAndSched[0])*100).toFixed(1) + "%");
 
             // Update calendar
             var schedule = JSON.parse(scoreAndSched[1]);

@@ -334,7 +334,7 @@ i.swap:hover {
 }
 
 #paper-deck {
-	height: 580px;
+	height: 560px;
 	overflow: auto;
 	list-style: none;
 	list-style-type: none;
@@ -376,6 +376,21 @@ i.swap:hover {
   width: 400px;
   overflow: auto;
   margin-left: 50px;
+}
+
+#sortButtons {
+  margin-bottom: 2px;
+}
+
+.sort {
+  color: #fff;
+  background-color: #1FBA95;
+  border-color: #1FBA95;
+}
+
+.sort:hover {
+  opacity: 0.5;
+  color: #fff;
 }
 
 #sessionlist-buttons{
