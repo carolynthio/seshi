@@ -1584,6 +1584,7 @@ Template.TeamTools.events({
     'click #sortZ-A' : function() {
       var list = $('#paper-deck');
       var listitems = list.children('li').get();
+
       listitems.sort(function(e1, e2) {
         return $(e1).children().children('.student-name').text().trim().toUpperCase().localeCompare($(e2).children().children('.student-name').text().trim().toUpperCase());
       })
@@ -1591,6 +1592,81 @@ Template.TeamTools.events({
       $.each(listitems, function(idx, itm) {
         list.prepend(itm);
       });
+    },
+
+    'change #sort_method' : function() {
+
+    	// get the student list from the db
+    	var list = $('#paper-deck');
+      	var listitems = list.children('li').get();
+      	// split the name by fast name and last name
+
+
+
+    	console.log("click the list ");
+    	var e = document.getElementById("sort_method");
+    	var val = e.options[e.selectedIndex].value;
+    	var val1 = e.options[0].value;
+    	
+
+    	if (val != "haha" && val1 == "haha"){
+    		console.log("remove the select");
+    		e.remove(0);
+    	}
+
+    	console.log(val);
+
+    	if (val == "lnaz"){
+    		
+    		listitems.sort(function(e1,e2) {
+    			var names1 = $(e1).children().children('.student-name').text().trim().split(" ");
+    			var names2 = $(e2).children().children('.student-name').text().trim().split(" ");
+    			var ln_e1 = names1[names1.length-1];
+    			var ln_e2 = names2[names2.length-1];
+
+    			return ln_e1.toUpperCase().localeCompare(ln_e2.toUpperCase());
+    		})
+    	}
+
+    	if (val == "lnza"){
+    		listitems.sort(function(e2,e1) {
+    			var names1 = $(e1).children().children('.student-name').text().trim().split(" ");
+    			var names2 = $(e2).children().children('.student-name').text().trim().split(" ");
+    			var ln_e1 = names1[names1.length-1];
+    			var ln_e2 = names2[names2.length-1];
+
+    			return ln_e1.toUpperCase().localeCompare(ln_e2.toUpperCase());
+    		})
+    	}
+
+    	if (val == "fnza"){
+
+    		listitems.sort(function(e2,e1) {
+    			var names1 = $(e1).children().children('.student-name').text().trim().split(" ");
+    			var names2 = $(e2).children().children('.student-name').text().trim().split(" ");
+    			var ln_e1 = names1[0];
+    			var ln_e2 = names2[0];
+
+    			return ln_e1.toUpperCase().localeCompare(ln_e2.toUpperCase());
+    		})
+    	}
+
+    	if (val == "fnaz"){
+
+    		listitems.sort(function(e1,e2) {
+    			var names1 = $(e1).children().children('.student-name').text().trim().split(" ");
+    			var names2 = $(e2).children().children('.student-name').text().trim().split(" ");
+    			var ln_e1 = names1[0];
+    			var ln_e2 = names2[0];
+
+    			return ln_e1.toUpperCase().localeCompare(ln_e2.toUpperCase());
+    		})
+    	}
+
+    	$.each(listitems, function(idx, itm) {
+        list.append(itm);
+      	});
+
     },
 
     'click .finish-session-button' : function(e){
